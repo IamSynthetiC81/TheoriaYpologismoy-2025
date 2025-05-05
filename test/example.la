@@ -1,0 +1,16 @@
+@defmacro pi 3.14
+
+def main():
+  x: scalar;
+  y: scalar;
+  x = 1 + 2;
+  y = x * pi;
+
+  if (x > 1):
+    writeStr("x is bigger\n");
+  else:
+    writeStr("x is not bigger\n");
+  endif;
+
+  return;
+enddef;
