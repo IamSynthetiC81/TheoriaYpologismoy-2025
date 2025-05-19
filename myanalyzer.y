@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "cgen.h"
+#include "lambdalib.h"
 
 extern int yylex();
 extern int yyparse();
@@ -12,11 +14,7 @@ extern char* find_macro(const char*);
 
 
 int indent_level = 0;
-
-void yyerror(const char *msg) {
-    fprintf(stderr, "Syntax error in line %d: %s\n", line_number, msg);
-    exit(1);
-}
+int line_num = 1;
 
 void debug_print(const char* str) {
     fprintf(stderr, "debug: %s\n", str);
@@ -46,6 +44,7 @@ char* add_indentation(const char* code) {
 }
 
 %type <string> stmt stmt_list expression function function_list main_function type
+%type <string> param_list param_decl_list
 
 %token <string> IDENTIFIER CONST_INT CONST_FLOAT CONST_STRING
 %token CONST_BOOL_TRUE CONST_BOOL_FALSE
@@ -58,10 +57,14 @@ char* add_indentation(const char* code) {
 %token KW_DEF KW_ENDDEF KW_MAIN KW_RETURN
 %token KW_COMP KW_ENDCOMP KW_OF
 
-%token OP_ASSIGN OP_PLUSEQ OP_MINUSEQ OP_MULTEQ OP_DIVEQ OP_MODEQ OP_DEFINE
+%token KW_DEFMACRO
+
+%token OP_ASSIGN OP_PLUSEQ OP_MINUSEQ OP_MULTEQ OP_DIVEQ OP_MODEQ OP_DEFINE OP_POW
 %token OP_EQ OP_NEQ OP_LT OP_LEQ OP_GT OP_GEQ
-%token OP_PLUS OP_MINUS OP_MULT OP_DIV OP_MOD OP_POW
+%token OP_PLUS OP_MINUS OP_MULT OP_DIV OP_MOD
 %token LPAREN RPAREN LBRACKET RBRACKET COLON SEMICOLON COMMA DOT
+%token OP_ARROW
+%token HASH
 
 %left OP_EQ OP_NEQ OP_LT OP_LEQ OP_GT OP_GEQ
 %left OP_PLUS OP_MINUS
@@ -71,7 +74,26 @@ char* add_indentation(const char* code) {
 %%
 
 program:
-    function_list main_function
+    macro_def_list top_level_list main_function
+    ;
+
+macro_def_list:
+    /* empty */
+    | macro_def_list macro_def
+    ;
+
+macro_def:
+    KW_DEFMACRO IDENTIFIER CONST_FLOAT
+    ;
+
+top_level_list:
+    /* empty */
+    | top_level_list top_level
+    ;
+
+top_level:
+      function
+    | component
     ;
 
 function_list:
@@ -80,33 +102,44 @@ function_list:
     ;
 
 function:
-    KW_DEF IDENTIFIER LPAREN RPAREN COLON stmt_list KW_ENDDEF SEMICOLON
-    {
+    KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON stmt_list KW_ENDDEF SEMICOLON {
         indent_level++;
-        char* body = add_indentation($6);
+
+        // char* body = add_indentation($8);
         indent_level--;
-        char* code = malloc(strlen($2) + strlen(body) + 64);
-        sprintf(code, "void %s() {\n%s}\n\n", $2, body);
-        free(body);
-        printf("%s", code);
-        $$ = strdup("");
+        // char* code = malloc(1024);
+        // sprintf(code, "%s %s(%s) {\n%s}\n\n", $7, $2, $4, body);
+        // free(body);
+        // $$ = code;
     }
     ;
+param_list:
+    /* empty */ { $$ = strdup(""); }
+    | param_decl_list { $$ = $1; }
+
+param_decl_list:
+    IDENTIFIER COLON type {
+        $$ = malloc(strlen($1) + strlen($3) + 2);
+        sprintf($$, "%s %s", $3, $1);
+    } | param_decl_list COMMA IDENTIFIER COLON type {
+        char* tmp = malloc(strlen($1) + strlen($3) + strlen($5) + 4);
+        sprintf(tmp, "%s, %s %s", $1, $5, $3);
+        $$ = tmp;
+    }
 
 main_function:
-    KW_DEF KW_MAIN LPAREN RPAREN COLON stmt_list KW_ENDDEF SEMICOLON
-    {
-        indent_level++;
-        char* body = add_indentation($6);
-        indent_level--;
-        char* code = malloc(strlen(body) + 64);
-        sprintf(code, "int main() {\n%s}\n", body);
-        free(body);
-        printf("%s", code);
-        free(code);
-        $$ = strdup("");    
-    }
-    ;
+	KW_DEF KW_MAIN LPAREN RPAREN COLON stmt_list KW_ENDDEF SEMICOLON {
+			indent_level++;
+			char* body = add_indentation($6);
+			indent_level--;
+			char* code = malloc(strlen(body) + 64);
+			sprintf(code, "int main() {\n%s}\n", body);
+			free(body);
+			printf("%s", code);
+			free(code);
+			$$ = strdup("");    
+	}
+	;
 
 stmt_list:
     /* empty */ { $$ = strdup(""); }
@@ -133,8 +166,7 @@ stmt:
         sprintf(line, "%s = %s;\n", $1, $3);
         $$ = add_indentation(line);
         free(line);
-    }
-    | IDENTIFIER LPAREN expression RPAREN SEMICOLON {
+    } | IDENTIFIER LPAREN expression RPAREN SEMICOLON {
         char* line = malloc(strlen($1) + strlen($3) + 16);
 
         fprintf(stderr, "Calling: %s(%s)\n", $1, $3);
@@ -142,8 +174,7 @@ stmt:
         sprintf(line, "%s(%s);\n", $1, $3);
         $$ = add_indentation(line);
         free(line);
-    }
-    | KW_RETURN expression SEMICOLON {
+    } | KW_RETURN expression SEMICOLON {
         char* line = malloc(strlen($2) + 16);
 
         fprintf(stderr, "Returning: %s\n", $2);
@@ -151,8 +182,7 @@ stmt:
         sprintf(line, "return %s;\n", $2);
         $$ = add_indentation(line);
         free(line);
-    }
-    | KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON {
+    } | KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON {
         indent_level++;
         char* body = add_indentation($6);
         indent_level--;
@@ -163,8 +193,7 @@ stmt:
         sprintf(code, "if (%s) {\n%s}\n", $3, body);
         $$ = code;
         free(body);
-    }
-    | KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON {
+    } | KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON {
         indent_level++;
         char* then_part = add_indentation($6);
         char* else_part = add_indentation($9);
@@ -177,8 +206,7 @@ stmt:
         $$ = code;
         free(then_part);
         free(else_part);
-    }
-    | KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON {
+    } | KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON {
         indent_level++;
         char* body = add_indentation($10);
         indent_level--;
@@ -189,8 +217,7 @@ stmt:
         sprintf(code, "for (int %s = %s; %s <= %s; %s++) {\n%s}\n", $2, $5, $2, $7, $2, body);
         $$ = code;
         free(body);
-    }
-    | KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
+    } | KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
         indent_level++;
         char* body = add_indentation($6);
         indent_level--;
@@ -201,28 +228,65 @@ stmt:
         sprintf(code, "while (%s) {\n%s}\n", $3, body);
         $$ = code;
         free(body);
-    }
-    | KW_BREAK SEMICOLON {
+    } | KW_BREAK SEMICOLON {
         $$ = add_indentation("break;\n");
-    }
-    | KW_CONTINUE SEMICOLON {
+    } | KW_CONTINUE SEMICOLON {
         $$ = add_indentation("continue;\n");
-    }
-    | IDENTIFIER COLON type SEMICOLON {
+    } | IDENTIFIER COLON type SEMICOLON {
         char* line = malloc(strlen($1) + strlen($3) + 16);
         sprintf(line, "%s %s;\n", $3, $1);
         $$ = add_indentation(line);
         free(line);
-    }
-    | SEMICOLON {
+    } | SEMICOLON {
         fprintf(stderr, "STMT SEMICOLON\n");
         $$ = strdup(";");
-    }
-    | KW_RETURN SEMICOLON
-    {   
+    } | KW_RETURN SEMICOLON {   
         fprintf(stderr, "STMT RET SEMICOLON\n");
         $$ = strdup("return;\n");
+    } | IDENTIFIER OP_DEFINE LBRACKET expression KW_FOR IDENTIFIER COLON expression RBRACKET COLON type SEMICOLON {
+        char* code = malloc(1024);
+        sprintf(code, "%s = (%s*)malloc(%s * sizeof(%s));\nfor (int %s = 0; %s < %s; ++%s) {\n    %s[%s] = %s;\n}\n",
+            $1, $11, $8, $11, $6, $6, $8, $6, $1, $6, $4);
+        $$ = add_indentation(code);
+        free(code);
+    } | KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
+        indent_level++;
+        char* body = add_indentation($6);
+        indent_level--;
+        char* code = malloc(strlen($3) + strlen(body) + 64);
+        sprintf(code, "while (%s) {\n%s}\n", $3, body);
+        $$ = code;
+        free(body);
+    } | KW_COMP IDENTIFIER COLON stmt_list KW_ENDCOMP SEMICOLON {
+        fprintf(stderr, "COMPONENT %s\n", $2);
+        
+        indent_level++;
+        char* body = add_indentation($4);
+        indent_level--;
+        char* code = malloc(strlen($2) + strlen(body) + 64);
+        sprintf(code, "component %s {\n%s}\n", $2, body);
+        $$ = code;
+        free(body);
     }
+    ;
+
+component:
+    KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON
+    ;
+
+component_body:
+    /* empty */
+    | component_body component_member
+    ;
+
+component_member:
+      field_decl
+    | function
+    ;
+
+field_decl:
+    HASH IDENTIFIER COLON type SEMICOLON
+    | HASH param_decl_list COLON type SEMICOLON
     ;
 
 expression:
@@ -310,6 +374,36 @@ expression:
         fprintf(stderr, "Parentheses: (%s)\n", $2);
 
         sprintf(code, "(%s)", $2);
+        $$ = code;
+    }
+    | expression OP_POW expression {
+        char* code = malloc(strlen($1) + strlen($3) + 5);
+        sprintf(code, "%s ** %s", $1, $3);
+        $$ = code;
+    }
+    | expression OP_PLUSEQ expression {
+        char* code = malloc(strlen($1) + strlen($3) + 6);
+        sprintf(code, "%s += %s", $1, $3);
+        $$ = code;
+    }
+    | expression OP_MINUSEQ expression {
+        char* code = malloc(strlen($1) + strlen($3) + 6);
+        sprintf(code, "%s -= %s", $1, $3);
+        $$ = code;
+    }
+    | expression OP_MULTEQ expression {
+        char* code = malloc(strlen($1) + strlen($3) + 6);
+        sprintf(code, "%s *= %s", $1, $3);
+        $$ = code;
+    }
+    | expression OP_DIVEQ expression {
+        char* code = malloc(strlen($1) + strlen($3) + 6);
+        sprintf(code, "%s /= %s", $1, $3);
+        $$ = code;
+    }
+    | expression OP_MODEQ expression {
+        char* code = malloc(strlen($1) + strlen($3) + 6);
+        sprintf(code, "%s %%= %s", $1, $3);
         $$ = code;
     }
     ;

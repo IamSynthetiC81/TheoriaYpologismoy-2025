@@ -1,0 +1,8 @@
+-- My first Lambda program. File: myprog.la
+-- This program prints "Hello, World!" to the console.
+
+message = "Hello, World!";
+
+def main():
+    writeStr(message);
+enddef;

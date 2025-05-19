@@ -5,6 +5,7 @@
 #include <string.h>
 #include <ctype.h>
 
+extern int line_num;
 
 char* macro_buffer = NULL;
 int macro_buffer_index = 0;
@@ -75,8 +76,6 @@ char* find_macro(const char* name) {
     }
     return NULL;
 }
-
-int line_number = 1;
 %}
 
 %option noyywrap
@@ -86,7 +85,7 @@ int line_number = 1;
 
 "--"[^\n]*                        { /* Comment */ }
 [\r]?\n {
-    line_number++;
+    line_num++;
     /* Do NOT return NEWLINE — just ignore it */
 }
 
@@ -100,27 +99,28 @@ int line_number = 1;
 
     // Use sscanf with format to separate name and replacement safely
     if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
-        // Strip trailing whitespace (spaces, tabs, newlines, etc.)
-        size_t len = strlen(replacement);
-        while (len > 0 && isspace(replacement[len - 1])) {
-            replacement[--len] = '\0';
-        }
-    
         add_macro(name, replacement);
+
+        fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
     }
      else {
-        fprintf(stderr, "Invalid macro definition line %d: %s\n", line_number, yytext);
+        fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
         exit(1);
     }   
 
-    line_number++;
+    line_num++;
 }
 
 
 
 "True"                            { fprintf(stderr, "CONST_BOOL_TRUE\n"); return CONST_BOOL_TRUE; }
 "False"                           { fprintf(stderr, "CONST_BOOL_FALSE\n"); return CONST_BOOL_FALSE; }
+
 [0-9]+\.[0-9]+ {
+    yylval.string = strdup(yytext);
+    return CONST_FLOAT;
+}
+[0-9]+\.[0-9]+([eE][+-]?[0-9]+)? {
     yylval.string = strdup(yytext);
     return CONST_FLOAT;
 }
@@ -129,6 +129,25 @@ int line_number = 1;
     return CONST_INT;
 }
 \"([^\"\\]|\\.)*\"                { fprintf(stderr, "CONST_STRING\n"); yylval.string = strdup(yytext); return CONST_STRING; }
+
+
+"while"         { fprintf(stderr, "KW_WHILE\n"); return KW_WHILE; }
+"endwhile"      { fprintf(stderr, "KW_ENDWHILE\n"); return KW_ENDWHILE; }
+"break"         { fprintf(stderr, "KW_BREAK\n"); return KW_BREAK; }
+"continue"      { fprintf(stderr, "KW_CONTINUE\n"); return KW_CONTINUE; }
+"comp "          { fprintf(stderr, "KW_COMP\n"); return KW_COMP; }
+"endcomp"       { fprintf(stderr, "KW_ENDCOMP\n"); return KW_ENDCOMP; }
+"of"            { fprintf(stderr, "KW_OF\n"); return KW_OF; }
+
+"**"            { fprintf(stderr, "OP_POW\n"); return OP_POW; }
+"+="            { fprintf(stderr, "OP_PLUSEQ\n"); return OP_PLUSEQ; }
+"-="            { fprintf(stderr, "OP_MINUSEQ\n"); return OP_MINUSEQ; }
+"*="            { fprintf(stderr, "OP_MULTEQ\n"); return OP_MULTEQ; }
+"/="            { fprintf(stderr, "OP_DIVEQ\n"); return OP_DIVEQ; }
+"%="            { fprintf(stderr, "OP_MODEQ\n"); return OP_MODEQ; }
+"->"            { fprintf(stderr, "OP_ARROW\n"); return OP_ARROW; }
+
+"#" { return HASH; }
 
 "def"                             { fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
 "enddef"                          { fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
@@ -168,8 +187,8 @@ int line_number = 1;
 "/"                               { fprintf(stderr, "OP_DIV\n"); return OP_DIV; }
 "%"                               { fprintf(stderr, "OP_MOD\n"); return OP_MOD; }
 
-"("     { fprintf(stderr, "LPAREN\n"); return LPAREN; }
-")"     { fprintf(stderr, "RPAREN\n"); return RPAREN; }
+"("                               { fprintf(stderr, "LPAREN\n"); return LPAREN; }
+")"                             	{ fprintf(stderr, "RPAREN\n"); return RPAREN; }
 
 "["                               { fprintf(stderr, "LBRACKET\n"); return LBRACKET; }
 "]"                               { fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
@@ -181,34 +200,12 @@ int line_number = 1;
 [a-zA-Z_][a-zA-Z0-9_]* {
     char* macro_val = find_macro(yytext);
     if (macro_val) {
-        if (macro_expansion_depth >= MAX_MACRO_EXPANSION_DEPTH) {
-            fprintf(stderr, "Error: Macro expansion depth exceeded at line %d\n", line_number);
-            exit(1);
+        unput('\n');
+        fprintf(stderr, "Macro expansion: %s -> %s\n", yytext, macro_val);
+
+        for (int i = strlen(macro_val) - 1; i >= 0; --i) {
+            unput(macro_val[i]);
         }
-
-        fprintf(stderr, "Macro found: %s -> %s\n", yytext, macro_val);
-        macro_expansion_depth++;
-
-        // Build a buffer with macro text followed by a whitespace (or semicolon if needed)
-        size_t len = strlen(macro_val);
-        int add_semicolon = 0;
-
-        // Check if the macro text might need a terminator (optional)
-        if (isdigit(macro_val[len - 1]) || macro_val[len - 1] == '.') {
-            add_semicolon = 1;
-        }
-
-        char* injected = malloc(len + (add_semicolon ? 2 : 2)); // room for ' ' or ';' and '\0'
-        strcpy(injected, macro_val);
-        injected[len] = ' '; // safety space or semicolon
-        if (add_semicolon) injected[len] = ';';
-        injected[len + 1] = '\0';
-
-        fprintf(stderr, "Injected macro content: \"%s\"\n", injected);
-
-        YY_BUFFER_STATE macro_buf = yy_scan_bytes(injected, strlen(macro_val)+1);
-        yypush_buffer_state(macro_buf);
-        free(injected);
 
         return yylex();
     }
@@ -222,7 +219,7 @@ int line_number = 1;
 
 
 . {
-    fprintf(stderr, "Unknown character '%c' at line %d\n", *yytext, line_number);
+    fprintf(stderr, "Unknown character '%c' at line %d\n", *yytext, line_num);
     exit(1);
 }
 

@@ -85,33 +85,36 @@ extern int yydebug;
     KW_COMP = 286,                 /* KW_COMP  */
     KW_ENDCOMP = 287,              /* KW_ENDCOMP  */
     KW_OF = 288,                   /* KW_OF  */
-    OP_ASSIGN = 289,               /* OP_ASSIGN  */
-    OP_PLUSEQ = 290,               /* OP_PLUSEQ  */
-    OP_MINUSEQ = 291,              /* OP_MINUSEQ  */
-    OP_MULTEQ = 292,               /* OP_MULTEQ  */
-    OP_DIVEQ = 293,                /* OP_DIVEQ  */
-    OP_MODEQ = 294,                /* OP_MODEQ  */
-    OP_DEFINE = 295,               /* OP_DEFINE  */
-    OP_EQ = 296,                   /* OP_EQ  */
-    OP_NEQ = 297,                  /* OP_NEQ  */
-    OP_LT = 298,                   /* OP_LT  */
-    OP_LEQ = 299,                  /* OP_LEQ  */
-    OP_GT = 300,                   /* OP_GT  */
-    OP_GEQ = 301,                  /* OP_GEQ  */
-    OP_PLUS = 302,                 /* OP_PLUS  */
-    OP_MINUS = 303,                /* OP_MINUS  */
-    OP_MULT = 304,                 /* OP_MULT  */
-    OP_DIV = 305,                  /* OP_DIV  */
-    OP_MOD = 306,                  /* OP_MOD  */
-    OP_POW = 307,                  /* OP_POW  */
-    LPAREN = 308,                  /* LPAREN  */
-    RPAREN = 309,                  /* RPAREN  */
-    LBRACKET = 310,                /* LBRACKET  */
-    RBRACKET = 311,                /* RBRACKET  */
-    COLON = 312,                   /* COLON  */
-    SEMICOLON = 313,               /* SEMICOLON  */
-    COMMA = 314,                   /* COMMA  */
-    DOT = 315                      /* DOT  */
+    KW_DEFMACRO = 289,             /* KW_DEFMACRO  */
+    OP_ASSIGN = 290,               /* OP_ASSIGN  */
+    OP_PLUSEQ = 291,               /* OP_PLUSEQ  */
+    OP_MINUSEQ = 292,              /* OP_MINUSEQ  */
+    OP_MULTEQ = 293,               /* OP_MULTEQ  */
+    OP_DIVEQ = 294,                /* OP_DIVEQ  */
+    OP_MODEQ = 295,                /* OP_MODEQ  */
+    OP_DEFINE = 296,               /* OP_DEFINE  */
+    OP_POW = 297,                  /* OP_POW  */
+    OP_EQ = 298,                   /* OP_EQ  */
+    OP_NEQ = 299,                  /* OP_NEQ  */
+    OP_LT = 300,                   /* OP_LT  */
+    OP_LEQ = 301,                  /* OP_LEQ  */
+    OP_GT = 302,                   /* OP_GT  */
+    OP_GEQ = 303,                  /* OP_GEQ  */
+    OP_PLUS = 304,                 /* OP_PLUS  */
+    OP_MINUS = 305,                /* OP_MINUS  */
+    OP_MULT = 306,                 /* OP_MULT  */
+    OP_DIV = 307,                  /* OP_DIV  */
+    OP_MOD = 308,                  /* OP_MOD  */
+    LPAREN = 309,                  /* LPAREN  */
+    RPAREN = 310,                  /* RPAREN  */
+    LBRACKET = 311,                /* LBRACKET  */
+    RBRACKET = 312,                /* RBRACKET  */
+    COLON = 313,                   /* COLON  */
+    SEMICOLON = 314,               /* SEMICOLON  */
+    COMMA = 315,                   /* COMMA  */
+    DOT = 316,                     /* DOT  */
+    OP_ARROW = 317,                /* OP_ARROW  */
+    HASH = 318                     /* HASH  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -120,11 +123,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 44 "myanalyzer.y"
+#line 42 "myanalyzer.y"
 
     char* string;
 
-#line 128 "out/myanalyzer.tab.h"
+#line 131 "out/myanalyzer.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

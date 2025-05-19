@@ -1,14 +1,15 @@
 OUT_DIR = out
 TEST_DIR = test
 TEST_OUT_DIR = out
+HELPER_FILES = HelperFiles/cgen.c
 
 CC = gcc
 FLEX = flex
 BISON = bison
 
-CFLAGS = -g -Wall -Wextra -I$(OUT_DIR)
+CFLAGS = -g -Wall -Wextra -I$(OUT_DIR) -IHelperFiles
 FLEXFLAGS = -l
-BISONFLAGS = -d -v
+BISONFLAGS = -d -v -r all 
 LDFLAGS = -lm
 
 # Create output directory if it doesn't exist
@@ -22,7 +23,7 @@ all: mycompiler
 mycompiler: mylexer.l myanalyzer.y
 	${FLEX} -o ${OUT_DIR}/lex.yy.c ${FLEXFLAGS} mylexer.l
 	${BISON} -o ${OUT_DIR}/myanalyzer.tab.c ${BISONFLAGS} myanalyzer.y
-	${CC} -o $(OUT_DIR)/mycompiler ${CFLAGS} ${LDFLAGS} ${OUT_DIR}/myanalyzer.tab.c ${OUT_DIR}/lex.yy.c
+	${CC} -o $(OUT_DIR)/mycompiler ${CFLAGS} ${LDFLAGS} ${OUT_DIR}/myanalyzer.tab.c ${OUT_DIR}/lex.yy.c $(HELPER_FILES)
 
 run: mycompiler
 	./mycompiler < example.la
@@ -31,7 +32,7 @@ test: mycompiler
 	@echo "Running tests..."
 	@for test in $(TEST_DIR)/*.la; do \
 		echo "Running $$test"; \
-		./$(OUT_DIR)/mycompiler < $$test > $${test%.la}.c; \
+		./$(OUT_DIR)/mycompiler < $$test > $(OUT_DIR)/$$(basename $$(basename $$test .la).c);\
 	done
 	@echo "All tests completed."
 
