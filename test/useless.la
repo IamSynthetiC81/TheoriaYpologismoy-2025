@@ -9,7 +9,7 @@ def cube(i: integer)-> integer:
    return i*i*i;
 enddef;
    
-def add(n: int, k: int)-> integer:
+def add(n: integer, k: integer)-> integer:
    j: integer;
   
    j = (N-n) + cube(k);

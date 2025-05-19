@@ -147,7 +147,8 @@ char* find_macro(const char* name) {
 "%="            { fprintf(stderr, "OP_MODEQ\n"); return OP_MODEQ; }
 "->"            { fprintf(stderr, "OP_ARROW\n"); return OP_ARROW; }
 
-"#" { return HASH; }
+"#"             { fprintf(stderr, "HASH\n"); return HASH; }
+","            { fprintf(stderr, "KW_COMMA\n"); return COMMA; }
 
 "def"                             { fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
 "enddef"                          { fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
@@ -194,7 +195,6 @@ char* find_macro(const char* name) {
 "]"                               { fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
 ":"                               { fprintf(stderr, "COLON\n"); return COLON; }
 ";"                               { fprintf(stderr, "SEMICOLON\n"); return SEMICOLON; }
-","                               { fprintf(stderr, "COMMA\n"); return COMMA; }
 "."                               { fprintf(stderr, "DOT\n"); return DOT; }
 
 [a-zA-Z_][a-zA-Z0-9_]* {

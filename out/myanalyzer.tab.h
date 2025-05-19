@@ -114,7 +114,8 @@ extern int yydebug;
     COMMA = 315,                   /* COMMA  */
     DOT = 316,                     /* DOT  */
     OP_ARROW = 317,                /* OP_ARROW  */
-    HASH = 318                     /* HASH  */
+    HASH = 318,                    /* HASH  */
+    UMINUS = 319                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -127,7 +128,7 @@ union YYSTYPE
 
     char* string;
 
-#line 131 "out/myanalyzer.tab.h"
+#line 132 "out/myanalyzer.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

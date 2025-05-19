@@ -386,22 +386,22 @@ struct yy_trans_info
 static const flex_int16_t yy_accept[172] =
     {   0,
         0,    0,   68,   66,    3,    2,   66,   66,   66,   25,
-       56,   57,   58,   54,   52,   63,   53,   64,   55,    9,
-       61,   62,   48,   51,   49,   65,   65,   65,   59,   60,
+       57,   58,   59,   55,   53,   26,   54,   64,   56,    9,
+       62,   63,   49,   52,   50,   65,   65,   65,   60,   61,
        65,   65,   65,   65,   65,   65,   65,   65,   65,   65,
-       65,   65,   65,   66,    3,    2,   45,    0,   10,    0,
+       65,   65,   65,   66,    3,    2,   46,    0,   10,    0,
        23,   18,   21,   19,    1,   20,   24,   22,    0,    9,
-       50,   46,   44,   47,   65,   65,   65,   65,   65,   65,
-       65,   65,   65,   65,   65,   30,   34,   65,   65,   17,
-       43,   65,   65,   65,   65,    0,    1,    7,   65,   65,
-       42,   65,   65,   65,   65,   26,   65,   65,   33,   65,
+       51,   47,   45,   48,   65,   65,   65,   65,   65,   65,
+       65,   65,   65,   65,   65,   31,   35,   65,   65,   17,
+       44,   65,   65,   65,   65,    0,    1,    7,   65,   65,
+       43,   65,   65,   65,   65,   27,   65,   65,   34,   65,
 
-       65,   41,   65,   65,   38,   65,    0,    0,   65,    5,
-       39,   65,   65,   65,   65,   31,   65,   65,   65,   65,
-       65,   65,   28,   65,   65,   65,    0,    0,    8,    6,
-       13,   15,   40,   65,   65,   65,   65,   32,   65,   65,
-       65,   65,   11,    0,   65,   65,   27,   35,   65,   65,
-       29,   37,    0,   65,   16,   65,   36,    0,   14,   12,
+       65,   42,   65,   65,   39,   65,    0,    0,   65,    5,
+       40,   65,   65,   65,   65,   32,   65,   65,   65,   65,
+       65,   65,   29,   65,   65,   65,    0,    0,    8,    6,
+       13,   15,   41,   65,   65,   65,   65,   33,   65,   65,
+       65,   65,   11,    0,   65,   65,   28,   36,   65,   65,
+       30,   38,    0,   65,   16,   65,   37,    0,   14,   12,
         0,    0,    0,    0,    0,    0,    0,    0,    4,    0,
         0
     } ;
@@ -1125,197 +1125,197 @@ YY_RULE_SETUP
 case 25:
 YY_RULE_SETUP
 #line 150 "mylexer.l"
-{ return HASH; }
+{ fprintf(stderr, "HASH\n"); return HASH; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 152 "mylexer.l"
-{ fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
+#line 151 "mylexer.l"
+{ fprintf(stderr, "KW_COMMA\n"); return COMMA; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 153 "mylexer.l"
-{ fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
+{ fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 154 "mylexer.l"
-{ fprintf(stderr, "KW_MAIN\n");return KW_MAIN; }
+{ fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 155 "mylexer.l"
-{ fprintf(stderr, "KW_RETURN\n");return KW_RETURN; }
+{ fprintf(stderr, "KW_MAIN\n");return KW_MAIN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 157 "mylexer.l"
-{ fprintf(stderr, "KW_IF\n"); return KW_IF; }
+#line 156 "mylexer.l"
+{ fprintf(stderr, "KW_RETURN\n");return KW_RETURN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 158 "mylexer.l"
-{ fprintf(stderr, "KW_ELSE\n"); return KW_ELSE; }
+{ fprintf(stderr, "KW_IF\n"); return KW_IF; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 159 "mylexer.l"
-{ fprintf(stderr, "KW_ENDIF\n"); return KW_ENDIF; }
+{ fprintf(stderr, "KW_ELSE\n"); return KW_ELSE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 161 "mylexer.l"
-{ fprintf(stderr, "KW_FOR\n"); return KW_FOR; }
+#line 160 "mylexer.l"
+{ fprintf(stderr, "KW_ENDIF\n"); return KW_ENDIF; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 162 "mylexer.l"
-{ fprintf(stderr, "KW_IN\n"); return KW_IN; }
+{ fprintf(stderr, "KW_FOR\n"); return KW_FOR; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 163 "mylexer.l"
-{ fprintf(stderr, "KW_ENDFOR\n"); return KW_ENDFOR; }
+{ fprintf(stderr, "KW_IN\n"); return KW_IN; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 165 "mylexer.l"
-{ fprintf(stderr, "KW_INTEGER\n"); return KW_INTEGER; }
+#line 164 "mylexer.l"
+{ fprintf(stderr, "KW_ENDFOR\n"); return KW_ENDFOR; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
 #line 166 "mylexer.l"
-{ fprintf(stderr, "KW_SCALAR\n"); return KW_SCALAR; }
+{ fprintf(stderr, "KW_INTEGER\n"); return KW_INTEGER; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
 #line 167 "mylexer.l"
-{ fprintf(stderr, "KW_STR\n"); return KW_STR; }
+{ fprintf(stderr, "KW_SCALAR\n"); return KW_SCALAR; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
 #line 168 "mylexer.l"
-{ fprintf(stderr, "KW_BOOL\n"); return KW_BOOL; }
+{ fprintf(stderr, "KW_STR\n"); return KW_STR; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 169 "mylexer.l"
-{ fprintf(stderr, "KW_CONST\n"); return KW_CONST; }
+{ fprintf(stderr, "KW_BOOL\n"); return KW_BOOL; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 171 "mylexer.l"
-{ fprintf(stderr, "KW_NOT\n"); return KW_NOT; }
+#line 170 "mylexer.l"
+{ fprintf(stderr, "KW_CONST\n"); return KW_CONST; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
 #line 172 "mylexer.l"
-{ fprintf(stderr, "KW_AND\n"); return KW_AND; }
+{ fprintf(stderr, "KW_NOT\n"); return KW_NOT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
 #line 173 "mylexer.l"
-{ fprintf(stderr, "KW_OR\n"); return KW_OR; }
+{ fprintf(stderr, "KW_AND\n"); return KW_AND; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 175 "mylexer.l"
-{ fprintf(stderr, "OP_EQ\n"); return OP_EQ; }
+#line 174 "mylexer.l"
+{ fprintf(stderr, "KW_OR\n"); return KW_OR; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
 #line 176 "mylexer.l"
-{ fprintf(stderr, "OP_NEQ\n"); return OP_NEQ; }
+{ fprintf(stderr, "OP_EQ\n"); return OP_EQ; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
 #line 177 "mylexer.l"
-{ fprintf(stderr, "OP_LEQ\n"); return OP_LEQ; }
+{ fprintf(stderr, "OP_NEQ\n"); return OP_NEQ; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
 #line 178 "mylexer.l"
-{ fprintf(stderr, "OP_GEQ\n"); return OP_GEQ; }
+{ fprintf(stderr, "OP_LEQ\n"); return OP_LEQ; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
 #line 179 "mylexer.l"
-{ fprintf(stderr, "OP_LT\n"); return OP_LT; }
+{ fprintf(stderr, "OP_GEQ\n"); return OP_GEQ; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 180 "mylexer.l"
-{ fprintf(stderr, "OP_GT\n"); return OP_GT; }
+{ fprintf(stderr, "OP_LT\n"); return OP_LT; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 182 "mylexer.l"
-{ fprintf(stderr, "OP_DEFINE\n"); return OP_DEFINE; }
+#line 181 "mylexer.l"
+{ fprintf(stderr, "OP_GT\n"); return OP_GT; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
 #line 183 "mylexer.l"
-{ fprintf(stderr, "OP_ASSIGN\n"); return OP_ASSIGN; }
+{ fprintf(stderr, "OP_DEFINE\n"); return OP_DEFINE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
 #line 184 "mylexer.l"
-{ fprintf(stderr, "OP_PLUS\n"); return OP_PLUS; }
+{ fprintf(stderr, "OP_ASSIGN\n"); return OP_ASSIGN; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
 #line 185 "mylexer.l"
-{ fprintf(stderr, "OP_MINUS\n"); return OP_MINUS; }
+{ fprintf(stderr, "OP_PLUS\n"); return OP_PLUS; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
 #line 186 "mylexer.l"
-{ fprintf(stderr, "OP_MULT\n"); return OP_MULT; }
+{ fprintf(stderr, "OP_MINUS\n"); return OP_MINUS; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
 #line 187 "mylexer.l"
-{ fprintf(stderr, "OP_DIV\n"); return OP_DIV; }
+{ fprintf(stderr, "OP_MULT\n"); return OP_MULT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 188 "mylexer.l"
-{ fprintf(stderr, "OP_MOD\n"); return OP_MOD; }
+{ fprintf(stderr, "OP_DIV\n"); return OP_DIV; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 190 "mylexer.l"
-{ fprintf(stderr, "LPAREN\n"); return LPAREN; }
+#line 189 "mylexer.l"
+{ fprintf(stderr, "OP_MOD\n"); return OP_MOD; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
 #line 191 "mylexer.l"
-{ fprintf(stderr, "RPAREN\n"); return RPAREN; }
+{ fprintf(stderr, "LPAREN\n"); return LPAREN; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 193 "mylexer.l"
-{ fprintf(stderr, "LBRACKET\n"); return LBRACKET; }
+#line 192 "mylexer.l"
+{ fprintf(stderr, "RPAREN\n"); return RPAREN; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
 #line 194 "mylexer.l"
-{ fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
+{ fprintf(stderr, "LBRACKET\n"); return LBRACKET; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
 #line 195 "mylexer.l"
-{ fprintf(stderr, "COLON\n"); return COLON; }
+{ fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
 #line 196 "mylexer.l"
-{ fprintf(stderr, "SEMICOLON\n"); return SEMICOLON; }
+{ fprintf(stderr, "COLON\n"); return COLON; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
 #line 197 "mylexer.l"
-{ fprintf(stderr, "COMMA\n"); return COMMA; }
+{ fprintf(stderr, "SEMICOLON\n"); return SEMICOLON; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
