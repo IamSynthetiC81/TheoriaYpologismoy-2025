@@ -360,6 +360,18 @@ stmt:
             $1, $11, $8, $11, $6, $6, $8, $6, $1, $6, $4);
         $$ = add_indentation(code);
         free(code);
+    } | IDENTIFIER OP_DEFINE LBRACKET expression KW_FOR IDENTIFIER COLON type KW_IN IDENTIFIER KW_OF CONST_INT RBRACKET COLON type SEMICOLON {
+        // Handles: half := [x/2 for x:scalar in a of 100]:scalar;
+        char* code = malloc(1024);
+        sprintf(code,
+            "%s = (%s*)malloc(%s * sizeof(%s));\n"
+            "for (int i = 0; i < %s; ++i) {\n"
+            "    %s[i] = %s;\n"
+            "}\n",
+            $1, $15, $12, $15, $12, $1, $4
+        );
+        $$ = add_indentation(code);
+        free(code);
     } | KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
         indent_level++;
         char* body = add_indentation($6);
@@ -516,7 +528,7 @@ component_member:
 			sprintf(decl, "%s", $1);
 			$$ = add_indentation(decl);
 			free(decl);
-		}
+		} | SEMICOLON { $$ = strdup(""); }
   ;
 
 hash_ident_list:
@@ -663,57 +675,90 @@ expression:
 
 		sprintf(code, "%s[%s]", $1, $3);
 		$$ = code;
-	} | expression LPAREN arg_list RPAREN {
+	}
+	| primary_expression DOT IDENTIFIER {
 		char* code = malloc(strlen($1) + strlen($3) + 4);
-		
-		fprintf(stderr, "Function call: %s(%s)\n", $1, $3);
-
+		sprintf(code, "%s.%s", $1, $3);
+		$$ = code;
+	} | primary_expression LBRACKET expression RBRACKET {
+		char* code = malloc(strlen($1) + strlen($3) + 4);
+		sprintf(code, "%s[%s]", $1, $3);
+		$$ = code;
+	}
+	| primary_expression DOT IDENTIFIER LPAREN arg_list RPAREN {
+		char* code = malloc(strlen($1) + strlen($3) + strlen($5) + 8);
+		sprintf(code, "%s.%s(%s)", $1, $3, $5);
+		$$ = code;
+		free($1); free($3); free($5);
+	} | primary_expression DOT IDENTIFIER LPAREN RPAREN {
+		char* code = malloc(strlen($1) + strlen($3) + 8);
+		sprintf(code, "%s.%s()", $1, $3);
+		$$ = code;
+		free($1); free($3);
+	}
+	| expression LPAREN arg_list RPAREN {
+		char* code = malloc(strlen($1) + strlen($3) + 4);
 		sprintf(code, "%s(%s)", $1, $3);
 		$$ = code;
+		free($1); free($3);
 	} | expression LPAREN RPAREN {
-		char * code = malloc(strlen($1) + 4);
-		fprintf(stderr, "Function call: %s()\n", $1);
+		char* code = malloc(strlen($1) + 4);
 		sprintf(code, "%s()", $1);
 		$$ = code;
+		free($1);
 	}
 	;
 
 primary_expression:
     CONST_INT {
-        char* code = malloc(strlen($1) + 16);
-        sprintf(code, "%s", $1);
-        $$ = code;
-    }
-  | CONST_FLOAT {
-        char* code = malloc(strlen($1) + 16);
-        sprintf(code, "%s", $1);
-        $$ = code;
-    }
-  | CONST_STRING {
-        char* code = malloc(strlen($1) + 16);
-        sprintf(code, "%s", $1);
-        $$ = code;
-    }
-  | CONST_BOOL_TRUE {
-        char* code = malloc(16);
-        sprintf(code, "true");
-        $$ = code;
-    }
-  | CONST_BOOL_FALSE {
-        char* code = malloc(16);
-        sprintf(code, "false");
-        $$ = code;
-    }
-  | IDENTIFIER {
-        char* code = malloc(strlen($1) + 16);
-        sprintf(code, "%s", $1);
-        $$ = code;
-    }
-  | HASH IDENTIFIER {
-        char* code = malloc(strlen($2) + 2);
-        sprintf(code, "#%s", $2);
-        $$ = code;
-    }
+			char* code = malloc(strlen($1) + 16);
+			sprintf(code, "%s", $1);
+			$$ = code;
+	} | CONST_FLOAT {
+			char* code = malloc(strlen($1) + 16);
+			sprintf(code, "%s", $1);
+	} | CONST_STRING {
+			char* code = malloc(strlen($1) + 16);
+			sprintf(code, "%s", $1);
+			$$ = code;
+	} | CONST_BOOL_TRUE {
+			char* code = malloc(16);
+			sprintf(code, "true");
+			$$ = code;
+	} | CONST_BOOL_FALSE {
+			char* code = malloc(16);
+			sprintf(code, "false");
+			$$ = code;
+	} | IDENTIFIER {
+			char* code = malloc(strlen($1) + 16);
+			sprintf(code, "%s", $1);
+			$$ = code;
+	} | HASH IDENTIFIER {
+			char* code = malloc(strlen($2) + 2);
+			sprintf(code, "#%s", $2);
+			$$ = code;
+	} | IDENTIFIER LPAREN arg_list RPAREN {
+			char* code = malloc(strlen($1) + strlen($3) + 4);
+			sprintf(code, "%s(%s)", $1, $3);
+			$$ = code;
+			free($1);
+			free($3);
+	} | IDENTIFIER LPAREN RPAREN {
+			char* code = malloc(strlen($1) + 4);
+			sprintf(code, "%s()", $1);
+			$$ = code;
+			free($1);
+	} | primary_expression DOT IDENTIFIER LPAREN arg_list RPAREN {
+			char* code = malloc(strlen($1) + strlen($3) + strlen($5) + 8);
+			sprintf(code, "%s.%s(%s)", $1, $3, $5);
+			$$ = code;
+			free($1); free($3); free($5);
+	} | primary_expression DOT IDENTIFIER LPAREN RPAREN {
+			char* code = malloc(strlen($1) + strlen($3) + 8);
+			sprintf(code, "%s.%s()", $1, $3);
+			$$ = code;
+			free($1); free($3);
+	}
 ;
 
 block:
