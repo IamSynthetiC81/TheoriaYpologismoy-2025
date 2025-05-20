@@ -125,6 +125,7 @@ char* find_macro(const char* name) {
     return CONST_FLOAT;
 }
 [0-9]+ {
+    fprintf(stderr, "DIGIT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_INT;
 }
@@ -135,7 +136,7 @@ char* find_macro(const char* name) {
 "endwhile"      { fprintf(stderr, "KW_ENDWHILE\n"); return KW_ENDWHILE; }
 "break"         { fprintf(stderr, "KW_BREAK\n"); return KW_BREAK; }
 "continue"      { fprintf(stderr, "KW_CONTINUE\n"); return KW_CONTINUE; }
-"comp "          { fprintf(stderr, "KW_COMP\n"); return KW_COMP; }
+"comp"          { fprintf(stderr, "KW_COMP\n"); return KW_COMP; }
 "endcomp"       { fprintf(stderr, "KW_ENDCOMP\n"); return KW_ENDCOMP; }
 "of"            { fprintf(stderr, "KW_OF\n"); return KW_OF; }
 
@@ -148,7 +149,7 @@ char* find_macro(const char* name) {
 "->"            { fprintf(stderr, "OP_ARROW\n"); return OP_ARROW; }
 
 "#"             { fprintf(stderr, "HASH\n"); return HASH; }
-","            { fprintf(stderr, "KW_COMMA\n"); return COMMA; }
+","            { fprintf(stderr, "COMMA\n"); return COMMA; }
 
 "def"                             { fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
 "enddef"                          { fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
@@ -218,9 +219,6 @@ char* find_macro(const char* name) {
 }
 
 
-. {
-    fprintf(stderr, "Unknown character '%c' at line %d\n", *yytext, line_num);
-    exit(1);
-}
+. { fprintf(stderr, "Unknown character '%c' (ASCII %d) at line %d\n", *yytext, (int)*yytext, line_num); exit(1); }
 
 %%
