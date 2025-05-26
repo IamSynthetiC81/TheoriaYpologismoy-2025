@@ -1,5 +1,4 @@
 def main():
-  for i in [0 : #numOfOrders]:
-    x = i;
-  endfor;
+    x: integer;
+    writeInt(x);
 enddef;

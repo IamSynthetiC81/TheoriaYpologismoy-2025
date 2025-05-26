@@ -115,7 +115,10 @@ extern int yydebug;
     DOT = 316,                     /* DOT  */
     OP_ARROW = 317,                /* OP_ARROW  */
     HASH = 318,                    /* HASH  */
-    UMINUS = 319                   /* UMINUS  */
+    UMINUS = 319,                  /* UMINUS  */
+    DECLARATION = 320,             /* DECLARATION  */
+    STMT = 321,                    /* STMT  */
+    NO_COMPARE = 322               /* NO_COMPARE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -124,11 +127,11 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 38 "myanalyzer.y"
+#line 95 "myanalyzer.y"
 
-    char* string;
+	char* string;
 
-#line 132 "out/myanalyzer.tab.h"
+#line 135 "out/myanalyzer.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

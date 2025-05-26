@@ -1,0 +1,30 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reducing stack by rule 2 (line 166):
+-> $$ = nterm macro_def_list ()
+Entering state 2
+Stack now 0 2
+Reading a token
+Next token is token KW_DEFMACRO ()
+Shifting token KW_DEFMACRO ()
+Entering state 4
+Stack now 0 2 4
+Reading a token
+IDENTIFIER: a
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 7
+Stack now 0 2 4 7
+Reading a token
+COMMA
+Next token is token COMMA ()
+line 5: syntax error
+Error: popping token IDENTIFIER ()
+Stack now 0 2 4
+Error: popping token KW_DEFMACRO ()
+Stack now 0 2
+Error: popping nterm macro_def_list ()
+Stack now 0
+Cleanup: discarding lookahead token COMMA ()
+Stack now 0

@@ -163,27 +163,8 @@ extern FILE *yyin, *yyout;
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
     
-    /* Note: We specifically omit the test for yy_rule_can_match_eol because it requires
-     *       access to the local variable yy_act. Since yyless() is a macro, it would break
-     *       existing scanners that call yyless() from OUTSIDE yylex.
-     *       One obvious solution it to make yy_act a global. I tried that, and saw
-     *       a 5% performance hit in a non-yylineno scanner, because yy_act is
-     *       normally declared as a register variable-- so it is not worth it.
-     */
-    #define  YY_LESS_LINENO(n) \
-            do { \
-                int yyl;\
-                for ( yyl = n; yyl < yyleng; ++yyl )\
-                    if ( yytext[yyl] == '\n' )\
-                        --yylineno;\
-            }while(0)
-    #define YY_LINENO_REWIND_TO(dst) \
-            do {\
-                const char *p;\
-                for ( p = yy_cp-1; p >= (dst); --p)\
-                    if ( *p == '\n' )\
-                        --yylineno;\
-            }while(0)
+    #define YY_LESS_LINENO(n)
+    #define YY_LINENO_REWIND_TO(ptr)
     
 /* Return all but the first "n" matched characters back to the input stream. */
 #define yyless(n) \
@@ -351,11 +332,14 @@ FILE *yyin = NULL, *yyout = NULL;
 
 typedef int yy_state_type;
 
-#define YY_FLEX_LEX_COMPAT
 extern int yylineno;
 int yylineno = 1;
 
-extern char yytext[];
+extern char *yytext;
+#ifdef yytext_ptr
+#undef yytext_ptr
+#endif
+#define yytext_ptr yytext
 
 static yy_state_type yy_get_previous_state ( void );
 static yy_state_type yy_try_NUL_trans ( yy_state_type current_state  );
@@ -370,9 +354,6 @@ static void yynoreturn yy_fatal_error ( const char* msg  );
 	yyleng = (int) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
-	if ( yyleng >= YYLMAX ) \
-		YY_FATAL_ERROR( "token too large, exceeds YYLMAX" ); \
-	yy_flex_strncpy( yytext, (yytext_ptr), yyleng + 1 ); \
 	(yy_c_buf_p) = yy_cp;
 #define YY_NUM_RULES 67
 #define YY_END_OF_BUFFER 68
@@ -558,14 +539,6 @@ static const flex_int16_t yy_chk[262] =
       170
     } ;
 
-/* Table of booleans, true if rule could match eol. */
-static const flex_int32_t yy_rule_can_match_eol[68] =
-    {   0,
-0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
-    0, 0, 0, 0, 0, 0, 0, 0,     };
-
 static yy_state_type yy_last_accepting_state;
 static char *yy_last_accepting_cpos;
 
@@ -579,12 +552,7 @@ int yy_flex_debug = 0;
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#ifndef YYLMAX
-#define YYLMAX 8192
-#endif
-
-char yytext[YYLMAX];
-char *yytext_ptr;
+char *yytext;
 #line 1 "mylexer.l"
 #line 2 "mylexer.l"
 #include "myanalyzer.tab.h"
@@ -600,7 +568,6 @@ int macro_buffer_index = 0;
 int macro_buffer_len = 0;
 
 int using_macro_input = 0;
-
 int macro_expansion_depth = 0;
 #define MAX_MACRO_EXPANSION_DEPTH 100
 
@@ -624,48 +591,12 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 
 
 
-// Για την αποθήκευση defmacro αντικαταστάσεων
-typedef struct {
-    char* name;
-    char* replacement;
-} Macro;
 
-#define MAX_MACROS 100
-Macro macros[MAX_MACROS];
-int macro_count = 0;
 
-void add_macro(const char* name, const char* replacement) {
 
-    fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
-
-    for (int i = 0; i < macro_count; ++i) {
-        if (strcmp(macros[i].name, name) == 0) {
-            free(macros[i].replacement);
-            macros[i].replacement = strdup(replacement);
-            return;
-        }
-    }
-    macros[macro_count].name = strdup(name);
-    macros[macro_count].replacement = strdup(replacement);
-    macro_count++;
-
-    fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
-    fprintf(stderr, "Total macros: %d\n", macro_count);
-    if (macro_count >= MAX_MACROS) {
-        fprintf(stderr, "Error: Too many macros defined\n");
-        exit(1);
-    }
-}
-
-char* find_macro(const char* name) {
-    for (int i = macro_count - 1; i >= 0; --i) {
-        if (strcmp(macros[i].name, name) == 0)
-            return macros[i].replacement;
-    }
-    return NULL;
-}
-#line 668 "out/lex.yy.c"
-#line 669 "out/lex.yy.c"
+#line 598 "out/lex.yy.c"
+#define YY_NO_INPUT 1
+#line 600 "out/lex.yy.c"
 
 #define INITIAL 0
 
@@ -750,12 +681,6 @@ static int input ( void );
         static int yy_start_stack_ptr = 0;
         static int yy_start_stack_depth = 0;
         static int *yy_start_stack = NULL;
-    
-    static void yy_push_state ( int _new_state );
-    
-    static void yy_pop_state ( void );
-    
-    static int yy_top_state ( void );
     
 /* Amount of stuff to slurp up with each read. */
 #ifndef YY_READ_BUF_SIZE
@@ -895,10 +820,10 @@ YY_DECL
 		}
 
 	{
-#line 84 "mylexer.l"
+#line 48 "mylexer.l"
 
 
-#line 902 "out/lex.yy.c"
+#line 827 "out/lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -945,16 +870,6 @@ yy_find_action:
 
 		YY_DO_BEFORE_ACTION;
 
-		if ( yy_act != YY_END_OF_BUFFER && yy_rule_can_match_eol[yy_act] )
-			{
-			int yyl;
-			for ( yyl = 0; yyl < yyleng; ++yyl )
-				if ( yytext[yyl] == '\n' )
-					
-    yylineno++;
-;
-			}
-
 do_action:	/* This label is used only to access EOF actions. */
 
 		switch ( yy_act )
@@ -968,13 +883,13 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 86 "mylexer.l"
+#line 50 "mylexer.l"
 { /* Comment */ }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 87 "mylexer.l"
+#line 51 "mylexer.l"
 {
     line_num++;
     /* Do NOT return NEWLINE — just ignore it */
@@ -982,63 +897,74 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 93 "mylexer.l"
+#line 57 "mylexer.l"
 { /* skip whitespace */ }
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 95 "mylexer.l"
+#line 58 "mylexer.l"
 {
     // Extract name and replacement from yytext
-    char name[256];
-    char replacement[1024];
+    // char name[256];
+    // char replacement[1024];
 
-    // Use sscanf with format to separate name and replacement safely
-    if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
-        add_macro(name, replacement);
+    // // Use sscanf with format to separate name and replacement safely
+    // if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
+    //     add_macro(name, replacement);
 
-        fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
-    }
-     else {
-        fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
-        exit(1);
-    }   
+    //     fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
 
-    line_num++;
+    //     // If we are currently expanding a macro, we need to push the new state
+    //     if (macro_expansion_depth >= MAX_MACRO_EXPANSION_DEPTH) {
+    //         fprintf(stderr, "Error: Maximum macro expansion depth exceeded\n");
+    //         exit(1);
+    //     }
+
+    //     return KW_DEFMACRO;
+    // }
+    //  else {
+    //     fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
+    //     exit(1);
+    // }   
+
+    // line_num++;
+    return KW_DEFMACRO;
 }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 116 "mylexer.l"
+#line 86 "mylexer.l"
 { fprintf(stderr, "CONST_BOOL_TRUE\n"); return CONST_BOOL_TRUE; }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 117 "mylexer.l"
+#line 87 "mylexer.l"
 { fprintf(stderr, "CONST_BOOL_FALSE\n"); return CONST_BOOL_FALSE; }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 119 "mylexer.l"
+#line 89 "mylexer.l"
 {
+    fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_FLOAT;
 }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 123 "mylexer.l"
+#line 94 "mylexer.l"
 {
+    fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_FLOAT;
 }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 127 "mylexer.l"
+#line 99 "mylexer.l"
 {
-    fprintf(stderr, "DIGIT: %s\n", yytext);
+    fprintf(stderr, "CONST_INT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_INT;
 }
@@ -1046,282 +972,282 @@ YY_RULE_SETUP
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 132 "mylexer.l"
+#line 104 "mylexer.l"
 { fprintf(stderr, "CONST_STRING\n"); yylval.string = strdup(yytext); return CONST_STRING; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 135 "mylexer.l"
+#line 107 "mylexer.l"
 { fprintf(stderr, "KW_WHILE\n"); return KW_WHILE; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 136 "mylexer.l"
+#line 108 "mylexer.l"
 { fprintf(stderr, "KW_ENDWHILE\n"); return KW_ENDWHILE; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 137 "mylexer.l"
+#line 109 "mylexer.l"
 { fprintf(stderr, "KW_BREAK\n"); return KW_BREAK; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 138 "mylexer.l"
+#line 110 "mylexer.l"
 { fprintf(stderr, "KW_CONTINUE\n"); return KW_CONTINUE; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 139 "mylexer.l"
+#line 111 "mylexer.l"
 { fprintf(stderr, "KW_COMP\n"); return KW_COMP; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 140 "mylexer.l"
+#line 112 "mylexer.l"
 { fprintf(stderr, "KW_ENDCOMP\n"); return KW_ENDCOMP; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 141 "mylexer.l"
+#line 113 "mylexer.l"
 { fprintf(stderr, "KW_OF\n"); return KW_OF; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 143 "mylexer.l"
+#line 115 "mylexer.l"
 { fprintf(stderr, "OP_POW\n"); return OP_POW; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 144 "mylexer.l"
+#line 116 "mylexer.l"
 { fprintf(stderr, "OP_PLUSEQ\n"); return OP_PLUSEQ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 145 "mylexer.l"
+#line 117 "mylexer.l"
 { fprintf(stderr, "OP_MINUSEQ\n"); return OP_MINUSEQ; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 146 "mylexer.l"
+#line 118 "mylexer.l"
 { fprintf(stderr, "OP_MULTEQ\n"); return OP_MULTEQ; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 147 "mylexer.l"
+#line 119 "mylexer.l"
 { fprintf(stderr, "OP_DIVEQ\n"); return OP_DIVEQ; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 148 "mylexer.l"
+#line 120 "mylexer.l"
 { fprintf(stderr, "OP_MODEQ\n"); return OP_MODEQ; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 149 "mylexer.l"
+#line 121 "mylexer.l"
 { fprintf(stderr, "OP_ARROW\n"); return OP_ARROW; }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 151 "mylexer.l"
+#line 123 "mylexer.l"
 { fprintf(stderr, "HASH\n"); return HASH; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 152 "mylexer.l"
+#line 124 "mylexer.l"
 { fprintf(stderr, "COMMA\n"); return COMMA; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 154 "mylexer.l"
+#line 126 "mylexer.l"
 { fprintf(stderr, "KW_DEF\n"); return KW_DEF; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 155 "mylexer.l"
+#line 127 "mylexer.l"
 { fprintf(stderr, "KW_ENDDEF\n");return KW_ENDDEF; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 156 "mylexer.l"
+#line 128 "mylexer.l"
 { fprintf(stderr, "KW_MAIN\n");return KW_MAIN; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 157 "mylexer.l"
+#line 129 "mylexer.l"
 { fprintf(stderr, "KW_RETURN\n");return KW_RETURN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 159 "mylexer.l"
+#line 131 "mylexer.l"
 { fprintf(stderr, "KW_IF\n"); return KW_IF; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 160 "mylexer.l"
+#line 132 "mylexer.l"
 { fprintf(stderr, "KW_ELSE\n"); return KW_ELSE; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 161 "mylexer.l"
+#line 133 "mylexer.l"
 { fprintf(stderr, "KW_ENDIF\n"); return KW_ENDIF; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 163 "mylexer.l"
+#line 135 "mylexer.l"
 { fprintf(stderr, "KW_FOR\n"); return KW_FOR; }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 164 "mylexer.l"
+#line 136 "mylexer.l"
 { fprintf(stderr, "KW_IN\n"); return KW_IN; }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 165 "mylexer.l"
+#line 137 "mylexer.l"
 { fprintf(stderr, "KW_ENDFOR\n"); return KW_ENDFOR; }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 167 "mylexer.l"
+#line 139 "mylexer.l"
 { fprintf(stderr, "KW_INTEGER\n"); return KW_INTEGER; }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 168 "mylexer.l"
+#line 140 "mylexer.l"
 { fprintf(stderr, "KW_SCALAR\n"); return KW_SCALAR; }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 169 "mylexer.l"
+#line 141 "mylexer.l"
 { fprintf(stderr, "KW_STR\n"); return KW_STR; }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 170 "mylexer.l"
+#line 142 "mylexer.l"
 { fprintf(stderr, "KW_BOOL\n"); return KW_BOOL; }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 171 "mylexer.l"
+#line 143 "mylexer.l"
 { fprintf(stderr, "KW_CONST\n"); return KW_CONST; }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 173 "mylexer.l"
+#line 145 "mylexer.l"
 { fprintf(stderr, "KW_NOT\n"); return KW_NOT; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 174 "mylexer.l"
+#line 146 "mylexer.l"
 { fprintf(stderr, "KW_AND\n"); return KW_AND; }
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 175 "mylexer.l"
+#line 147 "mylexer.l"
 { fprintf(stderr, "KW_OR\n"); return KW_OR; }
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 177 "mylexer.l"
+#line 149 "mylexer.l"
 { fprintf(stderr, "OP_EQ\n"); return OP_EQ; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 178 "mylexer.l"
+#line 150 "mylexer.l"
 { fprintf(stderr, "OP_NEQ\n"); return OP_NEQ; }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 179 "mylexer.l"
+#line 151 "mylexer.l"
 { fprintf(stderr, "OP_LEQ\n"); return OP_LEQ; }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 180 "mylexer.l"
+#line 152 "mylexer.l"
 { fprintf(stderr, "OP_GEQ\n"); return OP_GEQ; }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 181 "mylexer.l"
+#line 153 "mylexer.l"
 { fprintf(stderr, "OP_LT\n"); return OP_LT; }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 182 "mylexer.l"
+#line 154 "mylexer.l"
 { fprintf(stderr, "OP_GT\n"); return OP_GT; }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 184 "mylexer.l"
+#line 156 "mylexer.l"
 { fprintf(stderr, "OP_DEFINE\n"); return OP_DEFINE; }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 185 "mylexer.l"
+#line 157 "mylexer.l"
 { fprintf(stderr, "OP_ASSIGN\n"); return OP_ASSIGN; }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 186 "mylexer.l"
+#line 158 "mylexer.l"
 { fprintf(stderr, "OP_PLUS\n"); return OP_PLUS; }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 187 "mylexer.l"
+#line 159 "mylexer.l"
 { fprintf(stderr, "OP_MINUS\n"); return OP_MINUS; }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 188 "mylexer.l"
+#line 160 "mylexer.l"
 { fprintf(stderr, "OP_MULT\n"); return OP_MULT; }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 189 "mylexer.l"
+#line 161 "mylexer.l"
 { fprintf(stderr, "OP_DIV\n"); return OP_DIV; }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 190 "mylexer.l"
+#line 162 "mylexer.l"
 { fprintf(stderr, "OP_MOD\n"); return OP_MOD; }
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 192 "mylexer.l"
+#line 164 "mylexer.l"
 { fprintf(stderr, "LPAREN\n"); return LPAREN; }
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 193 "mylexer.l"
+#line 165 "mylexer.l"
 { fprintf(stderr, "RPAREN\n"); return RPAREN; }
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 195 "mylexer.l"
+#line 168 "mylexer.l"
 { fprintf(stderr, "LBRACKET\n"); return LBRACKET; }
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 196 "mylexer.l"
+#line 169 "mylexer.l"
 { fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 197 "mylexer.l"
+#line 170 "mylexer.l"
 { fprintf(stderr, "COLON\n"); return COLON; }
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 198 "mylexer.l"
+#line 171 "mylexer.l"
 { fprintf(stderr, "SEMICOLON\n"); return SEMICOLON; }
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 199 "mylexer.l"
+#line 172 "mylexer.l"
 { fprintf(stderr, "DOT\n"); return DOT; }
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 201 "mylexer.l"
+#line 174 "mylexer.l"
 {
     char* macro_val = find_macro(yytext);
     if (macro_val) {
@@ -1344,15 +1270,15 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 222 "mylexer.l"
+#line 195 "mylexer.l"
 { fprintf(stderr, "Unknown character '%c' (ASCII %d) at line %d\n", *yytext, (int)*yytext, line_num); exit(1); }
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 224 "mylexer.l"
+#line 197 "mylexer.l"
 ECHO;
 	YY_BREAK
-#line 1356 "out/lex.yy.c"
+#line 1282 "out/lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1721,10 +1647,6 @@ static int yy_get_next_buffer (void)
 
 	*--yy_cp = (char) c;
 
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
 	(yytext_ptr) = yy_bp;
 	(yy_hold_char) = *yy_cp;
 	(yy_c_buf_p) = yy_cp;
@@ -1803,10 +1725,6 @@ static int yy_get_next_buffer (void)
 	(yy_hold_char) = *++(yy_c_buf_p);
 
 	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = (c == '\n');
-	if ( YY_CURRENT_BUFFER_LVALUE->yy_at_bol )
-		
-    yylineno++;
-;
 
 	return c;
 }
@@ -2161,44 +2079,6 @@ YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
 	return b;
 }
 
-    static void yy_push_state (int  _new_state )
-{
-    	if ( (yy_start_stack_ptr) >= (yy_start_stack_depth) )
-		{
-		yy_size_t new_size;
-
-		(yy_start_stack_depth) += YY_START_STACK_INCR;
-		new_size = (yy_size_t) (yy_start_stack_depth) * sizeof( int );
-
-		if ( ! (yy_start_stack) )
-			(yy_start_stack) = (int *) yyalloc( new_size  );
-
-		else
-			(yy_start_stack) = (int *) yyrealloc(
-					(void *) (yy_start_stack), new_size  );
-
-		if ( ! (yy_start_stack) )
-			YY_FATAL_ERROR( "out of memory expanding start-condition stack" );
-		}
-
-	(yy_start_stack)[(yy_start_stack_ptr)++] = YY_START;
-
-	BEGIN(_new_state);
-}
-
-    static void yy_pop_state  (void)
-{
-    	if ( --(yy_start_stack_ptr) < 0 )
-		YY_FATAL_ERROR( "start-condition stack underflow" );
-
-	BEGIN((yy_start_stack)[(yy_start_stack_ptr)]);
-}
-
-    static int yy_top_state  (void)
-{
-    	return (yy_start_stack)[(yy_start_stack_ptr) - 1];
-}
-
 #ifndef YY_EXIT_FAILURE
 #define YY_EXIT_FAILURE 2
 #endif
@@ -2312,9 +2192,6 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    /* We do not touch yylineno unless the option is enabled. */
-    yylineno =  1;
-    
     (yy_buffer_stack) = NULL;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
@@ -2417,5 +2294,5 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 224 "mylexer.l"
+#line 197 "mylexer.l"
 

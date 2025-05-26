@@ -12,7 +12,6 @@ int macro_buffer_index = 0;
 int macro_buffer_len = 0;
 
 int using_macro_input = 0;
-
 int macro_expansion_depth = 0;
 #define MAX_MACRO_EXPANSION_DEPTH 100
 
@@ -36,50 +35,15 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 
 
 
-// Για την αποθήκευση defmacro αντικαταστάσεων
-typedef struct {
-    char* name;
-    char* replacement;
-} Macro;
 
-#define MAX_MACROS 100
-Macro macros[MAX_MACROS];
-int macro_count = 0;
 
-void add_macro(const char* name, const char* replacement) {
 
-    fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
-
-    for (int i = 0; i < macro_count; ++i) {
-        if (strcmp(macros[i].name, name) == 0) {
-            free(macros[i].replacement);
-            macros[i].replacement = strdup(replacement);
-            return;
-        }
-    }
-    macros[macro_count].name = strdup(name);
-    macros[macro_count].replacement = strdup(replacement);
-    macro_count++;
-
-    fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
-    fprintf(stderr, "Total macros: %d\n", macro_count);
-    if (macro_count >= MAX_MACROS) {
-        fprintf(stderr, "Error: Too many macros defined\n");
-        exit(1);
-    }
-}
-
-char* find_macro(const char* name) {
-    for (int i = macro_count - 1; i >= 0; --i) {
-        if (strcmp(macros[i].name, name) == 0)
-            return macros[i].replacement;
-    }
-    return NULL;
-}
 %}
 
 %option noyywrap
 %option stack
+%option noyy_top_state noyy_pop_state noyy_push_state noinput 
+
 
 %%
 
@@ -91,41 +55,49 @@ char* find_macro(const char* name) {
 
 
 [ \t]+                            { /* skip whitespace */ }
-
 ^@defmacro[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]+([^\n\r]+)[\r]?\n {
     // Extract name and replacement from yytext
-    char name[256];
-    char replacement[1024];
+    // char name[256];
+    // char replacement[1024];
 
-    // Use sscanf with format to separate name and replacement safely
-    if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
-        add_macro(name, replacement);
+    // // Use sscanf with format to separate name and replacement safely
+    // if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
+    //     add_macro(name, replacement);
 
-        fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
-    }
-     else {
-        fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
-        exit(1);
-    }   
+    //     fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
 
-    line_num++;
+    //     // If we are currently expanding a macro, we need to push the new state
+    //     if (macro_expansion_depth >= MAX_MACRO_EXPANSION_DEPTH) {
+    //         fprintf(stderr, "Error: Maximum macro expansion depth exceeded\n");
+    //         exit(1);
+    //     }
+
+    //     return KW_DEFMACRO;
+    // }
+    //  else {
+    //     fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
+    //     exit(1);
+    // }   
+
+    // line_num++;
+    return KW_DEFMACRO;
 }
-
-
 
 "True"                            { fprintf(stderr, "CONST_BOOL_TRUE\n"); return CONST_BOOL_TRUE; }
 "False"                           { fprintf(stderr, "CONST_BOOL_FALSE\n"); return CONST_BOOL_FALSE; }
 
 [0-9]+\.[0-9]+ {
+    fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_FLOAT;
 }
 [0-9]+\.[0-9]+([eE][+-]?[0-9]+)? {
+    fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_FLOAT;
 }
 [0-9]+ {
-    fprintf(stderr, "DIGIT: %s\n", yytext);
+    fprintf(stderr, "CONST_INT: %s\n", yytext);
     yylval.string = strdup(yytext);
     return CONST_INT;
 }
@@ -191,6 +163,7 @@ char* find_macro(const char* name) {
 
 "("                               { fprintf(stderr, "LPAREN\n"); return LPAREN; }
 ")"                             	{ fprintf(stderr, "RPAREN\n"); return RPAREN; }
+
 
 "["                               { fprintf(stderr, "LBRACKET\n"); return LBRACKET; }
 "]"                               { fprintf(stderr, "RBRACKET\n"); return RBRACKET; }
