@@ -1,0 +1,109 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reducing stack by rule 2 (line 181):
+-> $$ = nterm macro_def_list ()
+Entering state 2
+Stack now 0 2
+Reading a token
+KW_CONST
+Next token is token KW_CONST ()
+Reducing stack by rule 5 (line 203):
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Next token is token KW_CONST ()
+Shifting token KW_CONST ()
+Entering state 8
+Stack now 0 2 6 8
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 28
+Stack now 0 2 6 8 28
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Shifting token OP_ASSIGN ()
+Entering state 53
+Stack now 0 2 6 8 28 53
+Reading a token
+CONST_INT: 100
+Next token is token CONST_INT ()
+Shifting token CONST_INT ()
+Entering state 17
+Stack now 0 2 6 8 28 53 17
+Reducing stack by rule 80 (line 598):
+   $1 = token CONST_INT ()
+-> $$ = nterm primary_expression ()
+Entering state 27
+Stack now 0 2 6 8 28 53 27
+Reading a token
+COLON
+Next token is token COLON ()
+Reducing stack by rule 56 (line 527):
+   $1 = nterm primary_expression ()
+-> $$ = nterm expression ()
+Entering state 76
+Stack now 0 2 6 8 28 53 76
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 85
+Stack now 0 2 6 8 28 53 76 85
+Reading a token
+KW_INTEGER
+Next token is token KW_INTEGER ()
+Shifting token KW_INTEGER ()
+Entering state 100
+Stack now 0 2 6 8 28 53 76 85 100
+Reducing stack by rule 22 (line 331):
+   $1 = token KW_INTEGER ()
+-> $$ = nterm type ()
+Entering state 104
+Stack now 0 2 6 8 28 53 76 85 104
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 116
+Stack now 0 2 6 8 28 53 76 85 104 116
+Reducing stack by rule 12 (line 248):
+   $1 = token KW_CONST ()
+   $2 = token IDENTIFIER ()
+   $3 = token OP_ASSIGN ()
+   $4 = nterm expression ()
+   $5 = token COLON ()
+   $6 = nterm type ()
+   $7 = token SEMICOLON ()
+Constant declaration: N = 100
+-> $$ = nterm const_declaration ()
+Entering state 12
+Stack now 0 2 6 12
+Reducing stack by rule 10 (line 228):
+   $1 = nterm const_declaration ()
+Constant declaration: const int N = 100;
+
+-> $$ = nterm top_level ()
+Entering state 11
+Stack now 0 2 6 11
+Reducing stack by rule 6 (line 204):
+   $1 = nterm top_level_list ()
+   $2 = nterm top_level ()
+Top level: 
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Reading a token
+Next token is token IDENTIFIER ()
+Reducing stack by rule 1 (line 175):
+   $1 = nterm macro_def_list ()
+   $2 = nterm top_level_list ()
+-> $$ = nterm program ()
+Entering state 1
+Stack now 0 1
+Next token is token IDENTIFIER ()
+line 5: syntax error
+Error: popping nterm program ()
+Stack now 0
+Cleanup: discarding lookahead token IDENTIFIER ()
+Stack now 0

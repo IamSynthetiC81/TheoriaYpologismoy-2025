@@ -34,25 +34,32 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 }
 
 
-
-
-
-
 %}
 
 %option noyywrap
 %option stack
 %option noyy_top_state noyy_pop_state noyy_push_state noinput 
 
+%x DECLCHECK
 
 %%
 
-"--"[^\n]*                        { /* Comment */ }
-[\r]?\n {
-    line_num++;
-    /* Do NOT return NEWLINE — just ignore it */
+[a-zA-Z_][a-zA-Z0-9_]*[ \t]*: {
+	int id_len = 0;
+	while (yytext[id_len] != ' ' && yytext[id_len] != '\t' && yytext[id_len] != ':')
+			id_len++;
+	char* id = (char*)malloc(id_len + 1);
+	strncpy(id, yytext, id_len);
+	id[id_len] = '\0';
+	yylval.string = id;
+	return DECL_IDENT;
 }
 
+"--"[^\n]*                        { /* Comment */ }
+[\r]?\n {
+	line_num++;
+	/* Do NOT return NEWLINE — just ignore it */
+}
 
 [ \t]+                            { /* skip whitespace */ }
 ^@defmacro[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]+([^\n\r]+)[\r]?\n {
@@ -171,26 +178,19 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 ";"                               { fprintf(stderr, "SEMICOLON\n"); return SEMICOLON; }
 "."                               { fprintf(stderr, "DOT\n"); return DOT; }
 
+
+
 [a-zA-Z_][a-zA-Z0-9_]* {
-    char* macro_val = find_macro(yytext);
-    if (macro_val) {
-        unput('\n');
-        fprintf(stderr, "Macro expansion: %s -> %s\n", yytext, macro_val);
-
-        for (int i = strlen(macro_val) - 1; i >= 0; --i) {
-            unput(macro_val[i]);
-        }
-
-        return yylex();
-    }
-
-
-    // Not a macro — treat as regular identifier
-    fprintf(stderr, "IDENTIFIER: %s\n", yytext);
     yylval.string = strdup(yytext);
+    BEGIN(DECLCHECK);
     return IDENTIFIER;
 }
 
+<DECLCHECK>[ \t\r]+    { /* skip whitespace */ }
+<DECLCHECK>\n          { line_num++; /* skip newline */ }
+<DECLCHECK>--[^\n]*    { /* skip comment */ }
+<DECLCHECK>:           { BEGIN(INITIAL); return DECL_IDENT; }
+<DECLCHECK>.           { BEGIN(INITIAL); unput(yytext[0]); }
 
 . { fprintf(stderr, "Unknown character '%c' (ASCII %d) at line %d\n", *yytext, (int)*yytext, line_num); exit(1); }
 

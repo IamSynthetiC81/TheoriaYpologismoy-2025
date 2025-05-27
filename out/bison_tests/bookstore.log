@@ -1,0 +1,29 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reducing stack by rule 2 (line 181):
+-> $$ = nterm macro_def_list ()
+Entering state 2
+Stack now 0 2
+Reading a token
+KW_COMP
+Next token is token KW_COMP ()
+Reducing stack by rule 5 (line 203):
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Next token is token KW_COMP ()
+Shifting token KW_COMP ()
+Entering state 10
+Stack now 0 2 6 10
+Reading a token
+Next token is token DECL_IDENT ()
+line 1: syntax error
+Error: popping token KW_COMP ()
+Stack now 0 2 6
+Error: popping nterm top_level_list ()
+Stack now 0 2
+Error: popping nterm macro_def_list ()
+Stack now 0
+Cleanup: discarding lookahead token DECL_IDENT ()
+Stack now 0

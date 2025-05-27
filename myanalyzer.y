@@ -5,8 +5,9 @@
 	#include "cgen.h"
 	#include "lambdalib.h"
 	#include "myanalyzer.tab.h"
+	#include <setjmp.h>
 
-	extern int yylex();
+	extern int yylex(void);
 	extern int yyparse();
 	extern int line_number;
 	extern FILE *yyin;
@@ -14,82 +15,94 @@
 	extern char* find_macro(const char*);
 	extern char *yytext; 
 
-	#define YYABORT do { yyerror("Aborting"); return 1; } while (0)
-
 	int indent_level = 0;
 	int line_num = 1;
 
 	int yydebug = 1;
 
-	char* add_indentation(const char* code) {
-		char* result = malloc(strlen(code) + 1024);
-		result[0] = '\0';
-		const char* line = code;
-		while (*line) {
-			for (int i = 0; i < indent_level; ++i) strcat(result, "    ");
-				const char* newline = strchr(line, '\n');
-				if (newline) {
-					strncat(result, line, newline - line + 1);
-					line = newline + 1;
-			} else {
-				strcat(result, line);
-				break;
-			}
+char* add_indentation(const char* code) {
+	char* result = malloc(strlen(code) + 1024);
+	result[0] = '\0';
+	const char* line = code;
+	while (*line) {
+		for (int i = 0; i < indent_level; ++i) strcat(result, "    ");
+			const char* newline = strchr(line, '\n');
+			if (newline) {
+				strncat(result, line, newline - line + 1);
+				line = newline + 1;
+		} else {
+			strcat(result, line);
+			break;
 		}
-		strcat(result, line);
-		return result;
 	}
+	strcat(result, line);
+	return result;
+}
 
-	char* safe_strdup(const char* s) {
-		char* new = strdup(s);
-		if (!new) { yyerror("Memory allocation failed"); YYABORT; }
-    	return new;
+char *safe_strdup(const char *str) {
+	if (!str) return NULL;
+	char *new = strdup(str);
+	if (!new) {
+			yyerror("Memory allocation failed");
+			exit(1); 
 	}
+	return new;
+}
 
-	void safe_free(void* ptr) {
-		if (ptr) free(ptr);
-	}
+void safe_free(void* ptr) {
+	if (ptr) free(ptr);
+}
 
-	// Για την αποθήκευση defmacro αντικαταστάσεων
-	typedef struct {
-		char* name;
-		char* replacement;
-	} Macro;
+// Για την αποθήκευση defmacro αντικαταστάσεων
+typedef struct {
+	char* name;
+	char* replacement;
+} Macro;
 
-	#define MAX_MACROS 100
-	Macro macros[MAX_MACROS];
-	int macro_count = 0;
+#define MAX_MACROS 100
+Macro macros[MAX_MACROS];
+int macro_count = 0;
 
-	void add_macro(const char* name, const char* replacement) {
+void add_macro(const char* name, const char* replacement) {
 
-    fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
+	fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
 
-    for (int i = 0; i < macro_count; ++i) {
-			if (strcmp(macros[i].name, name) == 0) {
-				free(macros[i].replacement);
-				macros[i].replacement = strdup(replacement);
-				return;
-			}
-    }
-    macros[macro_count].name = strdup(name);
-    macros[macro_count].replacement = strdup(replacement);
-    macro_count++;
-
-    fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
-    fprintf(stderr, "Total macros: %d\n", macro_count);
-		if (macro_count >= MAX_MACROS) {
-				fprintf(stderr, "Error: Too many macros defined\n");
-				exit(1);
-			}
-	}
-
-	char* find_macro(const char* name) {
-		for (int i = macro_count - 1; i >= 0; --i) {
-			if (strcmp(macros[i].name, name) == 0)
-				return macros[i].replacement;
+	for (int i = 0; i < macro_count; ++i) {
+		if (strcmp(macros[i].name, name) == 0) {
+			free(macros[i].replacement);
+			macros[i].replacement = strdup(replacement);
+			return;
 		}
-		return NULL;
 	}
+	macros[macro_count].name = strdup(name);
+	macros[macro_count].replacement = strdup(replacement);
+	macro_count++;
+
+	fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
+	fprintf(stderr, "Total macros: %d\n", macro_count);
+	if (macro_count >= MAX_MACROS) {
+			fprintf(stderr, "Error: Too many macros defined\n");
+			exit(1);
+		}
+}
+
+char* find_macro(const char* name) {
+	for (int i = macro_count - 1; i >= 0; --i) {
+		if (strcmp(macros[i].name, name) == 0)
+			return macros[i].replacement;
+	}
+	return NULL;
+}
+
+// void yyerror(const char *fmt, ...) {
+// 	va_list args;
+// 	va_start(args, fmt);
+// 	fprintf(stderr, "Parse error: ");
+// 	vfprintf(stderr, fmt, args);
+// 	fprintf(stderr, "\n");
+// 	va_end(args);
+// }
+
 %}
 
 %union {
@@ -135,6 +148,8 @@
 %token OP_ARROW
 %token HASH
 
+%token <string> DECL_IDENT
+
 %left KW_OR
 %left KW_AND
 %right KW_NOT
@@ -151,7 +166,7 @@
 %nonassoc NO_COMPARE
 
 
-%precedence LPAREN RPAREN
+	// %precedence LPAREN RPAREN/
 %right OP_ASSIGN
 
 %%
@@ -205,17 +220,20 @@ top_level:
 	} | component {
 		fprintf(stderr, "Component: %s\n", $1);
 		$$ = $1;
-	} | var_declaration {
-		fprintf(stderr, "Variable declaration: %s\n", $1);
-		$$ = $1;
-	} | const_declaration {
+	} 
+	// | var_declaration {
+	// 	fprintf(stderr, "Variable declaration: %s\n", $1);
+	// 	$$ = $1;
+	// } 
+	| const_declaration {
 		fprintf(stderr, "Constant declaration: %s\n", $1);
 		$$ = $1;
 	} 
 	;
 
 var_declaration:
-	ident_list COLON type SEMICOLON {
+    IDENTIFIER COLON type SEMICOLON {
+		// $1 is the variable name, $3 is the type
 		fprintf(stderr, "Processing declaration: %s of type %s\n", $1, $3);
 		char* decl = malloc(strlen($1) + strlen($3) + 16);
 		sprintf(decl, "%s %s;\n", $3, $1);
@@ -223,21 +241,8 @@ var_declaration:
 		free(decl);
 		free($1);
 		free($3);
-	} | IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON {
-		fprintf(stderr, "Processing initialized declaration: %s = %s of type %s\n", $1, $3, $5);
-		char* decl = malloc(strlen($1) + strlen($3) + strlen($5) + 16);
-		sprintf(decl, "%s %s = %s;\n", $5, $1, $3);
-		$$ = add_indentation(decl);
-		free(decl);
-		free($1);
-		free($3);
-		free($5);
-	} | error SEMICOLON {
-		yyerror("Invalid variable declaration");
-		yyerrok;
-		$$ = safe_strdup("/* BAD DECLARATION */\n");
 	}
-	;
+;
 
 const_declaration:
     KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON {
@@ -300,27 +305,27 @@ param_decl_list:
     }
 
 main_function:
-    KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON {
-        fprintf(stderr, "Main function\n");
-        indent_level++;
-        char* body = add_indentation($6);
-        indent_level--;
-        char* code = malloc(strlen(body) + 64);
-        sprintf(code, "int main() {\n%s}\n", body);
-        safe_free(body);
-        $$ = code;
-    }
-    ;
+	KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON {
+		fprintf(stderr, "Main function\n");
+		indent_level++;
+		char* body = add_indentation($6);
+		indent_level--;
+		char* code = malloc(strlen(body) + 64);
+		sprintf(code, "int main() {\n%s}\n", body);
+		safe_free(body);
+		$$ = code;
+	}
+	;
 
 stmt_list:
-    /* empty */ { $$ = safe_strdup(""); }
-    | stmt_list stmt {
-			char* tmp = malloc(strlen($1) + strlen($2) + 2);
-			sprintf(tmp, "%s%s", $1, $2);
-			$$ = tmp;
-			free($1); free($2);
-    }
-    ;
+	/* empty */ { $$ = safe_strdup(""); }
+	| stmt_list stmt {
+		char* tmp = malloc(strlen($1) + strlen($2) + 2);
+		sprintf(tmp, "%s%s", $1, $2);
+		$$ = tmp;
+		free($1); free($2);
+	}
+	;
 
 type:
     KW_INTEGER  { $$ = safe_strdup("int"); }
@@ -331,7 +336,7 @@ type:
   ;
 
 stmt:
-    assignment_stmt
+	assignment_stmt
   | return_stmt
   | if_stmt
   | for_stmt
@@ -345,7 +350,7 @@ stmt:
 		$$ = add_indentation(tmp);
 		free(tmp);
 		free($1);
-} | error SEMICOLON { 
+	} | error SEMICOLON { 
 		yyerror("Invalid statement");
 		yyerrok;
 		$$ = safe_strdup("/* ERROR */\n"); 
@@ -353,16 +358,16 @@ stmt:
   ;
 
 assignment_stmt:
-    IDENTIFIER OP_ASSIGN expression SEMICOLON {
-        fprintf(stderr, "Matched assignment: %s = %s;\n", $1, $3);
-        char* line = malloc(strlen($1) + strlen($3) + 16);
-        sprintf(line, "%s = %s;\n", $1, $3);
-        $$ = safe_strdup(line);
-        safe_free(line);
-        safe_free($1);
-        safe_free($3);
-    }
-    ;
+	IDENTIFIER OP_ASSIGN expression SEMICOLON {
+		fprintf(stderr, "Matched assignment: %s = %s;\n", $1, $3);
+		char* line = malloc(strlen($1) + strlen($3) + 16);
+		sprintf(line, "%s = %s;\n", $1, $3);
+		$$ = safe_strdup(line);
+		safe_free(line);
+		safe_free($1);
+		safe_free($3);
+	}
+	;
 
 return_stmt:
     KW_RETURN expression SEMICOLON {
@@ -509,19 +514,20 @@ ident_list:
 	IDENTIFIER {
 		$$ = safe_strdup($1);
 		safe_free($1);
-	} | ident_list COMMA IDENTIFIER {
+	} 
+	| ident_list COMMA IDENTIFIER {
 		char* tmp = malloc(strlen($1) + strlen($3) + 2);
 		sprintf(tmp, "%s, %s", $1, $3);
-			$$ = tmp;
+		$$ = tmp;
 	}
-  ;
+	;
 
 
 expression:
     primary_expression { $$ = safe_strdup($1); safe_free($1); }
   | expression OP_PLUS expression { 
 			$$ = malloc(strlen($1) + strlen($3) + 4);
-			sprintf($$, "%s + %s", $1, $3);  // Fixed sprintf
+			sprintf($$, "%s + %s", $1, $3); 
 			safe_free($1); safe_free($3);
 	}	| expression OP_MINUS expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
@@ -574,16 +580,12 @@ function_call:
 		$$ = malloc(strlen($1) + strlen($3) + 4);
 		sprintf($$, "%s(%s)", $1, $3);
 		free($1); free($3);
-	} | IDENTIFIER LPAREN RPAREN {
-		$$ = malloc(strlen($1) + 3);
-		sprintf($$, "%s()", $1);
-		free($1);
-	}
+	} 
   ;
 
 arg_list:
-    /* empty */ { $$ = safe_strdup(""); }
-  | expression { $$ = safe_strdup($1); safe_free($1); }
+	/* empty */ { $$ = safe_strdup(""); }
+  | expression { $$ = safe_strdup($1);}
   | arg_list COMMA expression {
 		char* tmp = malloc(strlen($1) + strlen($3) + 2);
 		sprintf(tmp, "%s,%s", $1, $3);
@@ -597,43 +599,48 @@ primary_expression:
   | CONST_FLOAT
   | CONST_STRING
   | IDENTIFIER
-  | IDENTIFIER LPAREN arg_list RPAREN { /* function call */ }
-  | primary_expression LBRACKET expression RBRACKET { /* array access */ }
-  | primary_expression DOT IDENTIFIER { /* member access */ }
+	| function_call { $$ = $1; }
+  // | IDENTIFIER LPAREN arg_list RPAREN { /* function call */ }
+  | primary_expression LBRACKET expression RBRACKET {
+		$$ = malloc(strlen($1) + strlen($3) + 4);
+		sprintf($$, "%s[%s]", $1, $3);
+		free($1); free($3);
+	} | primary_expression DOT IDENTIFIER {
+		$$ = malloc(strlen($1) + strlen($3) + 2);
+		sprintf($$, "%s.%s", $1, $3);
+		free($1); free($3);
+	}
   ;
 
 block:
-	decl_list stmt_list {
-		fprintf(stderr, "Processing block:\nDeclarations: %s\nStatements: %s\n", $1, $2);
-		char* code = malloc(strlen($1) + strlen($2) + 2);
-		sprintf(code, "%s%s", $1, $2);
-		$$ = add_indentation(code);
-		free(code);
-		free($1); free($2);
-	}
-	;
-
-decl_list:
-    /* empty */ { $$ = safe_strdup(""); }
-    | decl_list var_declaration {
-        char* tmp = malloc(strlen($1) + strlen($2) + 2);
-        sprintf(tmp, "%s%s", $1, $2);
-        $$ = tmp;
-        free($1); free($2);
+    decl_list stmt_list {
+        // Add debug output to verify parsing
+        fprintf(stderr, "Block parsed:\nDeclarations: %s\nStatements: %s\n", $1, $2);
+        char* code = malloc(strlen($1) + strlen($2) + 2);
+        sprintf(code, "%s%s", $1, $2);
+        $$ = add_indentation(code);
+        free(code);
+        free($1);
+        free($2);
     }
     ;
 
+decl_list:
+	/* empty */ { $$ = safe_strdup(""); }
+	| decl_list var_declaration {
+		char* tmp = malloc(strlen($1) + strlen($2) + 2);
+		sprintf(tmp, "%s%s", $1, $2);
+		$$ = tmp;
+		free($1);
+		free($2);
+	}
+	;
+
 %%
 
-int main() {
-	yydebug = 1;
-	return yyparse();
-}
-
-// void yyerror(const char *pat, ...) {
-//     va_list args;
-//     va_start(args, pat);
-//     vfprintf(stderr, pat, args);
-//     va_end(args);
-//     fprintf(stderr, "\n");
-// }
+# ifndef TTLEXER
+	int main() {
+		yydebug = 1;
+		return yyparse();
+	}
+# endif

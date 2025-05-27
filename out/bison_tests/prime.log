@@ -1,0 +1,26 @@
+Starting parse
+Entering state 0
+Stack now 0
+Reducing stack by rule 2 (line 181):
+-> $$ = nterm macro_def_list ()
+Entering state 2
+Stack now 0 2
+Reading a token
+Next token is token IDENTIFIER ()
+Reducing stack by rule 5 (line 203):
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Next token is token IDENTIFIER ()
+Reducing stack by rule 1 (line 175):
+   $1 = nterm macro_def_list ()
+   $2 = nterm top_level_list ()
+-> $$ = nterm program ()
+Entering state 1
+Stack now 0 1
+Next token is token IDENTIFIER ()
+line 1: syntax error
+Error: popping nterm program ()
+Stack now 0
+Cleanup: discarding lookahead token IDENTIFIER ()
+Stack now 0

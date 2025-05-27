@@ -75,8 +75,9 @@
 	#include "cgen.h"
 	#include "lambdalib.h"
 	#include "myanalyzer.tab.h"
+	#include <setjmp.h>
 
-	extern int yylex();
+	extern int yylex(void);
 	extern int yyparse();
 	extern int line_number;
 	extern FILE *yyin;
@@ -84,84 +85,96 @@
 	extern char* find_macro(const char*);
 	extern char *yytext; 
 
-	#define YYABORT do { yyerror("Aborting"); return 1; } while (0)
-
 	int indent_level = 0;
 	int line_num = 1;
 
 	int yydebug = 1;
 
-	char* add_indentation(const char* code) {
-		char* result = malloc(strlen(code) + 1024);
-		result[0] = '\0';
-		const char* line = code;
-		while (*line) {
-			for (int i = 0; i < indent_level; ++i) strcat(result, "    ");
-				const char* newline = strchr(line, '\n');
-				if (newline) {
-					strncat(result, line, newline - line + 1);
-					line = newline + 1;
-			} else {
-				strcat(result, line);
-				break;
-			}
+char* add_indentation(const char* code) {
+	char* result = malloc(strlen(code) + 1024);
+	result[0] = '\0';
+	const char* line = code;
+	while (*line) {
+		for (int i = 0; i < indent_level; ++i) strcat(result, "    ");
+			const char* newline = strchr(line, '\n');
+			if (newline) {
+				strncat(result, line, newline - line + 1);
+				line = newline + 1;
+		} else {
+			strcat(result, line);
+			break;
 		}
-		strcat(result, line);
-		return result;
 	}
+	strcat(result, line);
+	return result;
+}
 
-	char* safe_strdup(const char* s) {
-		char* new = strdup(s);
-		if (!new) { yyerror("Memory allocation failed"); YYABORT; }
-    	return new;
+char *safe_strdup(const char *str) {
+	if (!str) return NULL;
+	char *new = strdup(str);
+	if (!new) {
+			yyerror("Memory allocation failed");
+			exit(1); 
 	}
+	return new;
+}
 
-	void safe_free(void* ptr) {
-		if (ptr) free(ptr);
-	}
+void safe_free(void* ptr) {
+	if (ptr) free(ptr);
+}
 
-	// Για την αποθήκευση defmacro αντικαταστάσεων
-	typedef struct {
-		char* name;
-		char* replacement;
-	} Macro;
+// Για την αποθήκευση defmacro αντικαταστάσεων
+typedef struct {
+	char* name;
+	char* replacement;
+} Macro;
 
-	#define MAX_MACROS 100
-	Macro macros[MAX_MACROS];
-	int macro_count = 0;
+#define MAX_MACROS 100
+Macro macros[MAX_MACROS];
+int macro_count = 0;
 
-	void add_macro(const char* name, const char* replacement) {
+void add_macro(const char* name, const char* replacement) {
 
-    fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
+	fprintf(stderr, "Adding macro: %s -> %s\n", name, replacement);
 
-    for (int i = 0; i < macro_count; ++i) {
-			if (strcmp(macros[i].name, name) == 0) {
-				free(macros[i].replacement);
-				macros[i].replacement = strdup(replacement);
-				return;
-			}
-    }
-    macros[macro_count].name = strdup(name);
-    macros[macro_count].replacement = strdup(replacement);
-    macro_count++;
-
-    fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
-    fprintf(stderr, "Total macros: %d\n", macro_count);
-		if (macro_count >= MAX_MACROS) {
-				fprintf(stderr, "Error: Too many macros defined\n");
-				exit(1);
-			}
-	}
-
-	char* find_macro(const char* name) {
-		for (int i = macro_count - 1; i >= 0; --i) {
-			if (strcmp(macros[i].name, name) == 0)
-				return macros[i].replacement;
+	for (int i = 0; i < macro_count; ++i) {
+		if (strcmp(macros[i].name, name) == 0) {
+			free(macros[i].replacement);
+			macros[i].replacement = strdup(replacement);
+			return;
 		}
-		return NULL;
 	}
+	macros[macro_count].name = strdup(name);
+	macros[macro_count].replacement = strdup(replacement);
+	macro_count++;
 
-#line 165 "out/myanalyzer.tab.c"
+	fprintf(stderr, "Added macro: %s -> %s\n", name, replacement);
+	fprintf(stderr, "Total macros: %d\n", macro_count);
+	if (macro_count >= MAX_MACROS) {
+			fprintf(stderr, "Error: Too many macros defined\n");
+			exit(1);
+		}
+}
+
+char* find_macro(const char* name) {
+	for (int i = macro_count - 1; i >= 0; --i) {
+		if (strcmp(macros[i].name, name) == 0)
+			return macros[i].replacement;
+	}
+	return NULL;
+}
+
+// void yyerror(const char *fmt, ...) {
+// 	va_list args;
+// 	va_start(args, fmt);
+// 	fprintf(stderr, "Parse error: ");
+// 	vfprintf(stderr, fmt, args);
+// 	fprintf(stderr, "\n");
+// 	va_end(args);
+// }
+
+
+#line 178 "out/myanalyzer.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -253,38 +266,38 @@ enum yysymbol_kind_t
   YYSYMBOL_DOT = 61,                       /* DOT  */
   YYSYMBOL_OP_ARROW = 62,                  /* OP_ARROW  */
   YYSYMBOL_HASH = 63,                      /* HASH  */
-  YYSYMBOL_UMINUS = 64,                    /* UMINUS  */
-  YYSYMBOL_DECLARATION = 65,               /* DECLARATION  */
-  YYSYMBOL_STMT = 66,                      /* STMT  */
-  YYSYMBOL_NO_COMPARE = 67,                /* NO_COMPARE  */
-  YYSYMBOL_YYACCEPT = 68,                  /* $accept  */
-  YYSYMBOL_program = 69,                   /* program  */
-  YYSYMBOL_macro_def_list = 70,            /* macro_def_list  */
-  YYSYMBOL_macro_def = 71,                 /* macro_def  */
-  YYSYMBOL_top_level_list = 72,            /* top_level_list  */
-  YYSYMBOL_top_level = 73,                 /* top_level  */
-  YYSYMBOL_var_declaration = 74,           /* var_declaration  */
-  YYSYMBOL_const_declaration = 75,         /* const_declaration  */
-  YYSYMBOL_function = 76,                  /* function  */
-  YYSYMBOL_param_list = 77,                /* param_list  */
-  YYSYMBOL_param_decl_list = 78,           /* param_decl_list  */
-  YYSYMBOL_main_function = 79,             /* main_function  */
-  YYSYMBOL_stmt_list = 80,                 /* stmt_list  */
-  YYSYMBOL_type = 81,                      /* type  */
-  YYSYMBOL_stmt = 82,                      /* stmt  */
-  YYSYMBOL_assignment_stmt = 83,           /* assignment_stmt  */
-  YYSYMBOL_return_stmt = 84,               /* return_stmt  */
-  YYSYMBOL_if_stmt = 85,                   /* if_stmt  */
-  YYSYMBOL_for_stmt = 86,                  /* for_stmt  */
-  YYSYMBOL_while_stmt = 87,                /* while_stmt  */
-  YYSYMBOL_break_stmt = 88,                /* break_stmt  */
-  YYSYMBOL_continue_stmt = 89,             /* continue_stmt  */
-  YYSYMBOL_empty_stmt = 90,                /* empty_stmt  */
-  YYSYMBOL_component = 91,                 /* component  */
-  YYSYMBOL_component_body = 92,            /* component_body  */
-  YYSYMBOL_component_member = 93,          /* component_member  */
-  YYSYMBOL_hash_ident_list = 94,           /* hash_ident_list  */
-  YYSYMBOL_ident_list = 95,                /* ident_list  */
+  YYSYMBOL_DECL_IDENT = 64,                /* DECL_IDENT  */
+  YYSYMBOL_UMINUS = 65,                    /* UMINUS  */
+  YYSYMBOL_DECLARATION = 66,               /* DECLARATION  */
+  YYSYMBOL_STMT = 67,                      /* STMT  */
+  YYSYMBOL_NO_COMPARE = 68,                /* NO_COMPARE  */
+  YYSYMBOL_YYACCEPT = 69,                  /* $accept  */
+  YYSYMBOL_program = 70,                   /* program  */
+  YYSYMBOL_macro_def_list = 71,            /* macro_def_list  */
+  YYSYMBOL_macro_def = 72,                 /* macro_def  */
+  YYSYMBOL_top_level_list = 73,            /* top_level_list  */
+  YYSYMBOL_top_level = 74,                 /* top_level  */
+  YYSYMBOL_var_declaration = 75,           /* var_declaration  */
+  YYSYMBOL_const_declaration = 76,         /* const_declaration  */
+  YYSYMBOL_function = 77,                  /* function  */
+  YYSYMBOL_param_list = 78,                /* param_list  */
+  YYSYMBOL_param_decl_list = 79,           /* param_decl_list  */
+  YYSYMBOL_main_function = 80,             /* main_function  */
+  YYSYMBOL_stmt_list = 81,                 /* stmt_list  */
+  YYSYMBOL_type = 82,                      /* type  */
+  YYSYMBOL_stmt = 83,                      /* stmt  */
+  YYSYMBOL_assignment_stmt = 84,           /* assignment_stmt  */
+  YYSYMBOL_return_stmt = 85,               /* return_stmt  */
+  YYSYMBOL_if_stmt = 86,                   /* if_stmt  */
+  YYSYMBOL_for_stmt = 87,                  /* for_stmt  */
+  YYSYMBOL_while_stmt = 88,                /* while_stmt  */
+  YYSYMBOL_break_stmt = 89,                /* break_stmt  */
+  YYSYMBOL_continue_stmt = 90,             /* continue_stmt  */
+  YYSYMBOL_empty_stmt = 91,                /* empty_stmt  */
+  YYSYMBOL_component = 92,                 /* component  */
+  YYSYMBOL_component_body = 93,            /* component_body  */
+  YYSYMBOL_component_member = 94,          /* component_member  */
+  YYSYMBOL_hash_ident_list = 95,           /* hash_ident_list  */
   YYSYMBOL_expression = 96,                /* expression  */
   YYSYMBOL_function_call = 97,             /* function_call  */
   YYSYMBOL_arg_list = 98,                  /* arg_list  */
@@ -618,19 +631,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  3
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   513
+#define YYLAST   494
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  68
+#define YYNTOKENS  69
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  34
+#define YYNNTS  33
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  96
+#define YYNRULES  90
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  215
+#define YYNSTATES  201
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   322
+#define YYMAXUTOK   323
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -676,23 +689,23 @@ static const yytype_int8 yytranslate[] =
       35,    36,    37,    38,    39,    40,    41,    42,    43,    44,
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
-      65,    66,    67
+      65,    66,    67,    68
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   160,   160,   166,   167,   180,   188,   189,   199,   202,
-     205,   208,   211,   218,   226,   235,   243,   257,   269,   284,
-     285,   289,   294,   303,   316,   317,   326,   327,   328,   329,
-     330,   334,   335,   336,   337,   338,   339,   340,   341,   342,
-     348,   356,   368,   378,   388,   403,   416,   429,   435,   441,
-     448,   459,   460,   471,   478,   486,   491,   492,   500,   501,
-     509,   512,   521,   522,   526,   529,   532,   535,   538,   541,
-     544,   547,   550,   553,   556,   559,   562,   565,   566,   567,
-     568,   569,   573,   577,   585,   586,   587,   596,   597,   598,
-     599,   600,   601,   602,   606,   617,   618
+       0,   175,   175,   181,   182,   195,   203,   204,   214,   217,
+     220,   228,   235,   248,   262,   274,   289,   290,   294,   299,
+     308,   321,   322,   331,   332,   333,   334,   335,   339,   340,
+     341,   342,   343,   344,   345,   346,   347,   353,   361,   373,
+     383,   393,   408,   421,   434,   440,   446,   453,   464,   465,
+     476,   483,   491,   496,   497,   505,   506,   527,   528,   532,
+     535,   538,   541,   544,   547,   550,   553,   556,   559,   562,
+     565,   568,   571,   572,   573,   574,   575,   579,   587,   588,
+     589,   598,   599,   600,   601,   602,   604,   608,   616,   629,
+     630
 };
 #endif
 
@@ -719,15 +732,15 @@ static const char *const yytname[] =
   "OP_MODEQ", "OP_DEFINE", "OP_POW", "OP_EQ", "OP_NEQ", "OP_LT", "OP_LEQ",
   "OP_GT", "OP_GEQ", "OP_PLUS", "OP_MINUS", "OP_MULT", "OP_DIV", "OP_MOD",
   "LPAREN", "RPAREN", "LBRACKET", "RBRACKET", "COLON", "SEMICOLON",
-  "COMMA", "DOT", "OP_ARROW", "HASH", "UMINUS", "DECLARATION", "STMT",
-  "NO_COMPARE", "$accept", "program", "macro_def_list", "macro_def",
-  "top_level_list", "top_level", "var_declaration", "const_declaration",
-  "function", "param_list", "param_decl_list", "main_function",
-  "stmt_list", "type", "stmt", "assignment_stmt", "return_stmt", "if_stmt",
-  "for_stmt", "while_stmt", "break_stmt", "continue_stmt", "empty_stmt",
-  "component", "component_body", "component_member", "hash_ident_list",
-  "ident_list", "expression", "function_call", "arg_list",
-  "primary_expression", "block", "decl_list", YY_NULLPTR
+  "COMMA", "DOT", "OP_ARROW", "HASH", "DECL_IDENT", "UMINUS",
+  "DECLARATION", "STMT", "NO_COMPARE", "$accept", "program",
+  "macro_def_list", "macro_def", "top_level_list", "top_level",
+  "var_declaration", "const_declaration", "function", "param_list",
+  "param_decl_list", "main_function", "stmt_list", "type", "stmt",
+  "assignment_stmt", "return_stmt", "if_stmt", "for_stmt", "while_stmt",
+  "break_stmt", "continue_stmt", "empty_stmt", "component",
+  "component_body", "component_member", "hash_ident_list", "expression",
+  "function_call", "arg_list", "primary_expression", "block", "decl_list", YY_NULLPTR
 };
 
 static const char *
@@ -737,12 +750,12 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-124)
+#define YYPACT_NINF (-145)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-95)
+#define YYTABLE_NINF (-89)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -751,28 +764,27 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int16 yypact[] =
 {
-    -124,    16,   -17,  -124,    26,  -124,   411,   135,   -29,    -3,
-      47,    -2,    53,  -124,  -124,  -124,  -124,  -124,  -124,   -52,
-      23,  -124,  -124,  -124,  -124,  -124,   135,   135,   135,   153,
-     -38,  -124,   135,    44,    30,    37,    22,   235,    91,   135,
-     257,  -124,   401,   135,   135,   135,   135,   135,   135,   135,
-     135,   135,   135,   135,   135,   135,   135,  -124,   135,    93,
-     240,   135,    96,    51,  -124,  -124,  -124,  -124,  -124,  -124,
-      59,  -124,   460,     3,  -124,   257,   343,    70,   167,   167,
-     167,   167,   167,   167,    72,    72,    70,    70,    70,   327,
-    -124,   235,   269,    68,    73,    67,    74,     1,  -124,  -124,
-     135,  -124,    71,   235,   235,   -53,   128,  -124,    77,  -124,
-     130,    86,  -124,  -124,  -124,    27,   460,  -124,    88,  -124,
-    -124,   235,    94,   121,    75,  -124,  -124,   156,   235,   159,
-    -124,   139,   110,   235,   111,  -124,    87,   116,   117,  -124,
-     118,  -124,  -124,  -124,   122,   -28,   126,   180,   132,   129,
-     131,   135,  -124,  -124,  -124,  -124,  -124,  -124,  -124,  -124,
-    -124,  -124,   133,   136,  -124,  -124,   185,  -124,   135,     7,
-     135,   169,   135,  -124,  -124,   182,  -124,   235,   151,   211,
-    -124,    10,   415,   158,   446,  -124,   162,  -124,  -124,  -124,
-     157,   135,   164,  -124,  -124,   298,  -124,    52,   135,    99,
-     165,   181,   356,   183,  -124,  -124,   190,  -124,   134,  -124,
-     184,   152,  -124,   191,  -124
+    -145,    12,   -21,  -145,    40,  -145,    28,   165,    41,     1,
+      42,  -145,  -145,  -145,  -145,  -145,     4,  -145,  -145,  -145,
+    -145,  -145,   165,   165,   165,   179,  -145,   -14,    25,    17,
+      18,     8,   165,   148,  -145,   382,   165,   165,   165,   165,
+     165,   165,   165,   165,   165,   165,   165,   165,   165,   165,
+    -145,   165,    75,   165,    79,    29,  -145,   441,     2,  -145,
+     148,   340,    43,    38,    38,    38,    38,    38,    38,    -3,
+      -3,    43,    43,    43,   324,  -145,   266,    35,    44,    37,
+      45,     5,  -145,   165,  -145,   121,   121,   -53,    99,  -145,
+      46,  -145,   101,    50,  -145,  -145,  -145,    62,   441,  -145,
+    -145,  -145,  -145,  -145,    52,  -145,  -145,   121,    61,    97,
+     118,  -145,  -145,   122,   121,   125,  -145,   106,    81,   121,
+      82,    86,  -145,    78,    94,    91,  -145,    95,  -145,  -145,
+    -145,   121,    98,    -1,   105,   150,   111,   116,   117,   165,
+    -145,  -145,  -145,  -145,  -145,  -145,  -145,  -145,  -145,  -145,
+     119,   102,  -145,  -145,   149,   120,  -145,   165,   165,   162,
+     165,  -145,  -145,   208,  -145,   121,   123,  -145,   237,   396,
+     127,   427,  -145,   128,  -145,  -145,   130,   165,   151,  -145,
+    -145,   295,  -145,    53,   165,    93,   152,   143,   353,   147,
+    -145,  -145,   153,  -145,   126,  -145,   154,   144,  -145,   155,
+    -145
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -780,46 +792,45 @@ static const yytype_int16 yypact[] =
    means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       3,     0,     6,     1,     0,     4,     0,     0,     0,    60,
-       0,     0,     0,     7,    11,    12,     8,     9,    10,     0,
-      90,    87,    88,    89,    81,    80,     0,     0,     0,     0,
-      62,    15,     0,     0,     0,     0,     0,     0,     0,    84,
-      77,    78,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     5,     0,     0,
-       0,     0,    19,     0,    51,    30,    26,    27,    28,    29,
-       0,    61,    85,     0,    79,    75,    76,    68,    69,    70,
-      71,    72,    73,    74,    63,    64,    65,    66,    67,     0,
-      93,     0,     0,     0,     0,    20,     0,     0,    13,    91,
-       0,    92,     0,     0,     0,     0,     0,    95,     0,    58,
-       0,     0,    56,    55,    52,     0,    86,    14,     0,    21,
-      95,     0,     0,     0,     0,    57,    50,     0,     0,     0,
-      16,     0,     0,     0,     0,    96,     0,     0,     0,    59,
-       0,    95,    22,    23,     0,     0,     0,     0,     0,     0,
-       0,     0,    49,    25,    31,    32,    33,    34,    35,    36,
-      37,    38,     0,     0,    53,    18,     0,    40,     0,    84,
-       0,     0,     0,    47,    48,     0,    39,     0,     0,     0,
-      83,     0,     0,     0,     0,    42,     0,    17,    41,    82,
-       0,     0,     0,    54,    24,     0,    24,     0,     0,     0,
-       0,     0,     0,     0,    24,    43,     0,    46,     0,    24,
-       0,     0,    44,     0,    45
+       3,     0,     6,     1,     0,     4,     2,     0,     0,     0,
+       0,     7,    11,     8,     9,    10,    84,    81,    82,    83,
+      76,    75,     0,     0,     0,     0,    85,    57,     0,     0,
+       0,     0,    78,    72,    73,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       5,     0,     0,     0,    16,     0,    48,    79,     0,    74,
+      70,    71,    63,    64,    65,    66,    67,    68,    69,    58,
+      59,    60,    61,    62,     0,    87,     0,     0,     0,    17,
+       0,     0,    77,     0,    86,     0,     0,     0,     0,    89,
+       0,    55,     0,     0,    53,    52,    49,     0,    80,    27,
+      23,    24,    25,    26,     0,    18,    89,     0,     0,     0,
+      21,    54,    47,     0,     0,     0,    13,     0,     0,     0,
+       0,     0,    90,     0,     0,     0,    56,     0,    89,    19,
+      20,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+      46,    22,    28,    29,    30,    31,    32,    33,    34,    35,
+       0,     0,    50,    15,     0,     0,    37,     0,     0,     0,
+       0,    44,    45,     0,    36,     0,     0,    12,     0,     0,
+       0,     0,    39,     0,    14,    38,     0,     0,     0,    51,
+      21,     0,    21,     0,     0,     0,     0,     0,     0,     0,
+      21,    40,     0,    43,     0,    21,     0,     0,    41,     0,
+      42
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int16 yypgoto[] =
 {
-    -124,  -124,  -124,  -124,  -124,  -124,   115,  -124,   154,  -124,
-    -124,  -124,  -123,   -69,  -124,  -124,  -124,  -124,  -124,  -124,
-    -124,  -124,  -124,  -124,  -124,  -124,  -124,  -124,    -7,  -124,
-      80,  -124,  -117,  -124
+    -145,  -145,  -145,  -145,  -145,  -145,  -145,  -145,   100,  -145,
+    -145,  -145,  -144,   -79,  -145,  -145,  -145,  -145,  -145,  -145,
+    -145,  -145,  -145,  -145,  -145,  -145,  -145,   -22,  -120,  -145,
+    -145,   -95,  -145
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_uint8 yydefgoto[] =
 {
-       0,     1,     2,     5,     6,    13,    14,    15,    16,    94,
-      95,    17,   136,    70,   153,   154,   155,   156,   157,   158,
-     159,   160,   161,    18,    97,   114,   115,    19,    72,   162,
-      73,    30,   123,   124
+       0,     1,     2,     5,     6,    11,   122,    12,    13,    78,
+      79,    14,   123,   104,   141,   142,   143,   144,   145,   146,
+     147,   148,   149,    15,    81,    96,    97,    25,    26,    58,
+      27,   109,   110
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -827,172 +838,167 @@ static const yytype_uint8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int16 yytable[] =
 {
-      29,    34,   108,   131,   109,   120,    37,   168,    38,   121,
-      20,    21,    22,    23,    24,    25,     3,     4,    58,    40,
-      41,    42,   102,    59,   166,    60,   169,    35,   110,     7,
-      31,    26,    32,   111,   118,   119,    75,    76,    77,    78,
-      79,    80,    81,    82,    83,    84,    85,    86,    87,    88,
-      33,    89,   132,   144,    92,   145,    36,    27,    99,   138,
-     112,    28,   180,   100,   142,   189,   146,   200,   201,   147,
-     100,   197,   148,   199,   149,   150,     8,    39,     9,    61,
-      64,   208,   151,   127,    62,   128,   211,   129,   144,   -24,
-     145,    63,   -24,   116,    71,   -24,    90,   -24,   -24,    93,
-     144,   146,   145,   -24,   147,   -24,    96,   148,   186,   149,
-     150,   152,    45,   146,    45,   -94,   147,   151,    98,   148,
-     203,   149,   150,    54,    55,    56,   104,   106,   105,   151,
-     117,   122,   107,    34,   -24,   144,   125,   145,    20,    21,
-      22,    23,    24,    25,   175,   126,   152,   130,   146,   134,
-     210,   147,   133,   144,   148,   145,   149,   150,   152,    26,
-     137,   179,   139,   182,   151,   184,   146,   140,   141,   147,
-     143,   213,   148,   163,   149,   150,   164,   165,    43,    44,
-     170,   167,   151,   171,   195,    27,   172,   183,   173,    28,
-     174,   202,   176,   152,   177,    45,    46,    47,    48,    49,
-      50,    51,    52,    53,    54,    55,    56,    43,    44,    45,
-     187,   152,    57,   178,   191,   194,    52,    53,    54,    55,
-      56,   193,   196,   204,    45,    46,    47,    48,    49,    50,
-      51,    52,    53,    54,    55,    56,    43,    44,    65,   135,
-     205,   185,   207,   212,    66,    67,    68,    69,   209,   181,
-     214,   113,     0,    45,    46,    47,    48,    49,    50,    51,
-      52,    53,    54,    55,    56,    43,    44,     0,     0,     0,
-     188,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    54,    55,    56,    43,    44,     0,     0,    91,    45,
-      46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-      54,    55,    56,    43,    44,     0,     0,   103,     0,     0,
+      33,    34,    35,   150,    29,   106,    90,   105,    91,   107,
+      57,   117,     3,     4,    60,    61,    62,    63,    64,    65,
+      66,    67,    68,    69,    70,    71,    72,    73,   118,    74,
+      30,    76,    92,   154,   157,   125,   183,    93,   185,    38,
+     129,     8,    51,     7,    28,    31,   194,    52,    47,    48,
+      49,   197,   155,    32,   132,     9,   133,    82,    32,    10,
+      53,    98,    83,   150,    94,   150,    56,   134,   186,   187,
+     135,    54,    55,   136,   150,   137,   138,   150,    75,   132,
+      38,   133,    77,   139,    80,    38,   173,    45,    46,    47,
+      48,    49,   134,    86,   132,   135,   133,    88,   136,    87,
+     137,   138,   108,    89,    29,   111,   -88,   134,   139,   112,
+     135,   116,   140,   136,   189,   137,   138,   163,   113,   119,
+     114,   121,   115,   139,    99,   120,   124,   132,   126,   133,
+     100,   101,   102,   103,   127,   168,   169,   140,   171,   128,
+     134,   130,   196,   135,   131,   132,   136,   133,   137,   138,
+     152,   151,   140,   159,   153,   181,   139,   156,   134,   158,
+     165,   135,   188,   199,   136,   160,   137,   138,    16,    17,
+      18,    19,    20,    21,   139,   161,   162,   166,   164,   167,
+     170,    95,   174,   177,     0,   140,     0,   179,   180,    22,
+      38,    39,    40,    41,    42,    43,    44,    45,    46,    47,
+      48,    49,   191,   140,    36,    37,   193,     0,     0,   182,
+     190,   195,     0,   198,   200,    23,     0,     0,     0,    24,
+       0,    38,    39,    40,    41,    42,    43,    44,    45,    46,
+      47,    48,    49,    36,    37,     0,     0,     0,    50,     0,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-      45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
-      55,    56,    43,    44,     0,     0,   198,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    43,    45,
-      46,    47,    48,    49,    50,    51,    52,    53,    54,    55,
-      56,    43,    44,     0,   101,    45,    46,    47,    48,    49,
-      50,    51,    52,    53,    54,    55,    56,     0,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
-       0,    -2,     8,   206,     9,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,    10,     0,    43,    44,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,    11,     0,
-      43,    44,    12,    45,    46,    47,    48,    49,    50,    51,
-      52,    53,    54,    55,    56,     0,    74,    45,    46,    47,
-      48,    49,    50,    51,    52,    53,    54,    55,    56,     0,
-     190,    43,    44,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    43,    44,     0,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
-       0,   192,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    54,    55,    56
+      38,    39,    40,    41,    42,    43,    44,    45,    46,    47,
+      48,    49,    36,    37,     0,     0,     0,   172,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    38,
+      39,    40,    41,    42,    43,    44,    45,    46,    47,    48,
+      49,    36,    37,     0,     0,     0,   175,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,     0,    38,    39,
+      40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
+      36,    37,     0,     0,    85,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,     0,    38,    39,    40,
+      41,    42,    43,    44,    45,    46,    47,    48,    49,    36,
+      37,     0,     0,   184,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,    36,    38,    39,    40,    41,
+      42,    43,    44,    45,    46,    47,    48,    49,    36,    37,
+       0,    84,    38,    39,    40,    41,    42,    43,    44,    45,
+      46,    47,    48,    49,     0,    38,    39,    40,    41,    42,
+      43,    44,    45,    46,    47,    48,    49,    36,    37,     0,
+     192,     0,     0,     0,     0,     0,     0,     0,     0,     0,
+       0,    36,    37,     0,    38,    39,    40,    41,    42,    43,
+      44,    45,    46,    47,    48,    49,     0,    59,    38,    39,
+      40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
+       0,   176,    36,    37,     0,     0,     0,     0,     0,     0,
+       0,     0,     0,     0,     0,     0,    36,    37,     0,    38,
+      39,    40,    41,    42,    43,    44,    45,    46,    47,    48,
+      49,     0,   178,    38,    39,    40,    41,    42,    43,    44,
+      45,    46,    47,    48,    49
 };
 
 static const yytype_int16 yycheck[] =
 {
-       7,     3,     1,   120,     3,    58,    58,    35,    60,    62,
-       3,     4,     5,     6,     7,     8,     0,    34,    56,    26,
-      27,    28,    91,    61,   141,    32,    54,    29,    27,     3,
-      59,    24,    35,    32,   103,   104,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    54,    55,    56,
-       3,    58,   121,     1,    61,     3,     3,    50,    55,   128,
-      59,    54,    55,    60,   133,    55,    14,    15,    16,    17,
-      60,   194,    20,   196,    22,    23,     1,    54,     3,    35,
-      58,   204,    30,    56,    54,    58,   209,    60,     1,    14,
-       3,    54,    17,   100,     3,    20,     3,    22,    23,     3,
-       1,    14,     3,    28,    17,    30,    55,    20,   177,    22,
-      23,    59,    42,    14,    42,    28,    17,    30,    59,    20,
-      21,    22,    23,    51,    52,    53,    58,    60,    55,    30,
-      59,     3,    58,     3,    59,     1,    59,     3,     3,     4,
-       5,     6,     7,     8,   151,    59,    59,    59,    14,    28,
-      16,    17,    58,     1,    20,     3,    22,    23,    59,    24,
-       4,   168,     3,   170,    30,   172,    14,    28,    58,    17,
-      59,    19,    20,    57,    22,    23,    59,    59,    25,    26,
-      54,    59,    30,     3,   191,    50,    54,    18,    59,    54,
-      59,   198,    59,    59,    58,    42,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    25,    26,    42,
-      59,    59,    59,    28,    56,    58,    49,    50,    51,    52,
-      53,    59,    58,    58,    42,    43,    44,    45,    46,    47,
-      48,    49,    50,    51,    52,    53,    25,    26,     3,   124,
-      59,    59,    59,    59,     9,    10,    11,    12,    58,   169,
-      59,    97,    -1,    42,    43,    44,    45,    46,    47,    48,
-      49,    50,    51,    52,    53,    25,    26,    -1,    -1,    -1,
-      59,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    42,    43,    44,    45,    46,    47,    48,    49,
-      50,    51,    52,    53,    25,    26,    -1,    -1,    58,    42,
-      43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    42,    43,    44,    45,    46,    47,    48,    49,    50,
-      51,    52,    53,    25,    26,    -1,    -1,    58,    -1,    -1,
+      22,    23,    24,   123,     3,    58,     1,    86,     3,    62,
+      32,   106,     0,    34,    36,    37,    38,    39,    40,    41,
+      42,    43,    44,    45,    46,    47,    48,    49,   107,    51,
+      29,    53,    27,   128,    35,   114,   180,    32,   182,    42,
+     119,    13,    56,     3,     3,     3,   190,    61,    51,    52,
+      53,   195,   131,    54,     1,    27,     3,    55,    54,    31,
+      35,    83,    60,   183,    59,   185,    58,    14,    15,    16,
+      17,    54,    54,    20,   194,    22,    23,   197,     3,     1,
+      42,     3,     3,    30,    55,    42,   165,    49,    50,    51,
+      52,    53,    14,    58,     1,    17,     3,    60,    20,    55,
+      22,    23,     3,    58,     3,    59,    28,    14,    30,    59,
+      17,    59,    59,    20,    21,    22,    23,   139,    56,    58,
+      58,     3,    60,    30,     3,    28,     4,     1,     3,     3,
+       9,    10,    11,    12,    28,   157,   158,    59,   160,    58,
+      14,    59,    16,    17,    58,     1,    20,     3,    22,    23,
+      59,    57,    59,     3,    59,   177,    30,    59,    14,    54,
+      58,    17,   184,    19,    20,    54,    22,    23,     3,     4,
+       5,     6,     7,     8,    30,    59,    59,    28,    59,    59,
+      18,    81,    59,    56,    -1,    59,    -1,    59,    58,    24,
+      42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
+      52,    53,    59,    59,    25,    26,    59,    -1,    -1,    58,
+      58,    58,    -1,    59,    59,    50,    -1,    -1,    -1,    54,
+      -1,    42,    43,    44,    45,    46,    47,    48,    49,    50,
+      51,    52,    53,    25,    26,    -1,    -1,    -1,    59,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       42,    43,    44,    45,    46,    47,    48,    49,    50,    51,
-      52,    53,    25,    26,    -1,    -1,    58,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    25,    42,
+      52,    53,    25,    26,    -1,    -1,    -1,    59,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    42,
       43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      53,    25,    26,    -1,    57,    42,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    -1,    42,    43,
+      53,    25,    26,    -1,    -1,    -1,    59,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    42,    43,
       44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-      -1,     0,     1,    57,     3,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    13,    -1,    25,    26,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    27,    -1,
-      25,    26,    31,    42,    43,    44,    45,    46,    47,    48,
-      49,    50,    51,    52,    53,    -1,    55,    42,    43,    44,
-      45,    46,    47,    48,    49,    50,    51,    52,    53,    -1,
-      55,    25,    26,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    25,    26,    -1,    42,    43,
+      25,    26,    -1,    -1,    58,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    -1,    42,    43,    44,
+      45,    46,    47,    48,    49,    50,    51,    52,    53,    25,
+      26,    -1,    -1,    58,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    25,    42,    43,    44,    45,
+      46,    47,    48,    49,    50,    51,    52,    53,    25,    26,
+      -1,    57,    42,    43,    44,    45,    46,    47,    48,    49,
+      50,    51,    52,    53,    -1,    42,    43,    44,    45,    46,
+      47,    48,    49,    50,    51,    52,    53,    25,    26,    -1,
+      57,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    25,    26,    -1,    42,    43,    44,    45,    46,    47,
+      48,    49,    50,    51,    52,    53,    -1,    55,    42,    43,
       44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
-      -1,    55,    42,    43,    44,    45,    46,    47,    48,    49,
-      50,    51,    52,    53
+      -1,    55,    25,    26,    -1,    -1,    -1,    -1,    -1,    -1,
+      -1,    -1,    -1,    -1,    -1,    -1,    25,    26,    -1,    42,
+      43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
+      53,    -1,    55,    42,    43,    44,    45,    46,    47,    48,
+      49,    50,    51,    52,    53
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    69,    70,     0,    34,    71,    72,     3,     1,     3,
-      13,    27,    31,    73,    74,    75,    76,    79,    91,    95,
-       3,     4,     5,     6,     7,     8,    24,    50,    54,    96,
-      99,    59,    35,     3,     3,    29,     3,    58,    60,    54,
-      96,    96,    96,    25,    26,    42,    43,    44,    45,    46,
-      47,    48,    49,    50,    51,    52,    53,    59,    56,    61,
-      96,    35,    54,    54,    58,     3,     9,    10,    11,    12,
-      81,     3,    96,    98,    55,    96,    96,    96,    96,    96,
+       0,    70,    71,     0,    34,    72,    73,     3,    13,    27,
+      31,    74,    76,    77,    80,    92,     3,     4,     5,     6,
+       7,     8,    24,    50,    54,    96,    97,    99,     3,     3,
+      29,     3,    54,    96,    96,    96,    25,    26,    42,    43,
+      44,    45,    46,    47,    48,    49,    50,    51,    52,    53,
+      59,    56,    61,    35,    54,    54,    58,    96,    98,    55,
       96,    96,    96,    96,    96,    96,    96,    96,    96,    96,
-       3,    58,    96,     3,    77,    78,    55,    92,    59,    55,
-      60,    57,    81,    58,    58,    55,    60,    58,     1,     3,
-      27,    32,    59,    76,    93,    94,    96,    59,    81,    81,
-      58,    62,     3,   100,   101,    59,    59,    56,    58,    60,
-      59,   100,    81,    58,    28,    74,    80,     4,    81,     3,
-      28,    58,    81,    59,     1,     3,    14,    17,    20,    22,
-      23,    30,    59,    82,    83,    84,    85,    86,    87,    88,
-      89,    90,    97,    57,    59,    59,   100,    59,    35,    54,
-      54,     3,    54,    59,    59,    96,    59,    58,    28,    96,
-      55,    98,    96,    18,    96,    59,    81,    59,    59,    55,
-      55,    56,    55,    59,    58,    96,    58,    80,    58,    80,
-      15,    16,    96,    21,    58,    59,    57,    59,    80,    58,
-      16,    80,    59,    19,    59
+      96,    96,    96,    96,    96,     3,    96,     3,    78,    79,
+      55,    93,    55,    60,    57,    58,    58,    55,    60,    58,
+       1,     3,    27,    32,    59,    77,    94,    95,    96,     3,
+       9,    10,    11,    12,    82,    82,    58,    62,     3,   100,
+     101,    59,    59,    56,    58,    60,    59,   100,    82,    58,
+      28,     3,    75,    81,     4,    82,     3,    28,    58,    82,
+      59,    58,     1,     3,    14,    17,    20,    22,    23,    30,
+      59,    83,    84,    85,    86,    87,    88,    89,    90,    91,
+      97,    57,    59,    59,   100,    82,    59,    35,    54,     3,
+      54,    59,    59,    96,    59,    58,    28,    59,    96,    96,
+      18,    96,    59,    82,    59,    59,    55,    56,    55,    59,
+      58,    96,    58,    81,    58,    81,    15,    16,    96,    21,
+      58,    59,    57,    59,    81,    58,    16,    81,    59,    19,
+      59
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    68,    69,    70,    70,    71,    72,    72,    73,    73,
-      73,    73,    73,    74,    74,    74,    75,    76,    76,    77,
-      77,    78,    78,    79,    80,    80,    81,    81,    81,    81,
-      81,    82,    82,    82,    82,    82,    82,    82,    82,    82,
-      82,    83,    84,    85,    85,    86,    87,    88,    89,    90,
-      91,    92,    92,    93,    93,    93,    93,    93,    94,    94,
-      95,    95,    96,    96,    96,    96,    96,    96,    96,    96,
+       0,    69,    70,    71,    71,    72,    73,    73,    74,    74,
+      74,    74,    75,    76,    77,    77,    78,    78,    79,    79,
+      80,    81,    81,    82,    82,    82,    82,    82,    83,    83,
+      83,    83,    83,    83,    83,    83,    83,    83,    84,    85,
+      86,    86,    87,    88,    89,    90,    91,    92,    93,    93,
+      94,    94,    94,    94,    94,    95,    95,    96,    96,    96,
       96,    96,    96,    96,    96,    96,    96,    96,    96,    96,
-      96,    96,    97,    97,    98,    98,    98,    99,    99,    99,
-      99,    99,    99,    99,   100,   101,   101
+      96,    96,    96,    96,    96,    96,    96,    97,    98,    98,
+      98,    99,    99,    99,    99,    99,    99,    99,   100,   101,
+     101
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     0,     2,     4,     0,     2,     1,     1,
-       1,     1,     1,     4,     6,     2,     7,    11,     9,     0,
-       1,     3,     5,     8,     0,     2,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     2,
-       2,     4,     3,     8,    11,    12,     8,     2,     2,     1,
-       6,     0,     2,     4,     7,     1,     1,     2,     1,     3,
-       1,     3,     1,     3,     3,     3,     3,     3,     3,     3,
-       3,     3,     3,     3,     3,     3,     3,     2,     2,     3,
-       1,     1,     4,     3,     0,     1,     3,     1,     1,     1,
-       1,     4,     4,     3,     2,     0,     2
+       1,     1,     4,     7,    11,     9,     0,     1,     3,     5,
+       8,     0,     2,     1,     1,     1,     1,     1,     1,     1,
+       1,     1,     1,     1,     1,     1,     2,     2,     4,     3,
+       8,    11,    12,     8,     2,     2,     1,     6,     0,     2,
+       4,     7,     1,     1,     2,     1,     3,     1,     3,     3,
+       3,     3,     3,     3,     3,     3,     3,     3,     3,     3,
+       3,     3,     2,     2,     3,     1,     1,     4,     0,     1,
+       3,     1,     1,     1,     1,     1,     4,     3,     2,     0,
+       2
 };
 
 
@@ -1456,21 +1462,21 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* program: macro_def_list top_level_list  */
-#line 160 "myanalyzer.y"
+#line 175 "myanalyzer.y"
                                   {
         printf("%s", (yyvsp[0].string));
     }
-#line 1464 "out/myanalyzer.tab.c"
-    break;
-
-  case 3: /* macro_def_list: %empty  */
-#line 166 "myanalyzer.y"
-                { (yyval.string) = safe_strdup("");}
 #line 1470 "out/myanalyzer.tab.c"
     break;
 
+  case 3: /* macro_def_list: %empty  */
+#line 181 "myanalyzer.y"
+                { (yyval.string) = safe_strdup("");}
+#line 1476 "out/myanalyzer.tab.c"
+    break;
+
   case 4: /* macro_def_list: macro_def_list macro_def  */
-#line 167 "myanalyzer.y"
+#line 182 "myanalyzer.y"
                                {
 			fprintf(stderr, "Macro definition: %s\n", (yyvsp[-1].string));
 			(yyval.string) = (yyvsp[-1].string);
@@ -1481,27 +1487,27 @@ yyreduce:
 			free((yyvsp[0].string));
 
 		}
-#line 1485 "out/myanalyzer.tab.c"
+#line 1491 "out/myanalyzer.tab.c"
     break;
 
   case 5: /* macro_def: KW_DEFMACRO IDENTIFIER expression SEMICOLON  */
-#line 180 "myanalyzer.y"
+#line 195 "myanalyzer.y"
                                                 {
     fprintf(stderr, "Macro defined: %s\n", (yyvsp[-2].string));
     add_macro((yyvsp[-2].string), (yyvsp[-1].string));
     (yyval.string) = safe_strdup("");
 	}
-#line 1495 "out/myanalyzer.tab.c"
-    break;
-
-  case 6: /* top_level_list: %empty  */
-#line 188 "myanalyzer.y"
-                { (yyval.string) = safe_strdup(""); }
 #line 1501 "out/myanalyzer.tab.c"
     break;
 
+  case 6: /* top_level_list: %empty  */
+#line 203 "myanalyzer.y"
+                { (yyval.string) = safe_strdup(""); }
+#line 1507 "out/myanalyzer.tab.c"
+    break;
+
   case 7: /* top_level_list: top_level_list top_level  */
-#line 189 "myanalyzer.y"
+#line 204 "myanalyzer.y"
                               {
 			fprintf(stderr, "Top level: %s\n", (yyvsp[-1].string));
 			char* tmp = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
@@ -1509,57 +1515,49 @@ yyreduce:
 			(yyval.string) = tmp;
 			free((yyvsp[-1].string)); safe_free((yyvsp[0].string));
 		}
-#line 1513 "out/myanalyzer.tab.c"
+#line 1519 "out/myanalyzer.tab.c"
     break;
 
   case 8: /* top_level: function  */
-#line 199 "myanalyzer.y"
+#line 214 "myanalyzer.y"
                  {
 		fprintf(stderr, "Function: %s\n", (yyvsp[0].string));
 		(yyval.string) = (yyvsp[0].string);
 	}
-#line 1522 "out/myanalyzer.tab.c"
+#line 1528 "out/myanalyzer.tab.c"
     break;
 
   case 9: /* top_level: main_function  */
-#line 202 "myanalyzer.y"
+#line 217 "myanalyzer.y"
                           {
 		fprintf(stderr, "Main function: %s\n", (yyvsp[0].string));
 		(yyval.string) = (yyvsp[0].string);
 	}
-#line 1531 "out/myanalyzer.tab.c"
+#line 1537 "out/myanalyzer.tab.c"
     break;
 
   case 10: /* top_level: component  */
-#line 205 "myanalyzer.y"
+#line 220 "myanalyzer.y"
                       {
 		fprintf(stderr, "Component: %s\n", (yyvsp[0].string));
 		(yyval.string) = (yyvsp[0].string);
 	}
-#line 1540 "out/myanalyzer.tab.c"
+#line 1546 "out/myanalyzer.tab.c"
     break;
 
-  case 11: /* top_level: var_declaration  */
-#line 208 "myanalyzer.y"
+  case 11: /* top_level: const_declaration  */
+#line 228 "myanalyzer.y"
                             {
-		fprintf(stderr, "Variable declaration: %s\n", (yyvsp[0].string));
-		(yyval.string) = (yyvsp[0].string);
-	}
-#line 1549 "out/myanalyzer.tab.c"
-    break;
-
-  case 12: /* top_level: const_declaration  */
-#line 211 "myanalyzer.y"
-                              {
 		fprintf(stderr, "Constant declaration: %s\n", (yyvsp[0].string));
 		(yyval.string) = (yyvsp[0].string);
 	}
-#line 1558 "out/myanalyzer.tab.c"
+#line 1555 "out/myanalyzer.tab.c"
     break;
 
-  case 13: /* var_declaration: ident_list COLON type SEMICOLON  */
-#line 218 "myanalyzer.y"
-                                        {
+  case 12: /* var_declaration: IDENTIFIER COLON type SEMICOLON  */
+#line 235 "myanalyzer.y"
+                                    {
+		// $1 is the variable name, $3 is the type
 		fprintf(stderr, "Processing declaration: %s of type %s\n", (yyvsp[-3].string), (yyvsp[-1].string));
 		char* decl = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 16);
 		sprintf(decl, "%s %s;\n", (yyvsp[-1].string), (yyvsp[-3].string));
@@ -1568,36 +1566,11 @@ yyreduce:
 		free((yyvsp[-3].string));
 		free((yyvsp[-1].string));
 	}
-#line 1572 "out/myanalyzer.tab.c"
+#line 1570 "out/myanalyzer.tab.c"
     break;
 
-  case 14: /* var_declaration: IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON  */
-#line 226 "myanalyzer.y"
-                                                                 {
-		fprintf(stderr, "Processing initialized declaration: %s = %s of type %s\n", (yyvsp[-5].string), (yyvsp[-3].string), (yyvsp[-1].string));
-		char* decl = malloc(strlen((yyvsp[-5].string)) + strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 16);
-		sprintf(decl, "%s %s = %s;\n", (yyvsp[-1].string), (yyvsp[-5].string), (yyvsp[-3].string));
-		(yyval.string) = add_indentation(decl);
-		free(decl);
-		free((yyvsp[-5].string));
-		free((yyvsp[-3].string));
-		free((yyvsp[-1].string));
-	}
-#line 1587 "out/myanalyzer.tab.c"
-    break;
-
-  case 15: /* var_declaration: error SEMICOLON  */
-#line 235 "myanalyzer.y"
-                            {
-		yyerror("Invalid variable declaration");
-		yyerrok;
-		(yyval.string) = safe_strdup("/* BAD DECLARATION */\n");
-	}
-#line 1597 "out/myanalyzer.tab.c"
-    break;
-
-  case 16: /* const_declaration: KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON  */
-#line 243 "myanalyzer.y"
+  case 13: /* const_declaration: KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON  */
+#line 248 "myanalyzer.y"
                                                                   {
 				fprintf(stderr, "Constant declaration: %s = %s\n", (yyvsp[-5].string), (yyvsp[-3].string));
 
@@ -1609,11 +1582,11 @@ yyreduce:
 				free((yyvsp[-3].string));
 				free((yyvsp[-1].string));
 		}
-#line 1613 "out/myanalyzer.tab.c"
+#line 1586 "out/myanalyzer.tab.c"
     break;
 
-  case 17: /* function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON  */
-#line 257 "myanalyzer.y"
+  case 14: /* function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON  */
+#line 262 "myanalyzer.y"
                                                                                              {
         fprintf(stderr, "Function with return: %s\n", (yyvsp[-9].string));
 
@@ -1626,11 +1599,11 @@ yyreduce:
         safe_free(body);
         (yyval.string) = code;
     }
-#line 1630 "out/myanalyzer.tab.c"
+#line 1603 "out/myanalyzer.tab.c"
     break;
 
-  case 18: /* function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON  */
-#line 269 "myanalyzer.y"
+  case 15: /* function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON  */
+#line 274 "myanalyzer.y"
                                                                                {
         fprintf(stderr, "Function with no return: %s\n", (yyvsp[-7].string));
 
@@ -1643,34 +1616,34 @@ yyreduce:
         safe_free(body);
         (yyval.string) = code;
     }
-#line 1647 "out/myanalyzer.tab.c"
+#line 1620 "out/myanalyzer.tab.c"
     break;
 
-  case 19: /* param_list: %empty  */
-#line 284 "myanalyzer.y"
-                    { (yyval.string) = safe_strdup(""); }
-#line 1653 "out/myanalyzer.tab.c"
-    break;
-
-  case 20: /* param_list: param_decl_list  */
-#line 285 "myanalyzer.y"
-                          { fprintf(stderr, "Param list %s\n", (yyvsp[0].string));  (yyval.string) = (yyvsp[0].string); }
-#line 1659 "out/myanalyzer.tab.c"
-    break;
-
-  case 21: /* param_decl_list: IDENTIFIER COLON type  */
+  case 16: /* param_list: %empty  */
 #line 289 "myanalyzer.y"
+                    { (yyval.string) = safe_strdup(""); }
+#line 1626 "out/myanalyzer.tab.c"
+    break;
+
+  case 17: /* param_list: param_decl_list  */
+#line 290 "myanalyzer.y"
+                          { fprintf(stderr, "Param list %s\n", (yyvsp[0].string));  (yyval.string) = (yyvsp[0].string); }
+#line 1632 "out/myanalyzer.tab.c"
+    break;
+
+  case 18: /* param_decl_list: IDENTIFIER COLON type  */
+#line 294 "myanalyzer.y"
                           {
 			fprintf(stderr, "Param: %s\n", (yyvsp[-2].string));
 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 2);
 			sprintf((yyval.string), "%s %s", (yyvsp[0].string), (yyvsp[-2].string));
     }
-#line 1670 "out/myanalyzer.tab.c"
+#line 1643 "out/myanalyzer.tab.c"
     break;
 
-  case 22: /* param_decl_list: param_decl_list COMMA IDENTIFIER COLON type  */
-#line 294 "myanalyzer.y"
+  case 19: /* param_decl_list: param_decl_list COMMA IDENTIFIER COLON type  */
+#line 299 "myanalyzer.y"
                                                     {
 			fprintf(stderr, "Param: %s\n", (yyvsp[-2].string));
 
@@ -1678,109 +1651,109 @@ yyreduce:
 			sprintf(tmp, "%s, %s %s", (yyvsp[-4].string), (yyvsp[0].string), (yyvsp[-2].string));
 			(yyval.string) = tmp;
     }
-#line 1682 "out/myanalyzer.tab.c"
+#line 1655 "out/myanalyzer.tab.c"
     break;
 
-  case 23: /* main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON  */
-#line 303 "myanalyzer.y"
-                                                                 {
-        fprintf(stderr, "Main function\n");
-        indent_level++;
-        char* body = add_indentation((yyvsp[-2].string));
-        indent_level--;
-        char* code = malloc(strlen(body) + 64);
-        sprintf(code, "int main() {\n%s}\n", body);
-        safe_free(body);
-        (yyval.string) = code;
-    }
-#line 1697 "out/myanalyzer.tab.c"
+  case 20: /* main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON  */
+#line 308 "myanalyzer.y"
+                                                                     {
+		fprintf(stderr, "Main function\n");
+		indent_level++;
+		char* body = add_indentation((yyvsp[-2].string));
+		indent_level--;
+		char* code = malloc(strlen(body) + 64);
+		sprintf(code, "int main() {\n%s}\n", body);
+		safe_free(body);
+		(yyval.string) = code;
+	}
+#line 1670 "out/myanalyzer.tab.c"
     break;
 
-  case 24: /* stmt_list: %empty  */
-#line 316 "myanalyzer.y"
-                { (yyval.string) = safe_strdup(""); }
-#line 1703 "out/myanalyzer.tab.c"
+  case 21: /* stmt_list: %empty  */
+#line 321 "myanalyzer.y"
+                    { (yyval.string) = safe_strdup(""); }
+#line 1676 "out/myanalyzer.tab.c"
     break;
 
-  case 25: /* stmt_list: stmt_list stmt  */
-#line 317 "myanalyzer.y"
-                     {
-			char* tmp = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
-			sprintf(tmp, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
-			(yyval.string) = tmp;
-			free((yyvsp[-1].string)); free((yyvsp[0].string));
-    }
-#line 1714 "out/myanalyzer.tab.c"
+  case 22: /* stmt_list: stmt_list stmt  */
+#line 322 "myanalyzer.y"
+                         {
+		char* tmp = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
+		sprintf(tmp, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
+		(yyval.string) = tmp;
+		free((yyvsp[-1].string)); free((yyvsp[0].string));
+	}
+#line 1687 "out/myanalyzer.tab.c"
     break;
 
-  case 26: /* type: KW_INTEGER  */
-#line 326 "myanalyzer.y"
+  case 23: /* type: KW_INTEGER  */
+#line 331 "myanalyzer.y"
                 { (yyval.string) = safe_strdup("int"); }
-#line 1720 "out/myanalyzer.tab.c"
+#line 1693 "out/myanalyzer.tab.c"
     break;
 
-  case 27: /* type: KW_SCALAR  */
-#line 327 "myanalyzer.y"
+  case 24: /* type: KW_SCALAR  */
+#line 332 "myanalyzer.y"
                 { (yyval.string) = safe_strdup("float"); }
-#line 1726 "out/myanalyzer.tab.c"
+#line 1699 "out/myanalyzer.tab.c"
     break;
 
-  case 28: /* type: KW_STR  */
-#line 328 "myanalyzer.y"
+  case 25: /* type: KW_STR  */
+#line 333 "myanalyzer.y"
                 { (yyval.string) = safe_strdup("char*"); }
-#line 1732 "out/myanalyzer.tab.c"
+#line 1705 "out/myanalyzer.tab.c"
     break;
 
-  case 29: /* type: KW_BOOL  */
-#line 329 "myanalyzer.y"
+  case 26: /* type: KW_BOOL  */
+#line 334 "myanalyzer.y"
                 { (yyval.string) = safe_strdup("bool"); }
-#line 1738 "out/myanalyzer.tab.c"
+#line 1711 "out/myanalyzer.tab.c"
     break;
 
-  case 30: /* type: IDENTIFIER  */
-#line 330 "myanalyzer.y"
+  case 27: /* type: IDENTIFIER  */
+#line 335 "myanalyzer.y"
                 { (yyval.string) = safe_strdup((yyvsp[0].string)); safe_free((yyvsp[0].string));}
-#line 1744 "out/myanalyzer.tab.c"
+#line 1717 "out/myanalyzer.tab.c"
     break;
 
-  case 39: /* stmt: function_call SEMICOLON  */
-#line 342 "myanalyzer.y"
+  case 36: /* stmt: function_call SEMICOLON  */
+#line 347 "myanalyzer.y"
                             {
 		char* tmp = malloc(strlen((yyvsp[-1].string)) + 3);
 		sprintf(tmp, "%s;\n", (yyvsp[-1].string));
 		(yyval.string) = add_indentation(tmp);
 		free(tmp);
 		free((yyvsp[-1].string));
-}
-#line 1756 "out/myanalyzer.tab.c"
+	}
+#line 1729 "out/myanalyzer.tab.c"
     break;
 
-  case 40: /* stmt: error SEMICOLON  */
-#line 348 "myanalyzer.y"
-                    { 
+  case 37: /* stmt: error SEMICOLON  */
+#line 353 "myanalyzer.y"
+                            { 
 		yyerror("Invalid statement");
 		yyerrok;
 		(yyval.string) = safe_strdup("/* ERROR */\n"); 
 	}
-#line 1766 "out/myanalyzer.tab.c"
+#line 1739 "out/myanalyzer.tab.c"
     break;
 
-  case 41: /* assignment_stmt: IDENTIFIER OP_ASSIGN expression SEMICOLON  */
-#line 356 "myanalyzer.y"
-                                              {
-        fprintf(stderr, "Matched assignment: %s = %s;\n", (yyvsp[-3].string), (yyvsp[-1].string));
-        char* line = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 16);
-        sprintf(line, "%s = %s;\n", (yyvsp[-3].string), (yyvsp[-1].string));
-        (yyval.string) = safe_strdup(line);
-        safe_free(line);
-        safe_free((yyvsp[-3].string));
-        safe_free((yyvsp[-1].string));
-    }
-#line 1780 "out/myanalyzer.tab.c"
+  case 38: /* assignment_stmt: IDENTIFIER OP_ASSIGN expression SEMICOLON  */
+#line 361 "myanalyzer.y"
+                                                  {
+		fprintf(stderr, "Matched assignment: %s = %s;\n", (yyvsp[-3].string), (yyvsp[-1].string));
+		char* line = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 16);
+		sprintf(line, "%s = %s;\n", (yyvsp[-3].string), (yyvsp[-1].string));
+		(yyval.string) = safe_strdup(line);
+		safe_free(line);
+		safe_free((yyvsp[-3].string));
+		safe_free((yyvsp[-1].string));
+	}
+#line 1753 "out/myanalyzer.tab.c"
     break;
 
-  case 42: /* return_stmt: KW_RETURN expression SEMICOLON  */
-#line 368 "myanalyzer.y"
+  case 39: /* return_stmt: KW_RETURN expression SEMICOLON  */
+#line 373 "myanalyzer.y"
                                    {
         fprintf(stderr, "Returning: %s\n", (yyvsp[-1].string));
         char* line = malloc(strlen((yyvsp[-1].string)) + 16);
@@ -1788,11 +1761,11 @@ yyreduce:
         (yyval.string) = add_indentation(line);
         safe_free(line);
     }
-#line 1792 "out/myanalyzer.tab.c"
+#line 1765 "out/myanalyzer.tab.c"
     break;
 
-  case 43: /* if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON  */
-#line 378 "myanalyzer.y"
+  case 40: /* if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON  */
+#line 383 "myanalyzer.y"
                                                                       {
         fprintf(stderr, "If statement: %s\n", (yyvsp[-5].string));
         indent_level++;
@@ -1803,11 +1776,11 @@ yyreduce:
         (yyval.string) = code;
         safe_free(body);
     }
-#line 1807 "out/myanalyzer.tab.c"
+#line 1780 "out/myanalyzer.tab.c"
     break;
 
-  case 44: /* if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON  */
-#line 388 "myanalyzer.y"
+  case 41: /* if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON  */
+#line 393 "myanalyzer.y"
                                                                                               {
         indent_level++;
         char* then_part = add_indentation((yyvsp[-5].string));
@@ -1820,11 +1793,11 @@ yyreduce:
         safe_free(then_part);
         safe_free(else_part);
     }
-#line 1824 "out/myanalyzer.tab.c"
+#line 1797 "out/myanalyzer.tab.c"
     break;
 
-  case 45: /* for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON  */
-#line 403 "myanalyzer.y"
+  case 42: /* for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON  */
+#line 408 "myanalyzer.y"
                                                                                                               {
         indent_level++;
         char* body = add_indentation((yyvsp[-2].string));
@@ -1835,11 +1808,11 @@ yyreduce:
         (yyval.string) = code;
         safe_free(body);
     }
-#line 1839 "out/myanalyzer.tab.c"
+#line 1812 "out/myanalyzer.tab.c"
     break;
 
-  case 46: /* while_stmt: KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON  */
-#line 416 "myanalyzer.y"
+  case 43: /* while_stmt: KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON  */
+#line 421 "myanalyzer.y"
                                                                             {
         indent_level++;
         char* body = add_indentation((yyvsp[-2].string));
@@ -1850,35 +1823,35 @@ yyreduce:
         (yyval.string) = code;
         safe_free(body);
     }
-#line 1854 "out/myanalyzer.tab.c"
+#line 1827 "out/myanalyzer.tab.c"
     break;
 
-  case 47: /* break_stmt: KW_BREAK SEMICOLON  */
-#line 429 "myanalyzer.y"
+  case 44: /* break_stmt: KW_BREAK SEMICOLON  */
+#line 434 "myanalyzer.y"
                        {
         (yyval.string) = add_indentation("break;\n");
     }
-#line 1862 "out/myanalyzer.tab.c"
+#line 1835 "out/myanalyzer.tab.c"
     break;
 
-  case 48: /* continue_stmt: KW_CONTINUE SEMICOLON  */
-#line 435 "myanalyzer.y"
+  case 45: /* continue_stmt: KW_CONTINUE SEMICOLON  */
+#line 440 "myanalyzer.y"
                           {
         (yyval.string) = add_indentation("continue;\n");
     }
-#line 1870 "out/myanalyzer.tab.c"
+#line 1843 "out/myanalyzer.tab.c"
     break;
 
-  case 49: /* empty_stmt: SEMICOLON  */
-#line 441 "myanalyzer.y"
+  case 46: /* empty_stmt: SEMICOLON  */
+#line 446 "myanalyzer.y"
               {
         (yyval.string) = safe_strdup(";");
     }
-#line 1878 "out/myanalyzer.tab.c"
+#line 1851 "out/myanalyzer.tab.c"
     break;
 
-  case 50: /* component: KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON  */
-#line 448 "myanalyzer.y"
+  case 47: /* component: KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON  */
+#line 453 "myanalyzer.y"
                                                                  {
 				fprintf(stderr, "Component: %s\n", (yyvsp[-4].string));
 
@@ -1887,17 +1860,17 @@ yyreduce:
 				(yyval.string) = add_indentation(code);
 				free(code);
 		}
-#line 1891 "out/myanalyzer.tab.c"
+#line 1864 "out/myanalyzer.tab.c"
     break;
 
-  case 51: /* component_body: %empty  */
-#line 459 "myanalyzer.y"
+  case 48: /* component_body: %empty  */
+#line 464 "myanalyzer.y"
                 { (yyval.string) = safe_strdup(""); }
-#line 1897 "out/myanalyzer.tab.c"
+#line 1870 "out/myanalyzer.tab.c"
     break;
 
-  case 52: /* component_body: component_body component_member  */
-#line 460 "myanalyzer.y"
+  case 49: /* component_body: component_body component_member  */
+#line 465 "myanalyzer.y"
                                     {
 			fprintf(stderr, "Component member: %s\n", (yyvsp[0].string));
 
@@ -1906,11 +1879,11 @@ yyreduce:
 			(yyval.string) = code;
 			free(code);
 	}
-#line 1910 "out/myanalyzer.tab.c"
+#line 1883 "out/myanalyzer.tab.c"
     break;
 
-  case 53: /* component_member: hash_ident_list COLON type SEMICOLON  */
-#line 471 "myanalyzer.y"
+  case 50: /* component_member: hash_ident_list COLON type SEMICOLON  */
+#line 476 "myanalyzer.y"
                                              {
 		char* decl = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 16);
 		sprintf(decl, "%s %s;\n", (yyvsp[-1].string), (yyvsp[-3].string));
@@ -1919,11 +1892,11 @@ yyreduce:
 		free((yyvsp[-3].string));
 		free((yyvsp[-1].string));
 	}
-#line 1923 "out/myanalyzer.tab.c"
+#line 1896 "out/myanalyzer.tab.c"
     break;
 
-  case 54: /* component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type SEMICOLON  */
-#line 478 "myanalyzer.y"
+  case 51: /* component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type SEMICOLON  */
+#line 483 "myanalyzer.y"
                                                                              {
 		char* decl = malloc(strlen((yyvsp[-6].string)) + strlen((yyvsp[-4].string)) + strlen((yyvsp[-1].string)) + 16);
 		sprintf(decl, "%s %s[%s];\n", (yyvsp[-1].string), (yyvsp[-6].string), (yyvsp[-4].string));
@@ -1933,328 +1906,310 @@ yyreduce:
 		free((yyvsp[-4].string));
 		free((yyvsp[-1].string));
 	}
-#line 1937 "out/myanalyzer.tab.c"
+#line 1910 "out/myanalyzer.tab.c"
     break;
 
-  case 55: /* component_member: function  */
-#line 486 "myanalyzer.y"
+  case 52: /* component_member: function  */
+#line 491 "myanalyzer.y"
                      {
 		char* decl = malloc(strlen((yyvsp[0].string)) + 16);
 		sprintf(decl, "%s", (yyvsp[0].string));
 		(yyval.string) = add_indentation(decl);
 		free(decl);
 	}
-#line 1948 "out/myanalyzer.tab.c"
+#line 1921 "out/myanalyzer.tab.c"
     break;
 
-  case 56: /* component_member: SEMICOLON  */
-#line 491 "myanalyzer.y"
+  case 53: /* component_member: SEMICOLON  */
+#line 496 "myanalyzer.y"
                       { (yyval.string) = safe_strdup(""); 
 	}
-#line 1955 "out/myanalyzer.tab.c"
+#line 1928 "out/myanalyzer.tab.c"
     break;
 
-  case 57: /* component_member: error SEMICOLON  */
-#line 492 "myanalyzer.y"
+  case 54: /* component_member: error SEMICOLON  */
+#line 497 "myanalyzer.y"
                             {
 		yyerror("Invalid variable declaration");
 		yyerrok;
 		(yyval.string) = safe_strdup("/* BAD DECLARATION */\n");
 	}
-#line 1965 "out/myanalyzer.tab.c"
+#line 1938 "out/myanalyzer.tab.c"
     break;
 
-  case 58: /* hash_ident_list: IDENTIFIER  */
-#line 500 "myanalyzer.y"
+  case 55: /* hash_ident_list: IDENTIFIER  */
+#line 505 "myanalyzer.y"
                  { (yyval.string) = safe_strdup((yyvsp[0].string)); }
-#line 1971 "out/myanalyzer.tab.c"
+#line 1944 "out/myanalyzer.tab.c"
     break;
 
-  case 59: /* hash_ident_list: hash_ident_list COMMA IDENTIFIER  */
-#line 501 "myanalyzer.y"
+  case 56: /* hash_ident_list: hash_ident_list COMMA IDENTIFIER  */
+#line 506 "myanalyzer.y"
                                            {
 		char* tmp = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 		sprintf(tmp, "%s, %s", (yyvsp[-2].string), (yyvsp[0].string)); // No # inserted
 		(yyval.string) = tmp;
 	}
-#line 1981 "out/myanalyzer.tab.c"
+#line 1954 "out/myanalyzer.tab.c"
     break;
 
-  case 60: /* ident_list: IDENTIFIER  */
-#line 509 "myanalyzer.y"
-                   {
-		(yyval.string) = safe_strdup((yyvsp[0].string));
-		safe_free((yyvsp[0].string));
-	}
-#line 1990 "out/myanalyzer.tab.c"
-    break;
-
-  case 61: /* ident_list: ident_list COMMA IDENTIFIER  */
-#line 512 "myanalyzer.y"
-                                        {
-		char* tmp = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 2);
-		sprintf(tmp, "%s, %s", (yyvsp[-2].string), (yyvsp[0].string));
-			(yyval.string) = tmp;
-	}
-#line 2000 "out/myanalyzer.tab.c"
-    break;
-
-  case 62: /* expression: primary_expression  */
-#line 521 "myanalyzer.y"
+  case 57: /* expression: primary_expression  */
+#line 527 "myanalyzer.y"
                        { (yyval.string) = safe_strdup((yyvsp[0].string)); safe_free((yyvsp[0].string)); }
-#line 2006 "out/myanalyzer.tab.c"
+#line 1960 "out/myanalyzer.tab.c"
     break;
 
-  case 63: /* expression: expression OP_PLUS expression  */
-#line 522 "myanalyzer.y"
+  case 58: /* expression: expression OP_PLUS expression  */
+#line 528 "myanalyzer.y"
                                   { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
-			sprintf((yyval.string), "%s + %s", (yyvsp[-2].string), (yyvsp[0].string));  // Fixed sprintf
+			sprintf((yyval.string), "%s + %s", (yyvsp[-2].string), (yyvsp[0].string)); 
 			safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2016 "out/myanalyzer.tab.c"
+#line 1970 "out/myanalyzer.tab.c"
     break;
 
-  case 64: /* expression: expression OP_MINUS expression  */
-#line 526 "myanalyzer.y"
+  case 59: /* expression: expression OP_MINUS expression  */
+#line 532 "myanalyzer.y"
                                                  {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s - %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2025 "out/myanalyzer.tab.c"
+#line 1979 "out/myanalyzer.tab.c"
     break;
 
-  case 65: /* expression: expression OP_MULT expression  */
-#line 529 "myanalyzer.y"
+  case 60: /* expression: expression OP_MULT expression  */
+#line 535 "myanalyzer.y"
                                           { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s * %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2034 "out/myanalyzer.tab.c"
+#line 1988 "out/myanalyzer.tab.c"
     break;
 
-  case 66: /* expression: expression OP_DIV expression  */
-#line 532 "myanalyzer.y"
+  case 61: /* expression: expression OP_DIV expression  */
+#line 538 "myanalyzer.y"
                                          {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s / %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2043 "out/myanalyzer.tab.c"
+#line 1997 "out/myanalyzer.tab.c"
     break;
 
-  case 67: /* expression: expression OP_MOD expression  */
-#line 535 "myanalyzer.y"
+  case 62: /* expression: expression OP_MOD expression  */
+#line 541 "myanalyzer.y"
                                          { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s %% %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2052 "out/myanalyzer.tab.c"
+#line 2006 "out/myanalyzer.tab.c"
     break;
 
-  case 68: /* expression: expression OP_POW expression  */
-#line 538 "myanalyzer.y"
+  case 63: /* expression: expression OP_POW expression  */
+#line 544 "myanalyzer.y"
                                                       {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s ^ %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2061 "out/myanalyzer.tab.c"
+#line 2015 "out/myanalyzer.tab.c"
     break;
 
-  case 69: /* expression: expression OP_EQ expression  */
-#line 541 "myanalyzer.y"
+  case 64: /* expression: expression OP_EQ expression  */
+#line 547 "myanalyzer.y"
                                         { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s == %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2070 "out/myanalyzer.tab.c"
+#line 2024 "out/myanalyzer.tab.c"
     break;
 
-  case 70: /* expression: expression OP_NEQ expression  */
-#line 544 "myanalyzer.y"
+  case 65: /* expression: expression OP_NEQ expression  */
+#line 550 "myanalyzer.y"
                                          { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s != %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2079 "out/myanalyzer.tab.c"
+#line 2033 "out/myanalyzer.tab.c"
     break;
 
-  case 71: /* expression: expression OP_LT expression  */
-#line 547 "myanalyzer.y"
+  case 66: /* expression: expression OP_LT expression  */
+#line 553 "myanalyzer.y"
                                         {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s < %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2088 "out/myanalyzer.tab.c"
+#line 2042 "out/myanalyzer.tab.c"
     break;
 
-  case 72: /* expression: expression OP_LEQ expression  */
-#line 550 "myanalyzer.y"
+  case 67: /* expression: expression OP_LEQ expression  */
+#line 556 "myanalyzer.y"
                                          {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s <= %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2097 "out/myanalyzer.tab.c"
+#line 2051 "out/myanalyzer.tab.c"
     break;
 
-  case 73: /* expression: expression OP_GT expression  */
-#line 553 "myanalyzer.y"
+  case 68: /* expression: expression OP_GT expression  */
+#line 559 "myanalyzer.y"
                                         {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s > %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2106 "out/myanalyzer.tab.c"
+#line 2060 "out/myanalyzer.tab.c"
     break;
 
-  case 74: /* expression: expression OP_GEQ expression  */
-#line 556 "myanalyzer.y"
+  case 69: /* expression: expression OP_GEQ expression  */
+#line 562 "myanalyzer.y"
                                          {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 4);
 			sprintf((yyval.string), "%s >= %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2115 "out/myanalyzer.tab.c"
+#line 2069 "out/myanalyzer.tab.c"
     break;
 
-  case 75: /* expression: expression KW_AND expression  */
-#line 559 "myanalyzer.y"
+  case 70: /* expression: expression KW_AND expression  */
+#line 565 "myanalyzer.y"
                                          {
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 6);
 			sprintf((yyval.string), "%s && %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2124 "out/myanalyzer.tab.c"
+#line 2078 "out/myanalyzer.tab.c"
     break;
 
-  case 76: /* expression: expression KW_OR expression  */
-#line 562 "myanalyzer.y"
+  case 71: /* expression: expression KW_OR expression  */
+#line 568 "myanalyzer.y"
                                         { 
 			(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 5);
 			sprintf((yyval.string), "%s || %s", (yyvsp[-2].string), (yyvsp[0].string)); safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2133 "out/myanalyzer.tab.c"
+#line 2087 "out/myanalyzer.tab.c"
     break;
 
-  case 77: /* expression: KW_NOT expression  */
-#line 565 "myanalyzer.y"
+  case 72: /* expression: KW_NOT expression  */
+#line 571 "myanalyzer.y"
                                            { (yyval.string) = (yyvsp[0].string); }
-#line 2139 "out/myanalyzer.tab.c"
+#line 2093 "out/myanalyzer.tab.c"
     break;
 
-  case 78: /* expression: OP_MINUS expression  */
-#line 566 "myanalyzer.y"
+  case 73: /* expression: OP_MINUS expression  */
+#line 572 "myanalyzer.y"
                                      { (yyval.string) = (yyvsp[0].string); }
-#line 2145 "out/myanalyzer.tab.c"
+#line 2099 "out/myanalyzer.tab.c"
     break;
 
-  case 79: /* expression: LPAREN expression RPAREN  */
-#line 567 "myanalyzer.y"
-                             { (yyval.string) = (yyvsp[-1].string); }
-#line 2151 "out/myanalyzer.tab.c"
-    break;
-
-  case 80: /* expression: CONST_BOOL_FALSE  */
-#line 568 "myanalyzer.y"
-                     { (yyval.string) = safe_strdup("false"); }
-#line 2157 "out/myanalyzer.tab.c"
-    break;
-
-  case 81: /* expression: CONST_BOOL_TRUE  */
-#line 569 "myanalyzer.y"
-                          { (yyval.string) = safe_strdup("true"); }
-#line 2163 "out/myanalyzer.tab.c"
-    break;
-
-  case 82: /* function_call: IDENTIFIER LPAREN arg_list RPAREN  */
+  case 74: /* expression: LPAREN expression RPAREN  */
 #line 573 "myanalyzer.y"
+                             { (yyval.string) = (yyvsp[-1].string); }
+#line 2105 "out/myanalyzer.tab.c"
+    break;
+
+  case 75: /* expression: CONST_BOOL_FALSE  */
+#line 574 "myanalyzer.y"
+                     { (yyval.string) = safe_strdup("false"); }
+#line 2111 "out/myanalyzer.tab.c"
+    break;
+
+  case 76: /* expression: CONST_BOOL_TRUE  */
+#line 575 "myanalyzer.y"
+                          { (yyval.string) = safe_strdup("true"); }
+#line 2117 "out/myanalyzer.tab.c"
+    break;
+
+  case 77: /* function_call: IDENTIFIER LPAREN arg_list RPAREN  */
+#line 579 "myanalyzer.y"
                                           {
 		(yyval.string) = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 4);
 		sprintf((yyval.string), "%s(%s)", (yyvsp[-3].string), (yyvsp[-1].string));
 		free((yyvsp[-3].string)); free((yyvsp[-1].string));
 	}
-#line 2173 "out/myanalyzer.tab.c"
+#line 2127 "out/myanalyzer.tab.c"
     break;
 
-  case 83: /* function_call: IDENTIFIER LPAREN RPAREN  */
-#line 577 "myanalyzer.y"
-                                     {
-		(yyval.string) = malloc(strlen((yyvsp[-2].string)) + 3);
-		sprintf((yyval.string), "%s()", (yyvsp[-2].string));
-		free((yyvsp[-2].string));
-	}
-#line 2183 "out/myanalyzer.tab.c"
-    break;
-
-  case 84: /* arg_list: %empty  */
-#line 585 "myanalyzer.y"
-                { (yyval.string) = safe_strdup(""); }
-#line 2189 "out/myanalyzer.tab.c"
-    break;
-
-  case 85: /* arg_list: expression  */
-#line 586 "myanalyzer.y"
-               { (yyval.string) = safe_strdup((yyvsp[0].string)); safe_free((yyvsp[0].string)); }
-#line 2195 "out/myanalyzer.tab.c"
-    break;
-
-  case 86: /* arg_list: arg_list COMMA expression  */
+  case 78: /* arg_list: %empty  */
 #line 587 "myanalyzer.y"
+                    { (yyval.string) = safe_strdup(""); }
+#line 2133 "out/myanalyzer.tab.c"
+    break;
+
+  case 79: /* arg_list: expression  */
+#line 588 "myanalyzer.y"
+               { (yyval.string) = safe_strdup((yyvsp[0].string));}
+#line 2139 "out/myanalyzer.tab.c"
+    break;
+
+  case 80: /* arg_list: arg_list COMMA expression  */
+#line 589 "myanalyzer.y"
                               {
 		char* tmp = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 2);
 		sprintf(tmp, "%s,%s", (yyvsp[-2].string), (yyvsp[0].string));
 		(yyval.string) = tmp;
 		safe_free((yyvsp[-2].string)); safe_free((yyvsp[0].string));
 	}
-#line 2206 "out/myanalyzer.tab.c"
+#line 2150 "out/myanalyzer.tab.c"
     break;
 
-  case 91: /* primary_expression: IDENTIFIER LPAREN arg_list RPAREN  */
-#line 600 "myanalyzer.y"
-                                      { /* function call */ }
-#line 2212 "out/myanalyzer.tab.c"
-    break;
-
-  case 92: /* primary_expression: primary_expression LBRACKET expression RBRACKET  */
-#line 601 "myanalyzer.y"
-                                                    { /* array access */ }
-#line 2218 "out/myanalyzer.tab.c"
-    break;
-
-  case 93: /* primary_expression: primary_expression DOT IDENTIFIER  */
+  case 85: /* primary_expression: function_call  */
 #line 602 "myanalyzer.y"
-                                      { /* member access */ }
-#line 2224 "out/myanalyzer.tab.c"
+                        { (yyval.string) = (yyvsp[0].string); }
+#line 2156 "out/myanalyzer.tab.c"
     break;
 
-  case 94: /* block: decl_list stmt_list  */
-#line 606 "myanalyzer.y"
-                            {
-		fprintf(stderr, "Processing block:\nDeclarations: %s\nStatements: %s\n", (yyvsp[-1].string), (yyvsp[0].string));
-		char* code = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
-		sprintf(code, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
-		(yyval.string) = add_indentation(code);
-		free(code);
-		free((yyvsp[-1].string)); free((yyvsp[0].string));
+  case 86: /* primary_expression: primary_expression LBRACKET expression RBRACKET  */
+#line 604 "myanalyzer.y"
+                                                    {
+		(yyval.string) = malloc(strlen((yyvsp[-3].string)) + strlen((yyvsp[-1].string)) + 4);
+		sprintf((yyval.string), "%s[%s]", (yyvsp[-3].string), (yyvsp[-1].string));
+		free((yyvsp[-3].string)); free((yyvsp[-1].string));
 	}
-#line 2237 "out/myanalyzer.tab.c"
+#line 2166 "out/myanalyzer.tab.c"
     break;
 
-  case 95: /* decl_list: %empty  */
-#line 617 "myanalyzer.y"
-                { (yyval.string) = safe_strdup(""); }
-#line 2243 "out/myanalyzer.tab.c"
+  case 87: /* primary_expression: primary_expression DOT IDENTIFIER  */
+#line 608 "myanalyzer.y"
+                                              {
+		(yyval.string) = malloc(strlen((yyvsp[-2].string)) + strlen((yyvsp[0].string)) + 2);
+		sprintf((yyval.string), "%s.%s", (yyvsp[-2].string), (yyvsp[0].string));
+		free((yyvsp[-2].string)); free((yyvsp[0].string));
+	}
+#line 2176 "out/myanalyzer.tab.c"
     break;
 
-  case 96: /* decl_list: decl_list var_declaration  */
-#line 618 "myanalyzer.y"
-                                {
-        char* tmp = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
-        sprintf(tmp, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
-        (yyval.string) = tmp;
-        free((yyvsp[-1].string)); free((yyvsp[0].string));
+  case 88: /* block: decl_list stmt_list  */
+#line 616 "myanalyzer.y"
+                        {
+        // Add debug output to verify parsing
+        fprintf(stderr, "Block parsed:\nDeclarations: %s\nStatements: %s\n", (yyvsp[-1].string), (yyvsp[0].string));
+        char* code = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
+        sprintf(code, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
+        (yyval.string) = add_indentation(code);
+        free(code);
+        free((yyvsp[-1].string));
+        free((yyvsp[0].string));
     }
-#line 2254 "out/myanalyzer.tab.c"
+#line 2191 "out/myanalyzer.tab.c"
+    break;
+
+  case 89: /* decl_list: %empty  */
+#line 629 "myanalyzer.y"
+                    { (yyval.string) = safe_strdup(""); }
+#line 2197 "out/myanalyzer.tab.c"
+    break;
+
+  case 90: /* decl_list: decl_list var_declaration  */
+#line 630 "myanalyzer.y"
+                                    {
+		char* tmp = malloc(strlen((yyvsp[-1].string)) + strlen((yyvsp[0].string)) + 2);
+		sprintf(tmp, "%s%s", (yyvsp[-1].string), (yyvsp[0].string));
+		(yyval.string) = tmp;
+		free((yyvsp[-1].string));
+		free((yyvsp[0].string));
+	}
+#line 2209 "out/myanalyzer.tab.c"
     break;
 
 
-#line 2258 "out/myanalyzer.tab.c"
+#line 2213 "out/myanalyzer.tab.c"
 
       default: break;
     }
@@ -2447,18 +2402,12 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 626 "myanalyzer.y"
+#line 639 "myanalyzer.y"
 
 
-int main() {
-	yydebug = 1;
-	return yyparse();
-}
-
-// void yyerror(const char *pat, ...) {
-//     va_list args;
-//     va_start(args, pat);
-//     vfprintf(stderr, pat, args);
-//     va_end(args);
-//     fprintf(stderr, "\n");
-// }
+# ifndef TTLEXER
+	int main() {
+		yydebug = 1;
+		return yyparse();
+	}
+# endif
