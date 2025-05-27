@@ -17,13 +17,1656 @@ Shifting token KW_COMP ()
 Entering state 10
 Stack now 0 2 6 10
 Reading a token
-Next token is token DECL_IDENT ()
-line 1: syntax error
-Error: popping token KW_COMP ()
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 31
+Stack now 0 2 6 10 31
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 56
+Stack now 0 2 6 10 31 56
+Reducing stack by rule 47 (line 464):
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 2: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Error: discarding token KW_STR ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 2: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 3: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_INTEGER
+Next token is token KW_INTEGER ()
+Error: discarding token KW_INTEGER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 3: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 4: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Error: discarding token KW_STR ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 4: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+KW_DEF
+Next token is token KW_DEF ()
+Shifting token KW_DEF ()
+Entering state 92
+Stack now 0 2 6 10 31 56 81 92
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 29
+Stack now 0 2 6 10 31 56 81 92 29
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 54
+Stack now 0 2 6 10 31 56 81 92 29 54
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 77
+Stack now 0 2 6 10 31 56 81 92 29 54 77
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 86
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Shifting token KW_STR ()
+Entering state 102
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86 102
+Reducing stack by rule 24 (line 333):
+   $1 = token KW_STR ()
+-> $$ = nterm type ()
+Entering state 105
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86 105
+Reducing stack by rule 17 (line 294):
+   $1 = token IDENTIFIER ()
+   $2 = token COLON ()
+   $3 = nterm type ()
+Param: s
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+KW_INTEGER
+Next token is token KW_INTEGER ()
+Shifting token KW_INTEGER ()
+Entering state 100
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 100
+Reducing stack by rule 22 (line 331):
+   $1 = token KW_INTEGER ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: n
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Shifting token KW_STR ()
+Entering state 102
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 102
+Reducing stack by rule 24 (line 333):
+   $1 = token KW_STR ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: c
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Reducing stack by rule 16 (line 290):
+   $1 = nterm param_decl_list ()
+Param list char* s, int n, char* c
+-> $$ = nterm param_list ()
+Entering state 78
+Stack now 0 2 6 10 31 56 81 92 29 54 78
+Next token is token RPAREN ()
+Shifting token RPAREN ()
+Entering state 87
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 106
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106
+Reducing stack by rule 87 (line 616):
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 7: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 7: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 8: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 8: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 9: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 9: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+KW_ENDDEF
+Next token is token KW_ENDDEF ()
+Shifting token KW_ENDDEF ()
+Entering state 143
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 159
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143 159
+Reducing stack by rule 14 (line 274):
+   $1 = token KW_DEF ()
+   $2 = token IDENTIFIER ()
+   $3 = token LPAREN ()
+   $4 = nterm param_list ()
+   $5 = token RPAREN ()
+   $6 = token COLON ()
+   $7 = nterm block ()
+   $8 = token KW_ENDDEF ()
+   $9 = token SEMICOLON ()
+Function with no return: setAddress
+-> $$ = nterm function ()
+Entering state 95
+Stack now 0 2 6 10 31 56 81 95
+Reducing stack by rule 51 (line 491):
+   $1 = nterm function ()
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: void setAddress(char* s, int n, char* c) {
+    /* ERROR */
+    /* ERROR */
+    /* ERROR */
+}
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+KW_DEF
+Next token is token KW_DEF ()
+Shifting token KW_DEF ()
+Entering state 92
+Stack now 0 2 6 10 31 56 81 92
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 29
+Stack now 0 2 6 10 31 56 81 92 29
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 54
+Stack now 0 2 6 10 31 56 81 92 29 54
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Reducing stack by rule 15 (line 289):
+-> $$ = nterm param_list ()
+Entering state 78
+Stack now 0 2 6 10 31 56 81 92 29 54 78
+Next token is token RPAREN ()
+Shifting token RPAREN ()
+Entering state 87
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 106
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106
+Reducing stack by rule 87 (line 616):
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 120
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 32
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32
+Reading a token
+CONST_STRING
+Next token is token CONST_STRING ()
+Shifting token CONST_STRING ()
+Entering state 19
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 19
+Reducing stack by rule 82 (line 600):
+   $1 = token CONST_STRING ()
+-> $$ = nterm primary_expression ()
+Entering state 27
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 27
+Reading a token
+COMMA
+Next token is token COMMA ()
+Reducing stack by rule 56 (line 527):
+   $1 = nterm primary_expression ()
+-> $$ = nterm expression ()
+Entering state 57
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 57
+Next token is token COMMA ()
+Reducing stack by rule 78 (line 588):
+   $1 = nterm expression ()
+-> $$ = nterm arg_list ()
+Entering state 58
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 58
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 83
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 58 83
+Reading a token
+HASH
+Next token is token HASH ()
+line 13: syntax error
+Error: popping token COMMA ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32 58
+Error: popping nterm arg_list ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120 32
+Error: popping token LPAREN ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 120
+Error: popping token IDENTIFIER ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+COMMA
+Next token is token COMMA ()
+Error: discarding token COMMA ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+HASH
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+COMMA
+Next token is token COMMA ()
+Error: discarding token COMMA ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+HASH
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Error: discarding token RPAREN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 13: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+KW_ENDDEF
+Next token is token KW_ENDDEF ()
+Shifting token KW_ENDDEF ()
+Entering state 143
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 159
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143 159
+Reducing stack by rule 14 (line 274):
+   $1 = token KW_DEF ()
+   $2 = token IDENTIFIER ()
+   $3 = token LPAREN ()
+   $4 = nterm param_list ()
+   $5 = token RPAREN ()
+   $6 = token COLON ()
+   $7 = nterm block ()
+   $8 = token KW_ENDDEF ()
+   $9 = token SEMICOLON ()
+Function with no return: printAddress
+-> $$ = nterm function ()
+Entering state 95
+Stack now 0 2 6 10 31 56 81 95
+Reducing stack by rule 51 (line 491):
+   $1 = nterm function ()
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: void printAddress() {
+    /* ERROR */
+}
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+KW_ENDCOMP
+Next token is token KW_ENDCOMP ()
+Shifting token KW_ENDCOMP ()
+Entering state 93
+Stack now 0 2 6 10 31 56 81 93
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 111
+Stack now 0 2 6 10 31 56 81 93 111
+Reducing stack by rule 46 (line 453):
+   $1 = token KW_COMP ()
+   $2 = token IDENTIFIER ()
+   $3 = token COLON ()
+   $4 = nterm component_body ()
+   $5 = token KW_ENDCOMP ()
+   $6 = token SEMICOLON ()
+Component: Address
+-> $$ = nterm component ()
+Entering state 15
+Stack now 0 2 6 15
+Reducing stack by rule 9 (line 220):
+   $1 = nterm component ()
+Component: struct Address {
+±›a};
+
+-> $$ = nterm top_level ()
+Entering state 11
+Stack now 0 2 6 11
+Reducing stack by rule 6 (line 204):
+   $1 = nterm top_level_list ()
+   $2 = nterm top_level ()
+Top level: 
+-> $$ = nterm top_level_list ()
+Entering state 6
 Stack now 0 2 6
-Error: popping nterm top_level_list ()
-Stack now 0 2
-Error: popping nterm macro_def_list ()
-Stack now 0
-Cleanup: discarding lookahead token DECL_IDENT ()
-Stack now 0
+Reading a token
+KW_COMP
+Next token is token KW_COMP ()
+Shifting token KW_COMP ()
+Entering state 10
+Stack now 0 2 6 10
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 31
+Stack now 0 2 6 10 31
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 56
+Stack now 0 2 6 10 31 56
+Reducing stack by rule 47 (line 464):
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 18: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COMMA
+Next token is token COMMA ()
+Error: discarding token COMMA ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+HASH
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Error: discarding token KW_STR ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 18: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 19: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Error: discarding token KW_STR ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 19: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 20: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+KW_INTEGER
+Next token is token KW_INTEGER ()
+Error: discarding token KW_INTEGER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 20: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+HASH
+Next token is token HASH ()
+line 21: syntax error
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+COLON
+Next token is token COLON ()
+Error: discarding token COLON ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81
+Shifting token error ()
+Entering state 90
+Stack now 0 2 6 10 31 56 81 90
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 110
+Stack now 0 2 6 10 31 56 81 90 110
+Reducing stack by rule 53 (line 497):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 21: Invalid variable declaration
+-> $$ = nterm component_member ()
+Entering state 96
+Stack now 0 2 6 10 31 56 81 96
+Reducing stack by rule 48 (line 465):
+   $1 = nterm component_body ()
+   $2 = nterm component_member ()
+Component member: /* BAD DECLARATION */
+
+-> $$ = nterm component_body ()
+Entering state 81
+Stack now 0 2 6 10 31 56 81
+Reading a token
+KW_DEF
+Next token is token KW_DEF ()
+Shifting token KW_DEF ()
+Entering state 92
+Stack now 0 2 6 10 31 56 81 92
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 29
+Stack now 0 2 6 10 31 56 81 92 29
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 54
+Stack now 0 2 6 10 31 56 81 92 29 54
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 77
+Stack now 0 2 6 10 31 56 81 92 29 54 77
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 86
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Shifting token KW_STR ()
+Entering state 102
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86 102
+Reducing stack by rule 24 (line 333):
+   $1 = token KW_STR ()
+-> $$ = nterm type ()
+Entering state 105
+Stack now 0 2 6 10 31 56 81 92 29 54 77 86 105
+Reducing stack by rule 17 (line 294):
+   $1 = token IDENTIFIER ()
+   $2 = token COLON ()
+   $3 = nterm type ()
+Param: fn
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Shifting token KW_STR ()
+Entering state 102
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 102
+Reducing stack by rule 24 (line 333):
+   $1 = token KW_STR ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: ln
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+KW_STR
+Next token is token KW_STR ()
+Shifting token KW_STR ()
+Entering state 102
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 102
+Reducing stack by rule 24 (line 333):
+   $1 = token KW_STR ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: email
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+KW_INTEGER
+Next token is token KW_INTEGER ()
+Shifting token KW_INTEGER ()
+Entering state 100
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 100
+Reducing stack by rule 22 (line 331):
+   $1 = token KW_INTEGER ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: phone
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+COMMA
+Next token is token COMMA ()
+Shifting token COMMA ()
+Entering state 88
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 108
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 118
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118
+Reading a token
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 99
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 99
+Reducing stack by rule 26 (line 335):
+   $1 = token IDENTIFIER ()
+-> $$ = nterm type ()
+Entering state 145
+Stack now 0 2 6 10 31 56 81 92 29 54 79 88 108 118 145
+Reducing stack by rule 18 (line 299):
+   $1 = nterm param_decl_list ()
+   $2 = token COMMA ()
+   $3 = token IDENTIFIER ()
+   $4 = token COLON ()
+   $5 = nterm type ()
+Param: addr
+-> $$ = nterm param_decl_list ()
+Entering state 79
+Stack now 0 2 6 10 31 56 81 92 29 54 79
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Reducing stack by rule 16 (line 290):
+   $1 = nterm param_decl_list ()
+Param list char* fn, char* ln, char* email, int phone, Address addr
+-> $$ = nterm param_list ()
+Entering state 78
+Stack now 0 2 6 10 31 56 81 92 29 54 78
+Next token is token RPAREN ()
+Shifting token RPAREN ()
+Entering state 87
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 106
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106
+Reducing stack by rule 87 (line 616):
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 24: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 24: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 25: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 25: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 26: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 26: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 27: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 27: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+HASH
+Next token is token HASH ()
+line 28: syntax error
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Next token is token HASH ()
+Error: discarding token HASH ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+OP_ASSIGN
+Next token is token OP_ASSIGN ()
+Error: discarding token OP_ASSIGN ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+Next token is token IDENTIFIER ()
+Error: discarding token IDENTIFIER ()
+Error: popping token error ()
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Shifting token error ()
+Entering state 119
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 146
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 119 146
+Reducing stack by rule 36 (line 353):
+   $1 = token error ()
+   $2 = token SEMICOLON ()
+line 28: Invalid statement
+-> $$ = nterm stmt ()
+Entering state 130
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116
+Reading a token
+KW_ENDDEF
+Next token is token KW_ENDDEF ()
+Shifting token KW_ENDDEF ()
+Entering state 143
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 159
+Stack now 0 2 6 10 31 56 81 92 29 54 78 87 106 116 143 159
+Reducing stack by rule 14 (line 274):
+   $1 = token KW_DEF ()
+   $2 = token IDENTIFIER ()
+   $3 = token LPAREN ()
+   $4 = nterm param_list ()
+   $5 = token RPAREN ()
+   $6 = token COLON ()
+   $7 = nterm block ()
+   $8 = token KW_ENDDEF ()
+   $9 = token SEMICOLON ()
+Function with no return: setPerson
+corrupted size vs. prev_size
+Aborted (core dumped)

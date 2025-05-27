@@ -1,5 +1,5 @@
 int main() {
-    /* ERROR */
+    int x;
     x = 1 + 2 + 3 + 4;
     writeInt(x);
 }

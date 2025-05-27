@@ -1,6 +1,7 @@
 Nonterminals useless in grammar
 
     ident_list
+    decl_list
 
 
 Terminals unused in grammar
@@ -24,8 +25,9 @@ Rules useless in grammar
    90 ident_list: IDENTIFIER
    91           | ident_list COMMA IDENTIFIER
 
-
-State 110 conflicts: 1 shift/reduce
+   92 decl_list: ε
+   93          | decl_list var_declaration
+   94          | decl_list error SEMICOLON
 
 
 Grammar
@@ -148,10 +150,9 @@ Grammar
    85                   | primary_expression LBRACKET expression RBRACKET
    86                   | primary_expression DOT IDENTIFIER
 
-   87 block: decl_list stmt_list
-
-   88 decl_list: ε
-   89          | decl_list var_declaration
+   87 block: ε
+   88      | block var_declaration
+   89      | block stmt
 
 
 Terminals, with rules where they appear
@@ -247,7 +248,7 @@ Nonterminals, with rules where they appear
         on right: 6
     var_declaration <string> (75)
         on left: 11
-        on right: 89
+        on right: 88
     const_declaration <string> (76)
         on left: 12
         on right: 10
@@ -265,13 +266,13 @@ Nonterminals, with rules where they appear
         on right: 8
     stmt_list <string> (81)
         on left: 20 21
-        on right: 21 39 40 41 42 87
+        on right: 21 39 40 41 42
     type <string> (82)
         on left: 22 23 24 25 26
         on right: 11 12 13 17 18 49 50
     stmt <string> (83)
         on left: 27 28 29 30 31 32 33 34 35 36
-        on right: 21
+        on right: 21 89
     assignment_stmt <string> (84)
         on left: 37
         on right: 27
@@ -321,11 +322,8 @@ Nonterminals, with rules where they appear
         on left: 80 81 82 83 84 85 86
         on right: 56 85 86
     block <string> (100)
-        on left: 87
-        on right: 13 14 19
-    decl_list <string> (101)
-        on left: 88 89
-        on right: 87 89
+        on left: 87 88 89
+        on right: 13 14 19 88 89
 
 
 State 0
@@ -2654,21 +2652,20 @@ State 88
 State 89
 
    19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON • block KW_ENDDEF SEMICOLON
-   87 block: • decl_list stmt_list
-   88 decl_list: ε •
-   89          | • decl_list var_declaration
+   87 block: ε •
+   88      | • block var_declaration
+   89      | • block stmt
 
-    $default  reduce using rule 88 (decl_list)
+    $default  reduce using rule 87 (block)
 
-    block      go to state 109
-    decl_list  go to state 110
+    block  go to state 109
 
 
 State 90
 
    53 component_member: error • SEMICOLON
 
-    SEMICOLON  shift, and go to state 111
+    SEMICOLON  shift, and go to state 110
 
 
 State 91
@@ -2690,7 +2687,7 @@ State 93
 
    46 component: KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP • SEMICOLON
 
-    SEMICOLON  shift, and go to state 112
+    SEMICOLON  shift, and go to state 111
 
 
 State 94
@@ -2720,9 +2717,9 @@ State 97
    50                 | hash_ident_list • LBRACKET CONST_INT RBRACKET COLON type SEMICOLON
    55 hash_ident_list: hash_ident_list • COMMA IDENTIFIER
 
-    LBRACKET  shift, and go to state 113
-    COLON     shift, and go to state 114
-    COMMA     shift, and go to state 115
+    LBRACKET  shift, and go to state 112
+    COLON     shift, and go to state 113
+    COMMA     shift, and go to state 114
 
 
 State 98
@@ -2800,7 +2797,7 @@ State 104
 
    12 const_declaration: KW_CONST IDENTIFIER OP_ASSIGN expression COLON type • SEMICOLON
 
-    SEMICOLON  shift, and go to state 116
+    SEMICOLON  shift, and go to state 115
 
 
 State 105
@@ -2813,14 +2810,13 @@ State 105
 State 106
 
    14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON • block KW_ENDDEF SEMICOLON
-   87 block: • decl_list stmt_list
-   88 decl_list: ε •
-   89          | • decl_list var_declaration
+   87 block: ε •
+   88      | • block var_declaration
+   89      | • block stmt
 
-    $default  reduce using rule 88 (decl_list)
+    $default  reduce using rule 87 (block)
 
-    block      go to state 117
-    decl_list  go to state 110
+    block  go to state 116
 
 
 State 107
@@ -2838,176 +2834,20 @@ State 107
     KW_STR      shift, and go to state 102
     KW_BOOL     shift, and go to state 103
 
-    type  go to state 118
+    type  go to state 117
 
 
 State 108
 
    18 param_decl_list: param_decl_list COMMA IDENTIFIER • COLON type
 
-    COLON  shift, and go to state 119
+    COLON  shift, and go to state 118
 
 
 State 109
 
-   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block • KW_ENDDEF SEMICOLON
-
-    KW_ENDDEF  shift, and go to state 120
-
-
-State 110
-
    11 var_declaration: • IDENTIFIER COLON type SEMICOLON
-   20 stmt_list: ε •  [error, IDENTIFIER, KW_IF, KW_FOR, KW_WHILE, KW_BREAK, KW_CONTINUE, KW_ENDDEF, KW_RETURN, SEMICOLON]
-   21          | • stmt_list stmt
-   87 block: decl_list • stmt_list
-   89 decl_list: decl_list • var_declaration
-
-    IDENTIFIER  shift, and go to state 121
-
-    IDENTIFIER  [reduce using rule 20 (stmt_list)]
-    $default    reduce using rule 20 (stmt_list)
-
-    var_declaration  go to state 122
-    stmt_list        go to state 123
-
-    shift/reduce conflict on token IDENTIFIER:
-       20 stmt_list: ε •
-       11 var_declaration: • IDENTIFIER COLON type SEMICOLON
-      First example: macro_def_list top_level_list KW_DEF KW_MAIN LPAREN RPAREN COLON decl_list • IDENTIFIER COLON type SEMICOLON stmt_list KW_ENDDEF SEMICOLON $end
-      Shift derivation
-        $accept
-        ↳ 0: program                                                                                                                                                                      $end
-             ↳ 1: macro_def_list top_level_list
-                                 ↳ 6: top_level_list main_function
-                                                     ↳ 19: KW_DEF KW_MAIN LPAREN RPAREN COLON block                                                                   KW_ENDDEF SEMICOLON
-                                                                                              ↳ 87: decl_list                                               stmt_list
-                                                                                                    ↳ 89: decl_list var_declaration
-                                                                                                                    ↳ 11: • IDENTIFIER COLON type SEMICOLON
-      Second example: macro_def_list top_level_list KW_DEF KW_MAIN LPAREN RPAREN COLON decl_list • IDENTIFIER OP_ASSIGN expression SEMICOLON KW_ENDDEF SEMICOLON $end
-      Reduce derivation
-        $accept
-        ↳ 0: program                                                                                                                                                                                         $end
-             ↳ 1: macro_def_list top_level_list
-                                 ↳ 6: top_level_list top_level
-                                                     ↳ 8: main_function
-                                                          ↳ 19: KW_DEF KW_MAIN LPAREN RPAREN COLON block                                                                                 KW_ENDDEF SEMICOLON
-                                                                                                   ↳ 87: decl_list stmt_list
-                                                                                                                   ↳ 21: stmt_list stmt
-                                                                                                                         ↳ 20: ε • ↳ 27: assignment_stmt
-                                                                                                                                         ↳ 37: IDENTIFIER OP_ASSIGN expression SEMICOLON
-
-
-
-State 111
-
-   53 component_member: error SEMICOLON •
-
-    $default  reduce using rule 53 (component_member)
-
-
-State 112
-
-   46 component: KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON •
-
-    $default  reduce using rule 46 (component)
-
-
-State 113
-
-   50 component_member: hash_ident_list LBRACKET • CONST_INT RBRACKET COLON type SEMICOLON
-
-    CONST_INT  shift, and go to state 124
-
-
-State 114
-
-   22 type: • KW_INTEGER
-   23     | • KW_SCALAR
-   24     | • KW_STR
-   25     | • KW_BOOL
-   26     | • IDENTIFIER
-   49 component_member: hash_ident_list COLON • type SEMICOLON
-
-    IDENTIFIER  shift, and go to state 99
-    KW_INTEGER  shift, and go to state 100
-    KW_SCALAR   shift, and go to state 101
-    KW_STR      shift, and go to state 102
-    KW_BOOL     shift, and go to state 103
-
-    type  go to state 125
-
-
-State 115
-
-   55 hash_ident_list: hash_ident_list COMMA • IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 126
-
-
-State 116
-
-   12 const_declaration: KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON •
-
-    $default  reduce using rule 12 (const_declaration)
-
-
-State 117
-
-   14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block • KW_ENDDEF SEMICOLON
-
-    KW_ENDDEF  shift, and go to state 127
-
-
-State 118
-
-   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type • COLON block KW_ENDDEF SEMICOLON
-
-    COLON  shift, and go to state 128
-
-
-State 119
-
-   18 param_decl_list: param_decl_list COMMA IDENTIFIER COLON • type
-   22 type: • KW_INTEGER
-   23     | • KW_SCALAR
-   24     | • KW_STR
-   25     | • KW_BOOL
-   26     | • IDENTIFIER
-
-    IDENTIFIER  shift, and go to state 99
-    KW_INTEGER  shift, and go to state 100
-    KW_SCALAR   shift, and go to state 101
-    KW_STR      shift, and go to state 102
-    KW_BOOL     shift, and go to state 103
-
-    type  go to state 129
-
-
-State 120
-
-   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF • SEMICOLON
-
-    SEMICOLON  shift, and go to state 130
-
-
-State 121
-
-   11 var_declaration: IDENTIFIER • COLON type SEMICOLON
-
-    COLON  shift, and go to state 131
-
-
-State 122
-
-   89 decl_list: decl_list var_declaration •
-
-    $default  reduce using rule 89 (decl_list)
-
-
-State 123
-
-   21 stmt_list: stmt_list • stmt
+   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block • KW_ENDDEF SEMICOLON
    27 stmt: • assignment_stmt
    28     | • return_stmt
    29     | • if_stmt
@@ -3028,88 +2868,456 @@ State 123
    44 continue_stmt: • KW_CONTINUE SEMICOLON
    45 empty_stmt: • SEMICOLON
    76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
-   87 block: decl_list stmt_list •  [KW_ENDDEF]
+   88 block: block • var_declaration
+   89      | block • stmt
 
-    error        shift, and go to state 132
-    IDENTIFIER   shift, and go to state 133
-    KW_IF        shift, and go to state 134
-    KW_FOR       shift, and go to state 135
-    KW_WHILE     shift, and go to state 136
-    KW_BREAK     shift, and go to state 137
-    KW_CONTINUE  shift, and go to state 138
-    KW_RETURN    shift, and go to state 139
-    SEMICOLON    shift, and go to state 140
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 120
+    KW_IF        shift, and go to state 121
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_ENDDEF    shift, and go to state 126
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
 
-    KW_ENDDEF  reduce using rule 87 (block)
+    var_declaration  go to state 129
+    stmt             go to state 130
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
 
-    stmt             go to state 141
-    assignment_stmt  go to state 142
-    return_stmt      go to state 143
-    if_stmt          go to state 144
-    for_stmt         go to state 145
-    while_stmt       go to state 146
-    break_stmt       go to state 147
-    continue_stmt    go to state 148
-    empty_stmt       go to state 149
-    function_call    go to state 150
+
+State 110
+
+   53 component_member: error SEMICOLON •
+
+    $default  reduce using rule 53 (component_member)
+
+
+State 111
+
+   46 component: KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON •
+
+    $default  reduce using rule 46 (component)
+
+
+State 112
+
+   50 component_member: hash_ident_list LBRACKET • CONST_INT RBRACKET COLON type SEMICOLON
+
+    CONST_INT  shift, and go to state 140
+
+
+State 113
+
+   22 type: • KW_INTEGER
+   23     | • KW_SCALAR
+   24     | • KW_STR
+   25     | • KW_BOOL
+   26     | • IDENTIFIER
+   49 component_member: hash_ident_list COLON • type SEMICOLON
+
+    IDENTIFIER  shift, and go to state 99
+    KW_INTEGER  shift, and go to state 100
+    KW_SCALAR   shift, and go to state 101
+    KW_STR      shift, and go to state 102
+    KW_BOOL     shift, and go to state 103
+
+    type  go to state 141
+
+
+State 114
+
+   55 hash_ident_list: hash_ident_list COMMA • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 142
+
+
+State 115
+
+   12 const_declaration: KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON •
+
+    $default  reduce using rule 12 (const_declaration)
+
+
+State 116
+
+   11 var_declaration: • IDENTIFIER COLON type SEMICOLON
+   14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block • KW_ENDDEF SEMICOLON
+   27 stmt: • assignment_stmt
+   28     | • return_stmt
+   29     | • if_stmt
+   30     | • for_stmt
+   31     | • while_stmt
+   32     | • break_stmt
+   33     | • continue_stmt
+   34     | • empty_stmt
+   35     | • function_call SEMICOLON
+   36     | • error SEMICOLON
+   37 assignment_stmt: • IDENTIFIER OP_ASSIGN expression SEMICOLON
+   38 return_stmt: • KW_RETURN expression SEMICOLON
+   39 if_stmt: • KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
+   40        | • KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
+   41 for_stmt: • KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
+   42 while_stmt: • KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
+   43 break_stmt: • KW_BREAK SEMICOLON
+   44 continue_stmt: • KW_CONTINUE SEMICOLON
+   45 empty_stmt: • SEMICOLON
+   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
+   88 block: block • var_declaration
+   89      | block • stmt
+
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 120
+    KW_IF        shift, and go to state 121
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_ENDDEF    shift, and go to state 143
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
+
+    var_declaration  go to state 129
+    stmt             go to state 130
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
+
+
+State 117
+
+   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type • COLON block KW_ENDDEF SEMICOLON
+
+    COLON  shift, and go to state 144
+
+
+State 118
+
+   18 param_decl_list: param_decl_list COMMA IDENTIFIER COLON • type
+   22 type: • KW_INTEGER
+   23     | • KW_SCALAR
+   24     | • KW_STR
+   25     | • KW_BOOL
+   26     | • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 99
+    KW_INTEGER  shift, and go to state 100
+    KW_SCALAR   shift, and go to state 101
+    KW_STR      shift, and go to state 102
+    KW_BOOL     shift, and go to state 103
+
+    type  go to state 145
+
+
+State 119
+
+   36 stmt: error • SEMICOLON
+
+    SEMICOLON  shift, and go to state 146
+
+
+State 120
+
+   11 var_declaration: IDENTIFIER • COLON type SEMICOLON
+   37 assignment_stmt: IDENTIFIER • OP_ASSIGN expression SEMICOLON
+   76 function_call: IDENTIFIER • LPAREN arg_list RPAREN
+
+    OP_ASSIGN  shift, and go to state 147
+    LPAREN     shift, and go to state 32
+    COLON      shift, and go to state 148
+
+
+State 121
+
+   39 if_stmt: KW_IF • LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
+   40        | KW_IF • LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
+
+    LPAREN  shift, and go to state 149
+
+
+State 122
+
+   41 for_stmt: KW_FOR • IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
+
+    IDENTIFIER  shift, and go to state 150
+
+
+State 123
+
+   42 while_stmt: KW_WHILE • LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
+
+    LPAREN  shift, and go to state 151
 
 
 State 124
 
-   50 component_member: hash_ident_list LBRACKET CONST_INT • RBRACKET COLON type SEMICOLON
-
-    RBRACKET  shift, and go to state 151
-
-
-State 125
-
-   49 component_member: hash_ident_list COLON type • SEMICOLON
+   43 break_stmt: KW_BREAK • SEMICOLON
 
     SEMICOLON  shift, and go to state 152
 
 
+State 125
+
+   44 continue_stmt: KW_CONTINUE • SEMICOLON
+
+    SEMICOLON  shift, and go to state 153
+
+
 State 126
+
+   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF • SEMICOLON
+
+    SEMICOLON  shift, and go to state 154
+
+
+State 127
+
+   38 return_stmt: KW_RETURN • expression SEMICOLON
+   56 expression: • primary_expression
+   57           | • expression OP_PLUS expression
+   58           | • expression OP_MINUS expression
+   59           | • expression OP_MULT expression
+   60           | • expression OP_DIV expression
+   61           | • expression OP_MOD expression
+   62           | • expression OP_POW expression
+   63           | • expression OP_EQ expression
+   64           | • expression OP_NEQ expression
+   65           | • expression OP_LT expression
+   66           | • expression OP_LEQ expression
+   67           | • expression OP_GT expression
+   68           | • expression OP_GEQ expression
+   69           | • expression KW_AND expression
+   70           | • expression KW_OR expression
+   71           | • KW_NOT expression
+   72           | • OP_MINUS expression
+   73           | • LPAREN expression RPAREN
+   74           | • CONST_BOOL_FALSE
+   75           | • CONST_BOOL_TRUE
+   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
+   80 primary_expression: • CONST_INT
+   81                   | • CONST_FLOAT
+   82                   | • CONST_STRING
+   83                   | • IDENTIFIER
+   84                   | • function_call
+   85                   | • primary_expression LBRACKET expression RBRACKET
+   86                   | • primary_expression DOT IDENTIFIER
+
+    IDENTIFIER        shift, and go to state 16
+    CONST_INT         shift, and go to state 17
+    CONST_FLOAT       shift, and go to state 18
+    CONST_STRING      shift, and go to state 19
+    CONST_BOOL_TRUE   shift, and go to state 20
+    CONST_BOOL_FALSE  shift, and go to state 21
+    KW_NOT            shift, and go to state 22
+    OP_MINUS          shift, and go to state 23
+    LPAREN            shift, and go to state 24
+
+    expression          go to state 155
+    function_call       go to state 26
+    primary_expression  go to state 27
+
+
+State 128
+
+   45 empty_stmt: SEMICOLON •
+
+    $default  reduce using rule 45 (empty_stmt)
+
+
+State 129
+
+   88 block: block var_declaration •
+
+    $default  reduce using rule 88 (block)
+
+
+State 130
+
+   89 block: block stmt •
+
+    $default  reduce using rule 89 (block)
+
+
+State 131
+
+   27 stmt: assignment_stmt •
+
+    $default  reduce using rule 27 (stmt)
+
+
+State 132
+
+   28 stmt: return_stmt •
+
+    $default  reduce using rule 28 (stmt)
+
+
+State 133
+
+   29 stmt: if_stmt •
+
+    $default  reduce using rule 29 (stmt)
+
+
+State 134
+
+   30 stmt: for_stmt •
+
+    $default  reduce using rule 30 (stmt)
+
+
+State 135
+
+   31 stmt: while_stmt •
+
+    $default  reduce using rule 31 (stmt)
+
+
+State 136
+
+   32 stmt: break_stmt •
+
+    $default  reduce using rule 32 (stmt)
+
+
+State 137
+
+   33 stmt: continue_stmt •
+
+    $default  reduce using rule 33 (stmt)
+
+
+State 138
+
+   34 stmt: empty_stmt •
+
+    $default  reduce using rule 34 (stmt)
+
+
+State 139
+
+   35 stmt: function_call • SEMICOLON
+
+    SEMICOLON  shift, and go to state 156
+
+
+State 140
+
+   50 component_member: hash_ident_list LBRACKET CONST_INT • RBRACKET COLON type SEMICOLON
+
+    RBRACKET  shift, and go to state 157
+
+
+State 141
+
+   49 component_member: hash_ident_list COLON type • SEMICOLON
+
+    SEMICOLON  shift, and go to state 158
+
+
+State 142
 
    55 hash_ident_list: hash_ident_list COMMA IDENTIFIER •
 
     $default  reduce using rule 55 (hash_ident_list)
 
 
-State 127
+State 143
 
    14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF • SEMICOLON
 
-    SEMICOLON  shift, and go to state 153
+    SEMICOLON  shift, and go to state 159
 
 
-State 128
+State 144
 
    13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON • block KW_ENDDEF SEMICOLON
-   87 block: • decl_list stmt_list
-   88 decl_list: ε •
-   89          | • decl_list var_declaration
+   87 block: ε •
+   88      | • block var_declaration
+   89      | • block stmt
 
-    $default  reduce using rule 88 (decl_list)
+    $default  reduce using rule 87 (block)
 
-    block      go to state 154
-    decl_list  go to state 110
+    block  go to state 160
 
 
-State 129
+State 145
 
    18 param_decl_list: param_decl_list COMMA IDENTIFIER COLON type •
 
     $default  reduce using rule 18 (param_decl_list)
 
 
-State 130
+State 146
 
-   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON •
+   36 stmt: error SEMICOLON •
 
-    $default  reduce using rule 19 (main_function)
+    $default  reduce using rule 36 (stmt)
 
 
-State 131
+State 147
+
+   37 assignment_stmt: IDENTIFIER OP_ASSIGN • expression SEMICOLON
+   56 expression: • primary_expression
+   57           | • expression OP_PLUS expression
+   58           | • expression OP_MINUS expression
+   59           | • expression OP_MULT expression
+   60           | • expression OP_DIV expression
+   61           | • expression OP_MOD expression
+   62           | • expression OP_POW expression
+   63           | • expression OP_EQ expression
+   64           | • expression OP_NEQ expression
+   65           | • expression OP_LT expression
+   66           | • expression OP_LEQ expression
+   67           | • expression OP_GT expression
+   68           | • expression OP_GEQ expression
+   69           | • expression KW_AND expression
+   70           | • expression KW_OR expression
+   71           | • KW_NOT expression
+   72           | • OP_MINUS expression
+   73           | • LPAREN expression RPAREN
+   74           | • CONST_BOOL_FALSE
+   75           | • CONST_BOOL_TRUE
+   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
+   80 primary_expression: • CONST_INT
+   81                   | • CONST_FLOAT
+   82                   | • CONST_STRING
+   83                   | • IDENTIFIER
+   84                   | • function_call
+   85                   | • primary_expression LBRACKET expression RBRACKET
+   86                   | • primary_expression DOT IDENTIFIER
+
+    IDENTIFIER        shift, and go to state 16
+    CONST_INT         shift, and go to state 17
+    CONST_FLOAT       shift, and go to state 18
+    CONST_STRING      shift, and go to state 19
+    CONST_BOOL_TRUE   shift, and go to state 20
+    CONST_BOOL_FALSE  shift, and go to state 21
+    KW_NOT            shift, and go to state 22
+    OP_MINUS          shift, and go to state 23
+    LPAREN            shift, and go to state 24
+
+    expression          go to state 161
+    function_call       go to state 26
+    primary_expression  go to state 27
+
+
+State 148
 
    11 var_declaration: IDENTIFIER COLON • type SEMICOLON
    22 type: • KW_INTEGER
@@ -3124,64 +3332,13 @@ State 131
     KW_STR      shift, and go to state 102
     KW_BOOL     shift, and go to state 103
 
-    type  go to state 155
+    type  go to state 162
 
 
-State 132
+State 149
 
-   36 stmt: error • SEMICOLON
-
-    SEMICOLON  shift, and go to state 156
-
-
-State 133
-
-   37 assignment_stmt: IDENTIFIER • OP_ASSIGN expression SEMICOLON
-   76 function_call: IDENTIFIER • LPAREN arg_list RPAREN
-
-    OP_ASSIGN  shift, and go to state 157
-    LPAREN     shift, and go to state 32
-
-
-State 134
-
-   39 if_stmt: KW_IF • LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
-   40        | KW_IF • LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
-
-    LPAREN  shift, and go to state 158
-
-
-State 135
-
-   41 for_stmt: KW_FOR • IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
-
-    IDENTIFIER  shift, and go to state 159
-
-
-State 136
-
-   42 while_stmt: KW_WHILE • LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
-
-    LPAREN  shift, and go to state 160
-
-
-State 137
-
-   43 break_stmt: KW_BREAK • SEMICOLON
-
-    SEMICOLON  shift, and go to state 161
-
-
-State 138
-
-   44 continue_stmt: KW_CONTINUE • SEMICOLON
-
-    SEMICOLON  shift, and go to state 162
-
-
-State 139
-
-   38 return_stmt: KW_RETURN • expression SEMICOLON
+   39 if_stmt: KW_IF LPAREN • expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
+   40        | KW_IF LPAREN • expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
    56 expression: • primary_expression
    57           | • expression OP_PLUS expression
    58           | • expression OP_MINUS expression
@@ -3226,228 +3383,14 @@ State 139
     primary_expression  go to state 27
 
 
-State 140
-
-   45 empty_stmt: SEMICOLON •
-
-    $default  reduce using rule 45 (empty_stmt)
-
-
-State 141
-
-   21 stmt_list: stmt_list stmt •
-
-    $default  reduce using rule 21 (stmt_list)
-
-
-State 142
-
-   27 stmt: assignment_stmt •
-
-    $default  reduce using rule 27 (stmt)
-
-
-State 143
-
-   28 stmt: return_stmt •
-
-    $default  reduce using rule 28 (stmt)
-
-
-State 144
-
-   29 stmt: if_stmt •
-
-    $default  reduce using rule 29 (stmt)
-
-
-State 145
-
-   30 stmt: for_stmt •
-
-    $default  reduce using rule 30 (stmt)
-
-
-State 146
-
-   31 stmt: while_stmt •
-
-    $default  reduce using rule 31 (stmt)
-
-
-State 147
-
-   32 stmt: break_stmt •
-
-    $default  reduce using rule 32 (stmt)
-
-
-State 148
-
-   33 stmt: continue_stmt •
-
-    $default  reduce using rule 33 (stmt)
-
-
-State 149
-
-   34 stmt: empty_stmt •
-
-    $default  reduce using rule 34 (stmt)
-
-
 State 150
-
-   35 stmt: function_call • SEMICOLON
-
-    SEMICOLON  shift, and go to state 164
-
-
-State 151
-
-   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET • COLON type SEMICOLON
-
-    COLON  shift, and go to state 165
-
-
-State 152
-
-   49 component_member: hash_ident_list COLON type SEMICOLON •
-
-    $default  reduce using rule 49 (component_member)
-
-
-State 153
-
-   14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON •
-
-    $default  reduce using rule 14 (function)
-
-
-State 154
-
-   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block • KW_ENDDEF SEMICOLON
-
-    KW_ENDDEF  shift, and go to state 166
-
-
-State 155
-
-   11 var_declaration: IDENTIFIER COLON type • SEMICOLON
-
-    SEMICOLON  shift, and go to state 167
-
-
-State 156
-
-   36 stmt: error SEMICOLON •
-
-    $default  reduce using rule 36 (stmt)
-
-
-State 157
-
-   37 assignment_stmt: IDENTIFIER OP_ASSIGN • expression SEMICOLON
-   56 expression: • primary_expression
-   57           | • expression OP_PLUS expression
-   58           | • expression OP_MINUS expression
-   59           | • expression OP_MULT expression
-   60           | • expression OP_DIV expression
-   61           | • expression OP_MOD expression
-   62           | • expression OP_POW expression
-   63           | • expression OP_EQ expression
-   64           | • expression OP_NEQ expression
-   65           | • expression OP_LT expression
-   66           | • expression OP_LEQ expression
-   67           | • expression OP_GT expression
-   68           | • expression OP_GEQ expression
-   69           | • expression KW_AND expression
-   70           | • expression KW_OR expression
-   71           | • KW_NOT expression
-   72           | • OP_MINUS expression
-   73           | • LPAREN expression RPAREN
-   74           | • CONST_BOOL_FALSE
-   75           | • CONST_BOOL_TRUE
-   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
-   80 primary_expression: • CONST_INT
-   81                   | • CONST_FLOAT
-   82                   | • CONST_STRING
-   83                   | • IDENTIFIER
-   84                   | • function_call
-   85                   | • primary_expression LBRACKET expression RBRACKET
-   86                   | • primary_expression DOT IDENTIFIER
-
-    IDENTIFIER        shift, and go to state 16
-    CONST_INT         shift, and go to state 17
-    CONST_FLOAT       shift, and go to state 18
-    CONST_STRING      shift, and go to state 19
-    CONST_BOOL_TRUE   shift, and go to state 20
-    CONST_BOOL_FALSE  shift, and go to state 21
-    KW_NOT            shift, and go to state 22
-    OP_MINUS          shift, and go to state 23
-    LPAREN            shift, and go to state 24
-
-    expression          go to state 168
-    function_call       go to state 26
-    primary_expression  go to state 27
-
-
-State 158
-
-   39 if_stmt: KW_IF LPAREN • expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
-   40        | KW_IF LPAREN • expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
-   56 expression: • primary_expression
-   57           | • expression OP_PLUS expression
-   58           | • expression OP_MINUS expression
-   59           | • expression OP_MULT expression
-   60           | • expression OP_DIV expression
-   61           | • expression OP_MOD expression
-   62           | • expression OP_POW expression
-   63           | • expression OP_EQ expression
-   64           | • expression OP_NEQ expression
-   65           | • expression OP_LT expression
-   66           | • expression OP_LEQ expression
-   67           | • expression OP_GT expression
-   68           | • expression OP_GEQ expression
-   69           | • expression KW_AND expression
-   70           | • expression KW_OR expression
-   71           | • KW_NOT expression
-   72           | • OP_MINUS expression
-   73           | • LPAREN expression RPAREN
-   74           | • CONST_BOOL_FALSE
-   75           | • CONST_BOOL_TRUE
-   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
-   80 primary_expression: • CONST_INT
-   81                   | • CONST_FLOAT
-   82                   | • CONST_STRING
-   83                   | • IDENTIFIER
-   84                   | • function_call
-   85                   | • primary_expression LBRACKET expression RBRACKET
-   86                   | • primary_expression DOT IDENTIFIER
-
-    IDENTIFIER        shift, and go to state 16
-    CONST_INT         shift, and go to state 17
-    CONST_FLOAT       shift, and go to state 18
-    CONST_STRING      shift, and go to state 19
-    CONST_BOOL_TRUE   shift, and go to state 20
-    CONST_BOOL_FALSE  shift, and go to state 21
-    KW_NOT            shift, and go to state 22
-    OP_MINUS          shift, and go to state 23
-    LPAREN            shift, and go to state 24
-
-    expression          go to state 169
-    function_call       go to state 26
-    primary_expression  go to state 27
-
-
-State 159
 
    41 for_stmt: KW_FOR IDENTIFIER • KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
 
-    KW_IN  shift, and go to state 170
+    KW_IN  shift, and go to state 164
 
 
-State 160
+State 151
 
    42 while_stmt: KW_WHILE LPAREN • expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
    56 expression: • primary_expression
@@ -3489,26 +3432,33 @@ State 160
     OP_MINUS          shift, and go to state 23
     LPAREN            shift, and go to state 24
 
-    expression          go to state 171
+    expression          go to state 165
     function_call       go to state 26
     primary_expression  go to state 27
 
 
-State 161
+State 152
 
    43 break_stmt: KW_BREAK SEMICOLON •
 
     $default  reduce using rule 43 (break_stmt)
 
 
-State 162
+State 153
 
    44 continue_stmt: KW_CONTINUE SEMICOLON •
 
     $default  reduce using rule 44 (continue_stmt)
 
 
-State 163
+State 154
+
+   19 main_function: KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON •
+
+    $default  reduce using rule 19 (main_function)
+
+
+State 155
 
    38 return_stmt: KW_RETURN expression • SEMICOLON
    57 expression: expression • OP_PLUS expression
@@ -3540,49 +3490,89 @@ State 163
     OP_MULT    shift, and go to state 47
     OP_DIV     shift, and go to state 48
     OP_MOD     shift, and go to state 49
-    SEMICOLON  shift, and go to state 172
+    SEMICOLON  shift, and go to state 166
 
 
-State 164
+State 156
 
    35 stmt: function_call SEMICOLON •
 
     $default  reduce using rule 35 (stmt)
 
 
-State 165
+State 157
 
-   22 type: • KW_INTEGER
-   23     | • KW_SCALAR
-   24     | • KW_STR
-   25     | • KW_BOOL
-   26     | • IDENTIFIER
-   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON • type SEMICOLON
+   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET • COLON type SEMICOLON
 
-    IDENTIFIER  shift, and go to state 99
-    KW_INTEGER  shift, and go to state 100
-    KW_SCALAR   shift, and go to state 101
-    KW_STR      shift, and go to state 102
-    KW_BOOL     shift, and go to state 103
-
-    type  go to state 173
+    COLON  shift, and go to state 167
 
 
-State 166
+State 158
 
-   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF • SEMICOLON
+   49 component_member: hash_ident_list COLON type SEMICOLON •
 
-    SEMICOLON  shift, and go to state 174
-
-
-State 167
-
-   11 var_declaration: IDENTIFIER COLON type SEMICOLON •
-
-    $default  reduce using rule 11 (var_declaration)
+    $default  reduce using rule 49 (component_member)
 
 
-State 168
+State 159
+
+   14 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON •
+
+    $default  reduce using rule 14 (function)
+
+
+State 160
+
+   11 var_declaration: • IDENTIFIER COLON type SEMICOLON
+   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block • KW_ENDDEF SEMICOLON
+   27 stmt: • assignment_stmt
+   28     | • return_stmt
+   29     | • if_stmt
+   30     | • for_stmt
+   31     | • while_stmt
+   32     | • break_stmt
+   33     | • continue_stmt
+   34     | • empty_stmt
+   35     | • function_call SEMICOLON
+   36     | • error SEMICOLON
+   37 assignment_stmt: • IDENTIFIER OP_ASSIGN expression SEMICOLON
+   38 return_stmt: • KW_RETURN expression SEMICOLON
+   39 if_stmt: • KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON
+   40        | • KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
+   41 for_stmt: • KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
+   42 while_stmt: • KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
+   43 break_stmt: • KW_BREAK SEMICOLON
+   44 continue_stmt: • KW_CONTINUE SEMICOLON
+   45 empty_stmt: • SEMICOLON
+   76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
+   88 block: block • var_declaration
+   89      | block • stmt
+
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 120
+    KW_IF        shift, and go to state 121
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_ENDDEF    shift, and go to state 168
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
+
+    var_declaration  go to state 129
+    stmt             go to state 130
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
+
+
+State 161
 
    37 assignment_stmt: IDENTIFIER OP_ASSIGN expression • SEMICOLON
    57 expression: expression • OP_PLUS expression
@@ -3614,10 +3604,17 @@ State 168
     OP_MULT    shift, and go to state 47
     OP_DIV     shift, and go to state 48
     OP_MOD     shift, and go to state 49
-    SEMICOLON  shift, and go to state 175
+    SEMICOLON  shift, and go to state 169
 
 
-State 169
+State 162
+
+   11 var_declaration: IDENTIFIER COLON type • SEMICOLON
+
+    SEMICOLON  shift, and go to state 170
+
+
+State 163
 
    39 if_stmt: KW_IF LPAREN expression • RPAREN COLON stmt_list KW_ENDIF SEMICOLON
    40        | KW_IF LPAREN expression • RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
@@ -3650,17 +3647,17 @@ State 169
     OP_MULT   shift, and go to state 47
     OP_DIV    shift, and go to state 48
     OP_MOD    shift, and go to state 49
-    RPAREN    shift, and go to state 176
+    RPAREN    shift, and go to state 171
 
 
-State 170
+State 164
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN • LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
 
-    LBRACKET  shift, and go to state 177
+    LBRACKET  shift, and go to state 172
 
 
-State 171
+State 165
 
    42 while_stmt: KW_WHILE LPAREN expression • RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON
    57 expression: expression • OP_PLUS expression
@@ -3692,46 +3689,64 @@ State 171
     OP_MULT   shift, and go to state 47
     OP_DIV    shift, and go to state 48
     OP_MOD    shift, and go to state 49
-    RPAREN    shift, and go to state 178
+    RPAREN    shift, and go to state 173
 
 
-State 172
+State 166
 
    38 return_stmt: KW_RETURN expression SEMICOLON •
 
     $default  reduce using rule 38 (return_stmt)
 
 
-State 173
+State 167
 
-   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type • SEMICOLON
+   22 type: • KW_INTEGER
+   23     | • KW_SCALAR
+   24     | • KW_STR
+   25     | • KW_BOOL
+   26     | • IDENTIFIER
+   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON • type SEMICOLON
 
-    SEMICOLON  shift, and go to state 179
+    IDENTIFIER  shift, and go to state 99
+    KW_INTEGER  shift, and go to state 100
+    KW_SCALAR   shift, and go to state 101
+    KW_STR      shift, and go to state 102
+    KW_BOOL     shift, and go to state 103
+
+    type  go to state 174
 
 
-State 174
+State 168
 
-   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON •
+   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF • SEMICOLON
 
-    $default  reduce using rule 13 (function)
+    SEMICOLON  shift, and go to state 175
 
 
-State 175
+State 169
 
    37 assignment_stmt: IDENTIFIER OP_ASSIGN expression SEMICOLON •
 
     $default  reduce using rule 37 (assignment_stmt)
 
 
-State 176
+State 170
+
+   11 var_declaration: IDENTIFIER COLON type SEMICOLON •
+
+    $default  reduce using rule 11 (var_declaration)
+
+
+State 171
 
    39 if_stmt: KW_IF LPAREN expression RPAREN • COLON stmt_list KW_ENDIF SEMICOLON
    40        | KW_IF LPAREN expression RPAREN • COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON
 
-    COLON  shift, and go to state 180
+    COLON  shift, and go to state 176
 
 
-State 177
+State 172
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET • expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
    56 expression: • primary_expression
@@ -3773,26 +3788,33 @@ State 177
     OP_MINUS          shift, and go to state 23
     LPAREN            shift, and go to state 24
 
-    expression          go to state 181
+    expression          go to state 177
     function_call       go to state 26
     primary_expression  go to state 27
 
 
-State 178
+State 173
 
    42 while_stmt: KW_WHILE LPAREN expression RPAREN • COLON stmt_list KW_ENDWHILE SEMICOLON
 
-    COLON  shift, and go to state 182
+    COLON  shift, and go to state 178
 
 
-State 179
+State 174
 
-   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type SEMICOLON •
+   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type • SEMICOLON
 
-    $default  reduce using rule 50 (component_member)
+    SEMICOLON  shift, and go to state 179
 
 
-State 180
+State 175
+
+   13 function: KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON •
+
+    $default  reduce using rule 13 (function)
+
+
+State 176
 
    20 stmt_list: ε •
    21          | • stmt_list stmt
@@ -3801,10 +3823,10 @@ State 180
 
     $default  reduce using rule 20 (stmt_list)
 
-    stmt_list  go to state 183
+    stmt_list  go to state 180
 
 
-State 181
+State 177
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression • COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
    57 expression: expression • OP_PLUS expression
@@ -3836,10 +3858,10 @@ State 181
     OP_MULT   shift, and go to state 47
     OP_DIV    shift, and go to state 48
     OP_MOD    shift, and go to state 49
-    COLON     shift, and go to state 184
+    COLON     shift, and go to state 181
 
 
-State 182
+State 178
 
    20 stmt_list: ε •
    21          | • stmt_list stmt
@@ -3847,10 +3869,17 @@ State 182
 
     $default  reduce using rule 20 (stmt_list)
 
-    stmt_list  go to state 185
+    stmt_list  go to state 182
 
 
-State 183
+State 179
+
+   50 component_member: hash_ident_list LBRACKET CONST_INT RBRACKET COLON type SEMICOLON •
+
+    $default  reduce using rule 50 (component_member)
+
+
+State 180
 
    21 stmt_list: stmt_list • stmt
    27 stmt: • assignment_stmt
@@ -3876,31 +3905,31 @@ State 183
    45 empty_stmt: • SEMICOLON
    76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
 
-    error        shift, and go to state 132
-    IDENTIFIER   shift, and go to state 133
-    KW_IF        shift, and go to state 134
-    KW_ELSE      shift, and go to state 186
-    KW_ENDIF     shift, and go to state 187
-    KW_FOR       shift, and go to state 135
-    KW_WHILE     shift, and go to state 136
-    KW_BREAK     shift, and go to state 137
-    KW_CONTINUE  shift, and go to state 138
-    KW_RETURN    shift, and go to state 139
-    SEMICOLON    shift, and go to state 140
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 183
+    KW_IF        shift, and go to state 121
+    KW_ELSE      shift, and go to state 184
+    KW_ENDIF     shift, and go to state 185
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
 
-    stmt             go to state 141
-    assignment_stmt  go to state 142
-    return_stmt      go to state 143
-    if_stmt          go to state 144
-    for_stmt         go to state 145
-    while_stmt       go to state 146
-    break_stmt       go to state 147
-    continue_stmt    go to state 148
-    empty_stmt       go to state 149
-    function_call    go to state 150
+    stmt             go to state 186
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
 
 
-State 184
+State 181
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON • expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
    56 expression: • primary_expression
@@ -3942,12 +3971,12 @@ State 184
     OP_MINUS          shift, and go to state 23
     LPAREN            shift, and go to state 24
 
-    expression          go to state 188
+    expression          go to state 187
     function_call       go to state 26
     primary_expression  go to state 27
 
 
-State 185
+State 182
 
    21 stmt_list: stmt_list • stmt
    27 stmt: • assignment_stmt
@@ -3972,44 +4001,60 @@ State 185
    45 empty_stmt: • SEMICOLON
    76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
 
-    error        shift, and go to state 132
-    IDENTIFIER   shift, and go to state 133
-    KW_IF        shift, and go to state 134
-    KW_FOR       shift, and go to state 135
-    KW_WHILE     shift, and go to state 136
-    KW_ENDWHILE  shift, and go to state 189
-    KW_BREAK     shift, and go to state 137
-    KW_CONTINUE  shift, and go to state 138
-    KW_RETURN    shift, and go to state 139
-    SEMICOLON    shift, and go to state 140
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 183
+    KW_IF        shift, and go to state 121
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_ENDWHILE  shift, and go to state 188
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
 
-    stmt             go to state 141
-    assignment_stmt  go to state 142
-    return_stmt      go to state 143
-    if_stmt          go to state 144
-    for_stmt         go to state 145
-    while_stmt       go to state 146
-    break_stmt       go to state 147
-    continue_stmt    go to state 148
-    empty_stmt       go to state 149
-    function_call    go to state 150
+    stmt             go to state 186
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
+
+
+State 183
+
+   37 assignment_stmt: IDENTIFIER • OP_ASSIGN expression SEMICOLON
+   76 function_call: IDENTIFIER • LPAREN arg_list RPAREN
+
+    OP_ASSIGN  shift, and go to state 147
+    LPAREN     shift, and go to state 32
+
+
+State 184
+
+   40 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE • COLON stmt_list KW_ENDIF SEMICOLON
+
+    COLON  shift, and go to state 189
+
+
+State 185
+
+   39 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF • SEMICOLON
+
+    SEMICOLON  shift, and go to state 190
 
 
 State 186
 
-   40 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE • COLON stmt_list KW_ENDIF SEMICOLON
+   21 stmt_list: stmt_list stmt •
 
-    COLON  shift, and go to state 190
+    $default  reduce using rule 21 (stmt_list)
 
 
 State 187
-
-   39 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF • SEMICOLON
-
-    SEMICOLON  shift, and go to state 191
-
-
-State 188
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression • RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON
    57 expression: expression • OP_PLUS expression
@@ -4041,17 +4086,17 @@ State 188
     OP_MULT   shift, and go to state 47
     OP_DIV    shift, and go to state 48
     OP_MOD    shift, and go to state 49
-    RBRACKET  shift, and go to state 192
+    RBRACKET  shift, and go to state 191
 
 
-State 189
+State 188
 
    42 while_stmt: KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE • SEMICOLON
 
-    SEMICOLON  shift, and go to state 193
+    SEMICOLON  shift, and go to state 192
 
 
-State 190
+State 189
 
    20 stmt_list: ε •
    21          | • stmt_list stmt
@@ -4059,31 +4104,31 @@ State 190
 
     $default  reduce using rule 20 (stmt_list)
 
-    stmt_list  go to state 194
+    stmt_list  go to state 193
 
 
-State 191
+State 190
 
    39 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON •
 
     $default  reduce using rule 39 (if_stmt)
 
 
-State 192
+State 191
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET • COLON stmt_list KW_ENDFOR SEMICOLON
 
-    COLON  shift, and go to state 195
+    COLON  shift, and go to state 194
 
 
-State 193
+State 192
 
    42 while_stmt: KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON •
 
     $default  reduce using rule 42 (while_stmt)
 
 
-State 194
+State 193
 
    21 stmt_list: stmt_list • stmt
    27 stmt: • assignment_stmt
@@ -4108,30 +4153,30 @@ State 194
    45 empty_stmt: • SEMICOLON
    76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
 
-    error        shift, and go to state 132
-    IDENTIFIER   shift, and go to state 133
-    KW_IF        shift, and go to state 134
-    KW_ENDIF     shift, and go to state 196
-    KW_FOR       shift, and go to state 135
-    KW_WHILE     shift, and go to state 136
-    KW_BREAK     shift, and go to state 137
-    KW_CONTINUE  shift, and go to state 138
-    KW_RETURN    shift, and go to state 139
-    SEMICOLON    shift, and go to state 140
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 183
+    KW_IF        shift, and go to state 121
+    KW_ENDIF     shift, and go to state 195
+    KW_FOR       shift, and go to state 122
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
 
-    stmt             go to state 141
-    assignment_stmt  go to state 142
-    return_stmt      go to state 143
-    if_stmt          go to state 144
-    for_stmt         go to state 145
-    while_stmt       go to state 146
-    break_stmt       go to state 147
-    continue_stmt    go to state 148
-    empty_stmt       go to state 149
-    function_call    go to state 150
+    stmt             go to state 186
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
 
 
-State 195
+State 194
 
    20 stmt_list: ε •
    21          | • stmt_list stmt
@@ -4139,17 +4184,17 @@ State 195
 
     $default  reduce using rule 20 (stmt_list)
 
-    stmt_list  go to state 197
+    stmt_list  go to state 196
 
 
-State 196
+State 195
 
    40 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF • SEMICOLON
 
-    SEMICOLON  shift, and go to state 198
+    SEMICOLON  shift, and go to state 197
 
 
-State 197
+State 196
 
    21 stmt_list: stmt_list • stmt
    27 stmt: • assignment_stmt
@@ -4174,44 +4219,44 @@ State 197
    45 empty_stmt: • SEMICOLON
    76 function_call: • IDENTIFIER LPAREN arg_list RPAREN
 
-    error        shift, and go to state 132
-    IDENTIFIER   shift, and go to state 133
-    KW_IF        shift, and go to state 134
-    KW_FOR       shift, and go to state 135
-    KW_ENDFOR    shift, and go to state 199
-    KW_WHILE     shift, and go to state 136
-    KW_BREAK     shift, and go to state 137
-    KW_CONTINUE  shift, and go to state 138
-    KW_RETURN    shift, and go to state 139
-    SEMICOLON    shift, and go to state 140
+    error        shift, and go to state 119
+    IDENTIFIER   shift, and go to state 183
+    KW_IF        shift, and go to state 121
+    KW_FOR       shift, and go to state 122
+    KW_ENDFOR    shift, and go to state 198
+    KW_WHILE     shift, and go to state 123
+    KW_BREAK     shift, and go to state 124
+    KW_CONTINUE  shift, and go to state 125
+    KW_RETURN    shift, and go to state 127
+    SEMICOLON    shift, and go to state 128
 
-    stmt             go to state 141
-    assignment_stmt  go to state 142
-    return_stmt      go to state 143
-    if_stmt          go to state 144
-    for_stmt         go to state 145
-    while_stmt       go to state 146
-    break_stmt       go to state 147
-    continue_stmt    go to state 148
-    empty_stmt       go to state 149
-    function_call    go to state 150
+    stmt             go to state 186
+    assignment_stmt  go to state 131
+    return_stmt      go to state 132
+    if_stmt          go to state 133
+    for_stmt         go to state 134
+    while_stmt       go to state 135
+    break_stmt       go to state 136
+    continue_stmt    go to state 137
+    empty_stmt       go to state 138
+    function_call    go to state 139
 
 
-State 198
+State 197
 
    40 if_stmt: KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON •
 
     $default  reduce using rule 40 (if_stmt)
 
 
-State 199
+State 198
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR • SEMICOLON
 
-    SEMICOLON  shift, and go to state 200
+    SEMICOLON  shift, and go to state 199
 
 
-State 200
+State 199
 
    41 for_stmt: KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON •
 

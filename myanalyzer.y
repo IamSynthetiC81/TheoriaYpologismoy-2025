@@ -302,7 +302,7 @@ param_decl_list:
 			char* tmp = malloc(strlen($1) + strlen($3) + strlen($5) + 4);
 			sprintf(tmp, "%s, %s %s", $1, $5, $3);
 			$$ = tmp;
-    }
+    } 
 
 main_function:
 	KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON {
@@ -323,7 +323,7 @@ stmt_list:
 		char* tmp = malloc(strlen($1) + strlen($2) + 2);
 		sprintf(tmp, "%s%s", $1, $2);
 		$$ = tmp;
-		free($1); free($2);
+		safe_free($1); safe_free($2);
 	}
 	;
 
@@ -579,7 +579,7 @@ function_call:
 	IDENTIFIER LPAREN arg_list RPAREN {
 		$$ = malloc(strlen($1) + strlen($3) + 4);
 		sprintf($$, "%s(%s)", $1, $3);
-		free($1); free($3);
+		safe_free($1); safe_free($3);
 	} 
   ;
 
@@ -604,26 +604,30 @@ primary_expression:
   | primary_expression LBRACKET expression RBRACKET {
 		$$ = malloc(strlen($1) + strlen($3) + 4);
 		sprintf($$, "%s[%s]", $1, $3);
-		free($1); free($3);
+		safe_free($1); safe_free($3);
 	} | primary_expression DOT IDENTIFIER {
 		$$ = malloc(strlen($1) + strlen($3) + 2);
 		sprintf($$, "%s.%s", $1, $3);
-		free($1); free($3);
+		safe_free($1); safe_free($3);
 	}
   ;
 
 block:
-    decl_list stmt_list {
-        // Add debug output to verify parsing
-        fprintf(stderr, "Block parsed:\nDeclarations: %s\nStatements: %s\n", $1, $2);
-        char* code = malloc(strlen($1) + strlen($2) + 2);
-        sprintf(code, "%s%s", $1, $2);
-        $$ = add_indentation(code);
-        free(code);
-        free($1);
-        free($2);
-    }
-    ;
+	/* empty */ { $$ = safe_strdup(""); }
+	| block var_declaration {
+		char* tmp = malloc(strlen($1) + strlen($2) + 2);
+		sprintf(tmp, "%s%s", $1, $2);
+		// safe_free($1); safe_free($2);
+		$$ = tmp;
+		
+	} | block stmt {
+		char* tmp = malloc(strlen($1) + strlen($2) + 2);
+		sprintf(tmp, "%s%s", $1, $2);
+		safe_free($1); safe_free($2);
+		$$ = tmp;
+	
+	}
+	;
 
 decl_list:
 	/* empty */ { $$ = safe_strdup(""); }
@@ -633,7 +637,7 @@ decl_list:
 		$$ = tmp;
 		free($1);
 		free($2);
-	}
+	} | decl_list error SEMICOLON { yyerrok; }
 	;
 
 %%

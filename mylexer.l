@@ -40,20 +40,8 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 %option stack
 %option noyy_top_state noyy_pop_state noyy_push_state noinput 
 
-%x DECLCHECK
-
 %%
 
-[a-zA-Z_][a-zA-Z0-9_]*[ \t]*: {
-	int id_len = 0;
-	while (yytext[id_len] != ' ' && yytext[id_len] != '\t' && yytext[id_len] != ':')
-			id_len++;
-	char* id = (char*)malloc(id_len + 1);
-	strncpy(id, yytext, id_len);
-	id[id_len] = '\0';
-	yylval.string = id;
-	return DECL_IDENT;
-}
 
 "--"[^\n]*                        { /* Comment */ }
 [\r]?\n {
@@ -181,16 +169,9 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 
 
 [a-zA-Z_][a-zA-Z0-9_]* {
-    yylval.string = strdup(yytext);
-    BEGIN(DECLCHECK);
-    return IDENTIFIER;
+	yylval.string = strdup(yytext);
+	return IDENTIFIER;
 }
-
-<DECLCHECK>[ \t\r]+    { /* skip whitespace */ }
-<DECLCHECK>\n          { line_num++; /* skip newline */ }
-<DECLCHECK>--[^\n]*    { /* skip comment */ }
-<DECLCHECK>:           { BEGIN(INITIAL); return DECL_IDENT; }
-<DECLCHECK>.           { BEGIN(INITIAL); unput(yytext[0]); }
 
 . { fprintf(stderr, "Unknown character '%c' (ASCII %d) at line %d\n", *yytext, (int)*yytext, line_num); exit(1); }
 

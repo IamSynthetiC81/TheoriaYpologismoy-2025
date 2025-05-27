@@ -65,8 +65,8 @@ Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 116
-Stack now 0 2 6 8 28 53 76 85 104 116
+Entering state 115
+Stack now 0 2 6 8 28 53 76 85 104 115
 Reducing stack by rule 12 (line 248):
    $1 = token KW_CONST ()
    $2 = token IDENTIFIER ()

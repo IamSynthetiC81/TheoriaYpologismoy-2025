@@ -40,66 +40,61 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 89
 Stack now 0 2 6 9 30 55 80 89
-Reducing stack by rule 88 (line 629):
--> $$ = nterm decl_list ()
-Entering state 110
-Stack now 0 2 6 9 30 55 80 89 110
+Reducing stack by rule 87 (line 616):
+-> $$ = nterm block ()
+Entering state 109
+Stack now 0 2 6 9 30 55 80 89 109
 Reading a token
 KW_FOR
 Next token is token KW_FOR ()
-Reducing stack by rule 20 (line 321):
--> $$ = nterm stmt_list ()
-Entering state 123
-Stack now 0 2 6 9 30 55 80 89 110 123
-Next token is token KW_FOR ()
 Shifting token KW_FOR ()
-Entering state 135
-Stack now 0 2 6 9 30 55 80 89 110 123 135
+Entering state 122
+Stack now 0 2 6 9 30 55 80 89 109 122
 Reading a token
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 159
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159
+Entering state 150
+Stack now 0 2 6 9 30 55 80 89 109 122 150
 Reading a token
 KW_IN
 Next token is token KW_IN ()
 Shifting token KW_IN ()
-Entering state 170
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170
+Entering state 164
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164
 Reading a token
 LBRACKET
 Next token is token LBRACKET ()
 Shifting token LBRACKET ()
-Entering state 177
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177
+Entering state 172
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172
 Reading a token
 CONST_INT: 0
 Next token is token CONST_INT ()
 Shifting token CONST_INT ()
 Entering state 17
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 17
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 17
 Reducing stack by rule 80 (line 598):
    $1 = token CONST_INT ()
 -> $$ = nterm primary_expression ()
 Entering state 27
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 27
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 27
 Reading a token
 COLON
 Next token is token COLON ()
 Reducing stack by rule 56 (line 527):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
-Entering state 181
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181
+Entering state 177
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177
 Next token is token COLON ()
 Shifting token COLON ()
-Entering state 184
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184
+Entering state 181
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181
 Reading a token
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
 Entering state 16
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 16
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 16
 Reading a token
 RBRACKET
 Next token is token RBRACKET ()
@@ -107,43 +102,43 @@ Reducing stack by rule 83 (line 601):
    $1 = token IDENTIFIER ()
 -> $$ = nterm primary_expression ()
 Entering state 27
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 27
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 27
 Next token is token RBRACKET ()
 Reducing stack by rule 56 (line 527):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
-Entering state 188
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188
+Entering state 187
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187
 Next token is token RBRACKET ()
 Shifting token RBRACKET ()
-Entering state 192
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192
+Entering state 191
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191
 Reading a token
 COLON
 Next token is token COLON ()
 Shifting token COLON ()
-Entering state 195
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195
+Entering state 194
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194
 Reducing stack by rule 20 (line 321):
 -> $$ = nterm stmt_list ()
-Entering state 197
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197
+Entering state 196
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196
 Reading a token
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 133
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133
+Entering state 183
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183
 Reading a token
 OP_ASSIGN
 Next token is token OP_ASSIGN ()
 Shifting token OP_ASSIGN ()
-Entering state 157
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133 157
+Entering state 147
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183 147
 Reading a token
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
 Entering state 16
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133 157 16
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183 147 16
 Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
@@ -151,17 +146,17 @@ Reducing stack by rule 83 (line 601):
    $1 = token IDENTIFIER ()
 -> $$ = nterm primary_expression ()
 Entering state 27
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133 157 27
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183 147 27
 Next token is token SEMICOLON ()
 Reducing stack by rule 56 (line 527):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
-Entering state 168
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133 157 168
+Entering state 161
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183 147 161
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 175
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 133 157 168 175
+Entering state 169
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 183 147 161 169
 Reducing stack by rule 37 (line 361):
    $1 = token IDENTIFIER ()
    $2 = token OP_ASSIGN ()
@@ -169,31 +164,31 @@ Reducing stack by rule 37 (line 361):
    $4 = token SEMICOLON ()
 Matched assignment: x = i;
 -> $$ = nterm assignment_stmt ()
-Entering state 142
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 142
+Entering state 131
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 131
 Reducing stack by rule 27 (line 339):
    $1 = nterm assignment_stmt ()
 -> $$ = nterm stmt ()
-Entering state 141
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 141
+Entering state 186
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 186
 Reducing stack by rule 21 (line 322):
    $1 = nterm stmt_list ()
    $2 = nterm stmt ()
 -> $$ = nterm stmt_list ()
-Entering state 197
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197
+Entering state 196
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196
 Reading a token
 KW_ENDFOR
 Next token is token KW_ENDFOR ()
 Shifting token KW_ENDFOR ()
-Entering state 199
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 199
+Entering state 198
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 198
 Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 200
-Stack now 0 2 6 9 30 55 80 89 110 123 135 159 170 177 181 184 188 192 195 197 199 200
+Entering state 199
+Stack now 0 2 6 9 30 55 80 89 109 122 150 164 172 177 181 187 191 194 196 198 199
 Reducing stack by rule 41 (line 408):
    $1 = token KW_FOR ()
    $2 = token IDENTIFIER ()
@@ -209,44 +204,31 @@ Reducing stack by rule 41 (line 408):
    $12 = token SEMICOLON ()
 For loop: i
 -> $$ = nterm for_stmt ()
-Entering state 145
-Stack now 0 2 6 9 30 55 80 89 110 123 145
+Entering state 134
+Stack now 0 2 6 9 30 55 80 89 109 134
 Reducing stack by rule 30 (line 342):
    $1 = nterm for_stmt ()
 -> $$ = nterm stmt ()
-Entering state 141
-Stack now 0 2 6 9 30 55 80 89 110 123 141
-Reducing stack by rule 21 (line 322):
-   $1 = nterm stmt_list ()
+Entering state 130
+Stack now 0 2 6 9 30 55 80 89 109 130
+Reducing stack by rule 89 (line 623):
+   $1 = nterm block ()
    $2 = nterm stmt ()
--> $$ = nterm stmt_list ()
-Entering state 123
-Stack now 0 2 6 9 30 55 80 89 110 123
-Reading a token
-KW_ENDDEF
-Next token is token KW_ENDDEF ()
-Reducing stack by rule 87 (line 616):
-   $1 = nterm decl_list ()
-   $2 = nterm stmt_list ()
-Block parsed:
-Declarations: 
-Statements: for (int i = 0; i < N; ++i) {
-    x = i;
-}
-
 -> $$ = nterm block ()
 Entering state 109
 Stack now 0 2 6 9 30 55 80 89 109
+Reading a token
+KW_ENDDEF
 Next token is token KW_ENDDEF ()
 Shifting token KW_ENDDEF ()
-Entering state 120
-Stack now 0 2 6 9 30 55 80 89 109 120
+Entering state 126
+Stack now 0 2 6 9 30 55 80 89 109 126
 Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 130
-Stack now 0 2 6 9 30 55 80 89 109 120 130
+Entering state 154
+Stack now 0 2 6 9 30 55 80 89 109 126 154
 Reducing stack by rule 19 (line 308):
    $1 = token KW_DEF ()
    $2 = token KW_MAIN ()
