@@ -173,7 +173,7 @@ char* find_macro(const char* name) {
 
 program:
     macro_def_list top_level_list {
-        printf("%s", $2);
+        printf("#include \"lambdalib.h\"\n\n%s", $2);
     }
     ;
 
@@ -311,7 +311,7 @@ main_function:
 		char* body = add_indentation($6);
 		indent_level--;
 		char* code = malloc(strlen(body) + 64);
-		sprintf(code, "int main() {\n%s}\n", body);
+		sprintf(code, "int main() {\n%s};\n", body);
 		safe_free(body);
 		$$ = code;
 	}

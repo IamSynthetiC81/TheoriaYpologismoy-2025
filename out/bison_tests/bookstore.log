@@ -832,7 +832,7 @@ Stack now 0 2 6 15
 Reducing stack by rule 9 (line 220):
    $1 = nterm component ()
 Component: struct Address {
-±›a};
+a*m^};
 
 -> $$ = nterm top_level ()
 Entering state 11

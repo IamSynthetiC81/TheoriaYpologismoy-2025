@@ -1460,7 +1460,7 @@ yyreduce:
   case 2: /* program: macro_def_list top_level_list  */
 #line 175 "myanalyzer.y"
                                   {
-        printf("%s", (yyvsp[0].string));
+        printf("#include \"lambdalib.h\"\n\n%s", (yyvsp[0].string));
     }
 #line 1466 "out/myanalyzer.tab.c"
     break;
@@ -1658,7 +1658,7 @@ yyreduce:
 		char* body = add_indentation((yyvsp[-2].string));
 		indent_level--;
 		char* code = malloc(strlen(body) + 64);
-		sprintf(code, "int main() {\n%s}\n", body);
+		sprintf(code, "int main() {\n%s};\n", body);
 		safe_free(body);
 		(yyval.string) = code;
 	}

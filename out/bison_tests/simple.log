@@ -330,8 +330,8 @@ Reducing stack by rule 8 (line 217):
 Main function: int main() {
     int x;
     x = 1 + 2 + 3 + 4;
-    writeInt(x);
-}
+    writeInteger(x);
+};
 
 -> $$ = nterm top_level ()
 Entering state 11

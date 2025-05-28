@@ -21,7 +21,7 @@ EXECUTABLE = $(OUT_DIR)/mycompiler
 # Create output directory
 $(shell mkdir -p $(OUT_DIR))
 
-.PHONY: all clean test lexer_test run debug
+.PHONY: all clean test lexer_test run debug run_compiled
 
 all: $(EXECUTABLE)
 
@@ -37,8 +37,8 @@ $(BISON_OUT): myanalyzer.y
 $(OUT_DIR)/myanalyzer.tab.h: myanalyzer.y
 	$(BISON) -o $(OUT_DIR)/myanalyzer.tab.c $(BISONFLAGS) $<
 
-run: $(EXECUTABLE)
-	@./$(EXECUTABLE) < example.la
+# run: $(EXECUTABLE)
+# 	@./$(EXECUTABLE) < example.la
 
 test: $(EXECUTABLE)
 	@echo "Running tests..."
@@ -76,6 +76,27 @@ $(OUT_DIR)/lexer_stubs.o: HelperFiles/lexer_stubs.c
 
 debug: $(EXECUTABLE)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(EXECUTABLE) < example.la
+
+run: 
+	@mkdir -p $(OUT_DIR)/comp
+	@for cfile in $(OUT_DIR)/bison_tests/*.c; do \
+		exe_file="$(OUT_DIR)/comp/$$(basename $$cfile .c)"; \
+		echo "Compiling $$cfile..."; \
+		$(CC) -IHelperFiles -o $$exe_file $$cfile; \
+		if [ $$? -eq 0 ]; then \
+			echo "Running $$exe_file:"; \
+			$$exe_file; \
+			if [ $$? -eq 0 ]; then \
+				echo "  ✓ Execution successful"; \
+			else \
+				echo "  ✗ Execution failed"; \
+			fi; \
+		else \
+			echo "Compilation failed for $$cfile"; \
+		fi; \
+	done
+
+
 
 clean:
 	@rm -rf $(OUT_DIR)
