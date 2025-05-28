@@ -8,40 +8,42 @@ Stack now 0 2
 Reading a token
 KW_DEF
 Next token is token KW_DEF ()
-Reducing stack by rule 5 (line 203):
+Reducing stack by rule 5 (line 208):
 -> $$ = nterm top_level_list ()
 Entering state 6
 Stack now 0 2 6
 Next token is token KW_DEF ()
 Shifting token KW_DEF ()
-Entering state 9
-Stack now 0 2 6 9
+Entering state 10
+Stack now 0 2 6 10
 Reading a token
+IDENTIFIER: swap
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 29
-Stack now 0 2 6 9 29
+Entering state 32
+Stack now 0 2 6 10 32
 Reading a token
 LPAREN
 Next token is token LPAREN ()
 Shifting token LPAREN ()
-Entering state 54
-Stack now 0 2 6 9 29 54
+Entering state 58
+Stack now 0 2 6 10 32 58
 Reading a token
+IDENTIFIER: a
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 77
-Stack now 0 2 6 9 29 54 77
+Entering state 88
+Stack now 0 2 6 10 32 58 88
 Reading a token
 LBRACKET
 Next token is token LBRACKET ()
 line 5: syntax error
 Error: popping token IDENTIFIER ()
-Stack now 0 2 6 9 29 54
+Stack now 0 2 6 10 32 58
 Error: popping token LPAREN ()
-Stack now 0 2 6 9 29
+Stack now 0 2 6 10 32
 Error: popping token IDENTIFIER ()
-Stack now 0 2 6 9
+Stack now 0 2 6 10
 Error: popping token KW_DEF ()
 Stack now 0 2 6
 Error: popping nterm top_level_list ()

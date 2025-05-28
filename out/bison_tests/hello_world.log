@@ -6,17 +6,213 @@ Reducing stack by rule 2 (line 181):
 Entering state 2
 Stack now 0 2
 Reading a token
+KW_DEFMACRO
 Next token is token KW_DEFMACRO ()
 Shifting token KW_DEFMACRO ()
 Entering state 4
 Stack now 0 2 4
 Reading a token
+IDENTIFIER: message
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 7
+Stack now 0 2 4 7
+Reading a token
+CONST_STRING
+Next token is token CONST_STRING ()
+Shifting token CONST_STRING ()
+Entering state 22
+Stack now 0 2 4 7 22
+Reducing stack by rule 85 (line 605):
+   $1 = token CONST_STRING ()
+-> $$ = nterm primary_expression ()
+Entering state 30
+Stack now 0 2 4 7 30
+Reading a token
 KW_DEF
 Next token is token KW_DEF ()
-line 3: syntax error
-Error: popping token KW_DEFMACRO ()
+Reducing stack by rule 59 (line 532):
+   $1 = nterm primary_expression ()
+-> $$ = nterm expression ()
+Entering state 28
+Stack now 0 2 4 7 28
+Next token is token KW_DEF ()
+Reducing stack by rule 4 (line 195):
+   $1 = token KW_DEFMACRO ()
+   $2 = token IDENTIFIER ()
+   $3 = nterm expression ()
+Macro defined: message
+Adding macro: message -> "Hello world!\n"
+Added macro: message -> "Hello world!\n"
+Total macros: 1
+-> $$ = nterm macro_def ()
+Entering state 5
+Stack now 0 2 5
+Reducing stack by rule 3 (line 182):
+   $1 = nterm macro_def_list ()
+   $2 = nterm macro_def ()
+Macro definition: 
+-> $$ = nterm macro_def_list ()
+Entering state 2
 Stack now 0 2
-Error: popping nterm macro_def_list ()
-Stack now 0
-Cleanup: discarding lookahead token KW_DEF ()
-Stack now 0
+Next token is token KW_DEF ()
+Reducing stack by rule 5 (line 208):
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Next token is token KW_DEF ()
+Shifting token KW_DEF ()
+Entering state 10
+Stack now 0 2 6 10
+Reading a token
+KW_MAIN
+Next token is token KW_MAIN ()
+Shifting token KW_MAIN ()
+Entering state 33
+Stack now 0 2 6 10 33
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 59
+Stack now 0 2 6 10 33 59
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Shifting token RPAREN ()
+Entering state 91
+Stack now 0 2 6 10 33 59 91
+Reading a token
+COLON
+Next token is token COLON ()
+Shifting token COLON ()
+Entering state 101
+Stack now 0 2 6 10 33 59 91 101
+Reducing stack by rule 90 (line 621):
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 33 59 91 101 116
+Reading a token
+IDENTIFIER: writeStr
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 127
+Stack now 0 2 6 10 33 59 91 101 116 127
+Reading a token
+LPAREN
+Next token is token LPAREN ()
+Shifting token LPAREN ()
+Entering state 37
+Stack now 0 2 6 10 33 59 91 101 116 127 37
+Reading a token
+IDENTIFIER: message
+Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 19
+Stack now 0 2 6 10 33 59 91 101 116 127 37 19
+Reading a token
+RPAREN
+Next token is token RPAREN ()
+Reducing stack by rule 86 (line 606):
+   $1 = token IDENTIFIER ()
+-> $$ = nterm primary_expression ()
+Entering state 30
+Stack now 0 2 6 10 33 59 91 101 116 127 37 30
+Next token is token RPAREN ()
+Reducing stack by rule 59 (line 532):
+   $1 = nterm primary_expression ()
+-> $$ = nterm expression ()
+Entering state 68
+Stack now 0 2 6 10 33 59 91 101 116 127 37 68
+Next token is token RPAREN ()
+Reducing stack by rule 81 (line 593):
+   $1 = nterm expression ()
+-> $$ = nterm arg_list ()
+Entering state 69
+Stack now 0 2 6 10 33 59 91 101 116 127 37 69
+Next token is token RPAREN ()
+Shifting token RPAREN ()
+Entering state 94
+Stack now 0 2 6 10 33 59 91 101 116 127 37 69 94
+Reducing stack by rule 79 (line 584):
+   $1 = token IDENTIFIER ()
+   $2 = token LPAREN ()
+   $3 = nterm arg_list ()
+   $4 = token RPAREN ()
+-> $$ = nterm function_call ()
+Entering state 146
+Stack now 0 2 6 10 33 59 91 101 116 146
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 162
+Stack now 0 2 6 10 33 59 91 101 116 146 162
+Reducing stack by rule 36 (line 352):
+   $1 = nterm function_call ()
+   $2 = token SEMICOLON ()
+-> $$ = nterm stmt ()
+Entering state 137
+Stack now 0 2 6 10 33 59 91 101 116 137
+Reducing stack by rule 92 (line 628):
+   $1 = nterm block ()
+   $2 = nterm stmt ()
+-> $$ = nterm block ()
+Entering state 116
+Stack now 0 2 6 10 33 59 91 101 116
+Reading a token
+KW_ENDDEF
+Next token is token KW_ENDDEF ()
+Shifting token KW_ENDDEF ()
+Entering state 133
+Stack now 0 2 6 10 33 59 91 101 116 133
+Reading a token
+SEMICOLON
+Next token is token SEMICOLON ()
+Shifting token SEMICOLON ()
+Entering state 160
+Stack now 0 2 6 10 33 59 91 101 116 133 160
+Reducing stack by rule 20 (line 313):
+   $1 = token KW_DEF ()
+   $2 = token KW_MAIN ()
+   $3 = token LPAREN ()
+   $4 = token RPAREN ()
+   $5 = token COLON ()
+   $6 = nterm block ()
+   $7 = token KW_ENDDEF ()
+   $8 = token SEMICOLON ()
+Main function
+-> $$ = nterm main_function ()
+Entering state 16
+Stack now 0 2 6 16
+Reducing stack by rule 8 (line 222):
+   $1 = nterm main_function ()
+Main function: int main() {
+    writeStr(message);
+};
+
+-> $$ = nterm top_level ()
+Entering state 12
+Stack now 0 2 6 12
+Reducing stack by rule 6 (line 209):
+   $1 = nterm top_level_list ()
+   $2 = nterm top_level ()
+Top level: 
+-> $$ = nterm top_level_list ()
+Entering state 6
+Stack now 0 2 6
+Reading a token
+Now at end of input.
+Reducing stack by rule 1 (line 175):
+   $1 = nterm macro_def_list ()
+   $2 = nterm top_level_list ()
+-> $$ = nterm program ()
+Entering state 1
+Stack now 0 1
+Now at end of input.
+Shifting token "end of file" ()
+Entering state 3
+Stack now 0 1 3
+Stack now 0 1 3
+Cleanup: popping token "end of file" ()
+Cleanup: popping nterm program ()

@@ -8,66 +8,67 @@ Stack now 0 2
 Reading a token
 KW_CONST
 Next token is token KW_CONST ()
-Reducing stack by rule 5 (line 203):
+Reducing stack by rule 5 (line 208):
 -> $$ = nterm top_level_list ()
 Entering state 6
 Stack now 0 2 6
 Next token is token KW_CONST ()
 Shifting token KW_CONST ()
-Entering state 8
-Stack now 0 2 6 8
+Entering state 9
+Stack now 0 2 6 9
 Reading a token
+IDENTIFIER: N
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 28
-Stack now 0 2 6 8 28
+Entering state 31
+Stack now 0 2 6 9 31
 Reading a token
 OP_ASSIGN
 Next token is token OP_ASSIGN ()
 Shifting token OP_ASSIGN ()
-Entering state 53
-Stack now 0 2 6 8 28 53
+Entering state 57
+Stack now 0 2 6 9 31 57
 Reading a token
 CONST_INT: 100
 Next token is token CONST_INT ()
 Shifting token CONST_INT ()
-Entering state 17
-Stack now 0 2 6 8 28 53 17
-Reducing stack by rule 80 (line 598):
+Entering state 20
+Stack now 0 2 6 9 31 57 20
+Reducing stack by rule 83 (line 603):
    $1 = token CONST_INT ()
 -> $$ = nterm primary_expression ()
-Entering state 27
-Stack now 0 2 6 8 28 53 27
+Entering state 30
+Stack now 0 2 6 9 31 57 30
 Reading a token
 COLON
 Next token is token COLON ()
-Reducing stack by rule 56 (line 527):
+Reducing stack by rule 59 (line 532):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
-Entering state 76
-Stack now 0 2 6 8 28 53 76
+Entering state 87
+Stack now 0 2 6 9 31 57 87
 Next token is token COLON ()
 Shifting token COLON ()
-Entering state 85
-Stack now 0 2 6 8 28 53 76 85
+Entering state 97
+Stack now 0 2 6 9 31 57 87 97
 Reading a token
 KW_INTEGER
 Next token is token KW_INTEGER ()
 Shifting token KW_INTEGER ()
-Entering state 100
-Stack now 0 2 6 8 28 53 76 85 100
-Reducing stack by rule 22 (line 331):
+Entering state 62
+Stack now 0 2 6 9 31 57 87 97 62
+Reducing stack by rule 23 (line 336):
    $1 = token KW_INTEGER ()
 -> $$ = nterm type ()
-Entering state 104
-Stack now 0 2 6 8 28 53 76 85 104
+Entering state 111
+Stack now 0 2 6 9 31 57 87 97 111
 Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 115
-Stack now 0 2 6 8 28 53 76 85 104 115
-Reducing stack by rule 12 (line 248):
+Entering state 122
+Stack now 0 2 6 9 31 57 87 97 111 122
+Reducing stack by rule 13 (line 253):
    $1 = token KW_CONST ()
    $2 = token IDENTIFIER ()
    $3 = token OP_ASSIGN ()
@@ -77,16 +78,16 @@ Reducing stack by rule 12 (line 248):
    $7 = token SEMICOLON ()
 Constant declaration: N = 100
 -> $$ = nterm const_declaration ()
-Entering state 12
-Stack now 0 2 6 12
-Reducing stack by rule 10 (line 228):
+Entering state 14
+Stack now 0 2 6 14
+Reducing stack by rule 11 (line 233):
    $1 = nterm const_declaration ()
 Constant declaration: const int N = 100;
 
 -> $$ = nterm top_level ()
-Entering state 11
-Stack now 0 2 6 11
-Reducing stack by rule 6 (line 204):
+Entering state 12
+Stack now 0 2 6 12
+Reducing stack by rule 6 (line 209):
    $1 = nterm top_level_list ()
    $2 = nterm top_level ()
 Top level: 
@@ -94,16 +95,25 @@ Top level:
 Entering state 6
 Stack now 0 2 6
 Reading a token
+IDENTIFIER: a
 Next token is token IDENTIFIER ()
-Reducing stack by rule 1 (line 175):
-   $1 = nterm macro_def_list ()
-   $2 = nterm top_level_list ()
--> $$ = nterm program ()
-Entering state 1
-Stack now 0 1
-Next token is token IDENTIFIER ()
+Shifting token IDENTIFIER ()
+Entering state 8
+Stack now 0 2 6 8
+Reducing stack by rule 57 (line 519):
+   $1 = token IDENTIFIER ()
+-> $$ = nterm ident_list ()
+Entering state 18
+Stack now 0 2 6 18
+Reading a token
+LBRACKET
+Next token is token LBRACKET ()
 line 5: syntax error
-Error: popping nterm program ()
+Error: popping nterm ident_list ()
+Stack now 0 2 6
+Error: popping nterm top_level_list ()
+Stack now 0 2
+Error: popping nterm macro_def_list ()
 Stack now 0
-Cleanup: discarding lookahead token IDENTIFIER ()
+Cleanup: discarding lookahead token LBRACKET ()
 Stack now 0

@@ -13,7 +13,7 @@
 	extern FILE *yyin;
 
 	extern char* find_macro(const char*);
-	extern char *yytext; 
+	extern char *yytext;
 
 	int indent_level = 0;
 	int line_num = 1;
@@ -44,7 +44,7 @@ char *safe_strdup(const char *str) {
 	char *new = strdup(str);
 	if (!new) {
 			yyerror("Memory allocation failed");
-			exit(1); 
+			exit(1);
 	}
 	return new;
 }
@@ -172,14 +172,14 @@ char* find_macro(const char* name) {
 %%
 
 program:
-    macro_def_list top_level_list {
-        printf("#include \"lambdalib.h\"\n\n%s", $2);
-    }
-    ;
+	macro_def_list top_level_list {
+		printf("#include \"lambdalib.h\"\n\n%s%s", $1, $2);
+	}
+	;
 
 macro_def_list:
-    /* empty */ { $$ = safe_strdup("");}
-    | macro_def_list macro_def {
+		/* empty */ { $$ = safe_strdup("");}
+		| macro_def_list macro_def {
 			fprintf(stderr, "Macro definition: %s\n", $1);
 			$$ = $1;
 			char* tmp = malloc(strlen($1) + strlen($2) + 2);
@@ -189,26 +189,31 @@ macro_def_list:
 			free($2);
 
 		}
-    ;
+		;
 
 macro_def:
-    KW_DEFMACRO IDENTIFIER expression SEMICOLON {
-    fprintf(stderr, "Macro defined: %s\n", $2);
-    add_macro($2, $3);
-    $$ = safe_strdup("");
-	} 
+		KW_DEFMACRO IDENTIFIER expression {
+		fprintf(stderr, "Macro defined: %s\n", $2);
+		add_macro($2, $3);
+		char* macro_code = malloc(strlen($2) + strlen($3) + 16);
+		sprintf(macro_code, "#define %s %s\n", $2, $3);
+		$$ = add_indentation(macro_code);
+		free(macro_code);
+		free($2);
+		free($3);
+	}
 	;
 
 top_level_list:
-    /* empty */ { $$ = safe_strdup(""); }
-    | top_level_list top_level{
+		/* empty */ { $$ = safe_strdup(""); }
+		| top_level_list top_level{
 			fprintf(stderr, "Top level: %s\n", $1);
 			char* tmp = malloc(strlen($1) + strlen($2) + 2);
 			sprintf(tmp, "%s%s", $1, $2);
 			$$ = tmp;
 			free($1); safe_free($2);
 		}
-    ;
+		;
 
 top_level:
 	function {
@@ -220,19 +225,19 @@ top_level:
 	} | component {
 		fprintf(stderr, "Component: %s\n", $1);
 		$$ = $1;
-	} 
-	// | var_declaration {
-	// 	fprintf(stderr, "Variable declaration: %s\n", $1);
-	// 	$$ = $1;
-	// } 
+	}
+	| var_declaration {
+		fprintf(stderr, "Variable declaration: %s\n", $1);
+		$$ = $1;
+	}
 	| const_declaration {
 		fprintf(stderr, "Constant declaration: %s\n", $1);
 		$$ = $1;
-	} 
+	}
 	;
 
 var_declaration:
-    IDENTIFIER COLON type SEMICOLON {
+		ident_list COLON type SEMICOLON {
 		// $1 is the variable name, $3 is the type
 		fprintf(stderr, "Processing declaration: %s of type %s\n", $1, $3);
 		char* decl = malloc(strlen($1) + strlen($3) + 16);
@@ -242,10 +247,10 @@ var_declaration:
 		free($1);
 		free($3);
 	}
-;
+	;
 
 const_declaration:
-    KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON {
+		KW_CONST IDENTIFIER OP_ASSIGN expression COLON type SEMICOLON {
 				fprintf(stderr, "Constant declaration: %s = %s\n", $2, $4);
 
 				char* decl = malloc(strlen($2) + strlen($4) + strlen($6) + 16);
@@ -256,34 +261,34 @@ const_declaration:
 				free($4);
 				free($6);
 		}
-    ;
+		;
 
 function:
-    KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON {
-        fprintf(stderr, "Function with return: %s\n", $2);
+		KW_DEF IDENTIFIER LPAREN param_list RPAREN OP_ARROW type COLON block KW_ENDDEF SEMICOLON {
+				fprintf(stderr, "Function with return: %s\n", $2);
 
-        indent_level++;
-        char* body = add_indentation($9);
-        indent_level--;
+				indent_level++;
+				char* body = add_indentation($9);
+				indent_level--;
 
-        char* code = malloc(strlen(body) + 64);
-        sprintf(code, "%s %s(%s) {\n%s}\n", $7, $2, $4, body);
-        safe_free(body);
-        $$ = code;
-    }
-  | KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON {
-        fprintf(stderr, "Function with no return: %s\n", $2);
+				char* code = malloc(strlen(body) + 64);
+				sprintf(code, "%s %s(%s) {\n%s}\n", $7, $2, $4, body);
+				safe_free(body);
+				$$ = code;
+		}
+	| KW_DEF IDENTIFIER LPAREN param_list RPAREN COLON block KW_ENDDEF SEMICOLON {
+				fprintf(stderr, "Function with no return: %s\n", $2);
 
-        indent_level++;
-        char* body = add_indentation($7);
-        indent_level--;
+				indent_level++;
+				char* body = add_indentation($7);
+				indent_level--;
 
-        char* code = malloc(strlen(body) + 64);
-        sprintf(code, "void %s(%s) {\n%s}\n", $2, $4, body);
-        safe_free(body);
-        $$ = code;
-    }
-    ;
+				char* code = malloc(strlen(body) + 64);
+				sprintf(code, "void %s(%s) {\n%s}\n", $2, $4, body);
+				safe_free(body);
+				$$ = code;
+		}
+		;
 
 param_list:
 	/* empty */ { $$ = safe_strdup(""); }
@@ -291,18 +296,18 @@ param_list:
 	;
 
 param_decl_list:
-    IDENTIFIER COLON type {
+		IDENTIFIER COLON type {
 			fprintf(stderr, "Param: %s\n", $1);
 
 			$$ = malloc(strlen($1) + strlen($3) + 2);
 			sprintf($$, "%s %s", $3, $1);
-    } | param_decl_list COMMA IDENTIFIER COLON type {
+		} | param_decl_list COMMA IDENTIFIER COLON type {
 			fprintf(stderr, "Param: %s\n", $3);
 
 			char* tmp = malloc(strlen($1) + strlen($3) + strlen($5) + 4);
 			sprintf(tmp, "%s, %s %s", $1, $5, $3);
 			$$ = tmp;
-    } 
+		}
 
 main_function:
 	KW_DEF KW_MAIN LPAREN RPAREN COLON block KW_ENDDEF SEMICOLON {
@@ -328,34 +333,34 @@ stmt_list:
 	;
 
 type:
-    KW_INTEGER  { $$ = safe_strdup("int"); }
-  | KW_SCALAR   { $$ = safe_strdup("float"); }
-  | KW_STR      { $$ = safe_strdup("char*"); }
-  | KW_BOOL     { $$ = safe_strdup("bool"); }
-  | IDENTIFIER  { $$ = safe_strdup($1); safe_free($1);} 
-  ;
+		KW_INTEGER  { $$ = safe_strdup("int"); }
+	| KW_SCALAR   { $$ = safe_strdup("float"); }
+	| KW_STR      { $$ = safe_strdup("char*"); }
+	| KW_BOOL     { $$ = safe_strdup("bool"); }
+	| IDENTIFIER  { $$ = safe_strdup($1); safe_free($1);}
+	;
 
 stmt:
 	assignment_stmt
-  | return_stmt
-  | if_stmt
-  | for_stmt
-  | while_stmt
-  | break_stmt
-  | continue_stmt
-  | empty_stmt
-  | function_call SEMICOLON {
+	| return_stmt
+	| if_stmt
+	| for_stmt
+	| while_stmt
+	| break_stmt
+	| continue_stmt
+	| empty_stmt
+	| function_call SEMICOLON {
 		char* tmp = malloc(strlen($1) + 3);
 		sprintf(tmp, "%s;\n", $1);
 		$$ = add_indentation(tmp);
 		free(tmp);
 		free($1);
-	} | error SEMICOLON { 
+	} | error SEMICOLON {
 		yyerror("Invalid statement");
 		yyerrok;
-		$$ = safe_strdup("/* ERROR */\n"); 
+		$$ = safe_strdup("/* ERROR */\n");
 	}
-  ;
+	;
 
 assignment_stmt:
 	IDENTIFIER OP_ASSIGN expression SEMICOLON {
@@ -370,87 +375,87 @@ assignment_stmt:
 	;
 
 return_stmt:
-    KW_RETURN expression SEMICOLON {
-        fprintf(stderr, "Returning: %s\n", $2);
-        char* line = malloc(strlen($2) + 16);
-        sprintf(line, "return %s;\n", $2);
-        $$ = add_indentation(line);
-        safe_free(line);
-    }
-    ;
+		KW_RETURN expression SEMICOLON {
+				fprintf(stderr, "Returning: %s\n", $2);
+				char* line = malloc(strlen($2) + 16);
+				sprintf(line, "return %s;\n", $2);
+				$$ = add_indentation(line);
+				safe_free(line);
+		}
+		;
 
 if_stmt:
-    KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON {
-        fprintf(stderr, "If statement: %s\n", $3);
-        indent_level++;
-        char* body = add_indentation($6);
-        indent_level--;
-        char* code = malloc(strlen($3) + strlen(body) + 64);
-        sprintf(code, "if (%s) {\n%s}\n", $3, body);
-        $$ = code;
-        safe_free(body);
-    } 
-  | KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON {
-        indent_level++;
-        char* then_part = add_indentation($6);
-        char* else_part = add_indentation($9);
-        indent_level--;
-        char* code = malloc(strlen($3) + strlen(then_part) + strlen(else_part) + 128);
-        fprintf(stderr, "If-else statement: %s\n", $3);
-        sprintf(code, "if (%s) {\n%s} else {\n%s}\n", $3, then_part, else_part);
-        $$ = code;
-        safe_free(then_part);
-        safe_free(else_part);
-    }
-    ;
+		KW_IF LPAREN expression RPAREN COLON stmt_list KW_ENDIF SEMICOLON {
+				fprintf(stderr, "If statement: %s\n", $3);
+				indent_level++;
+				char* body = add_indentation($6);
+				indent_level--;
+				char* code = malloc(strlen($3) + strlen(body) + 64);
+				sprintf(code, "if (%s) {\n%s}\n", $3, body);
+				$$ = code;
+				safe_free(body);
+		}
+	| KW_IF LPAREN expression RPAREN COLON stmt_list KW_ELSE COLON stmt_list KW_ENDIF SEMICOLON {
+				indent_level++;
+				char* then_part = add_indentation($6);
+				char* else_part = add_indentation($9);
+				indent_level--;
+				char* code = malloc(strlen($3) + strlen(then_part) + strlen(else_part) + 128);
+				fprintf(stderr, "If-else statement: %s\n", $3);
+				sprintf(code, "if (%s) {\n%s} else {\n%s}\n", $3, then_part, else_part);
+				$$ = code;
+				safe_free(then_part);
+				safe_free(else_part);
+		}
+		;
 
 for_stmt:
-    KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON {
-        indent_level++;
-        char* body = add_indentation($10);
-        indent_level--;
-        char* code = malloc(strlen($2) + strlen($5) + strlen($7) + strlen(body) + 128);
-        fprintf(stderr, "For loop: %s\n", $2);
-        sprintf(code, "for (int %s = %s; %s < %s; ++%s) {\n%s}\n", $2, $5, $2, $7, $2, body);
-        $$ = code;
-        safe_free(body);
-    }
-    ;
+		KW_FOR IDENTIFIER KW_IN LBRACKET expression COLON expression RBRACKET COLON stmt_list KW_ENDFOR SEMICOLON {
+				indent_level++;
+				char* body = add_indentation($10);
+				indent_level--;
+				char* code = malloc(strlen($2) + strlen($5) + strlen($7) + strlen(body) + 128);
+				fprintf(stderr, "For loop: %s\n", $2);
+				sprintf(code, "for (int %s = %s; %s < %s; ++%s) {\n%s}\n", $2, $5, $2, $7, $2, body);
+				$$ = code;
+				safe_free(body);
+		}
+		;
 
 while_stmt:
-    KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
-        indent_level++;
-        char* body = add_indentation($6);
-        indent_level--;
-        fprintf(stderr, "While loop: %s\n", $3);
-        char* code = malloc(strlen($3) + strlen(body) + 64);
-        sprintf(code, "while (%s) {\n%s}\n", $3, body);
-        $$ = code;
-        safe_free(body);
-    }
-    ;
+		KW_WHILE LPAREN expression RPAREN COLON stmt_list KW_ENDWHILE SEMICOLON {
+				indent_level++;
+				char* body = add_indentation($6);
+				indent_level--;
+				fprintf(stderr, "While loop: %s\n", $3);
+				char* code = malloc(strlen($3) + strlen(body) + 64);
+				sprintf(code, "while (%s) {\n%s}\n", $3, body);
+				$$ = code;
+				safe_free(body);
+		}
+		;
 
 break_stmt:
-    KW_BREAK SEMICOLON {
-        $$ = add_indentation("break;\n");
-    }
-    ;
+		KW_BREAK SEMICOLON {
+				$$ = add_indentation("break;\n");
+		}
+		;
 
 continue_stmt:
-    KW_CONTINUE SEMICOLON {
-        $$ = add_indentation("continue;\n");
-    }
-    ;
+		KW_CONTINUE SEMICOLON {
+				$$ = add_indentation("continue;\n");
+		}
+		;
 
 empty_stmt:
-    SEMICOLON {
-        $$ = safe_strdup(";");
-    }
-    ;
+		SEMICOLON {
+				$$ = safe_strdup(";");
+		}
+		;
 
 
 component:
-    KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON {
+		KW_COMP IDENTIFIER COLON component_body KW_ENDCOMP SEMICOLON {
 				fprintf(stderr, "Component: %s\n", $2);
 
 				char* code = malloc(strlen($2) + 16);
@@ -458,11 +463,11 @@ component:
 				$$ = add_indentation(code);
 				free(code);
 		}
-    ;
+		;
 
 component_body:
-    /* empty */ { $$ = safe_strdup(""); }
-  | component_body component_member {
+		/* empty */ { $$ = safe_strdup(""); }
+	| component_body component_member {
 			fprintf(stderr, "Component member: %s\n", $2);
 
 			char* code = malloc(strlen($1) + strlen($2) + 16);
@@ -470,7 +475,7 @@ component_body:
 			$$ = code;
 			free(code);
 	}
-  ;
+	;
 
 component_member:
 	hash_ident_list COLON type SEMICOLON {
@@ -493,28 +498,28 @@ component_member:
 		sprintf(decl, "%s", $1);
 		$$ = add_indentation(decl);
 		free(decl);
-	} | SEMICOLON { $$ = safe_strdup(""); 
+	} | SEMICOLON { $$ = safe_strdup("");
 	} | error SEMICOLON {
 		yyerror("Invalid variable declaration");
 		yyerrok;
 		$$ = safe_strdup("/* BAD DECLARATION */\n");
 	}
-  ;
+	;
 
 hash_ident_list:
-      IDENTIFIER { $$ = safe_strdup($1); }  // Drop the #
+			IDENTIFIER { $$ = safe_strdup($1); }  // Drop the #
 	| hash_ident_list COMMA IDENTIFIER {
 		char* tmp = malloc(strlen($1) + strlen($3) + 4);
 		sprintf(tmp, "%s, %s", $1, $3); // No # inserted
 		$$ = tmp;
 	}
-  ;
+	;
 
 ident_list:
 	IDENTIFIER {
 		$$ = safe_strdup($1);
 		safe_free($1);
-	} 
+	}
 	| ident_list COMMA IDENTIFIER {
 		char* tmp = malloc(strlen($1) + strlen($3) + 2);
 		sprintf(tmp, "%s, %s", $1, $3);
@@ -524,30 +529,30 @@ ident_list:
 
 
 expression:
-    primary_expression { $$ = safe_strdup($1); safe_free($1); }
-  | expression OP_PLUS expression { 
+		primary_expression { $$ = safe_strdup($1); safe_free($1); }
+	| expression OP_PLUS expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
-			sprintf($$, "%s + %s", $1, $3); 
+			sprintf($$, "%s + %s", $1, $3);
 			safe_free($1); safe_free($3);
 	}	| expression OP_MINUS expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s - %s", $1, $3); safe_free($1); safe_free($3);
-	} | expression OP_MULT expression { 
+	} | expression OP_MULT expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s * %s", $1, $3); safe_free($1); safe_free($3);
 	} | expression OP_DIV expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s / %s", $1, $3); safe_free($1); safe_free($3);
-	} | expression OP_MOD expression { 
+	} | expression OP_MOD expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s %% %s", $1, $3); safe_free($1); safe_free($3);
 	} | expression OP_POW expression %prec OP_POW {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s ^ %s", $1, $3); safe_free($1); safe_free($3);
-	} | expression OP_EQ expression { 
+	} | expression OP_EQ expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s == %s", $1, $3); safe_free($1); safe_free($3);
-	} | expression OP_NEQ expression { 
+	} | expression OP_NEQ expression {
 			$$ = malloc(strlen($1) + strlen($3) + 4);
 			sprintf($$, "%s != %s", $1, $3); safe_free($1); safe_free($3);
 	} | expression OP_LT expression {
@@ -565,43 +570,43 @@ expression:
 	} | expression KW_AND expression {
 			$$ = malloc(strlen($1) + strlen($3) + 6);
 			sprintf($$, "%s && %s", $1, $3); safe_free($1); safe_free($3);
-	} | expression KW_OR expression { 
+	} | expression KW_OR expression {
 			$$ = malloc(strlen($1) + strlen($3) + 5);
 			sprintf($$, "%s || %s", $1, $3); safe_free($1); safe_free($3);
 	} | KW_NOT expression %prec KW_NOT { $$ = $2; }
-  | OP_MINUS expression %prec UMINUS { $$ = $2; } // Unary minus
-  | LPAREN expression RPAREN { $$ = $2; } // Parentheses for grouping
-  | CONST_BOOL_FALSE { $$ = safe_strdup("false"); }
+	| OP_MINUS expression %prec UMINUS { $$ = $2; } // Unary minus
+	| LPAREN expression RPAREN { $$ = $2; } // Parentheses for grouping
+	| CONST_BOOL_FALSE { $$ = safe_strdup("false"); }
 	| CONST_BOOL_TRUE { $$ = safe_strdup("true"); }
-  ;
+	;
 
 function_call:
 	IDENTIFIER LPAREN arg_list RPAREN {
 		$$ = malloc(strlen($1) + strlen($3) + 4);
 		sprintf($$, "%s(%s)", $1, $3);
 		safe_free($1); safe_free($3);
-	} 
-  ;
+	}
+	;
 
 arg_list:
 	/* empty */ { $$ = safe_strdup(""); }
-  | expression { $$ = safe_strdup($1);}
-  | arg_list COMMA expression {
+	| expression { $$ = safe_strdup($1);}
+	| arg_list COMMA expression {
 		char* tmp = malloc(strlen($1) + strlen($3) + 2);
 		sprintf(tmp, "%s,%s", $1, $3);
 		$$ = tmp;
 		safe_free($1); safe_free($3);
 	}
-  ;
+	;
 
 primary_expression:
-    CONST_INT
-  | CONST_FLOAT
-  | CONST_STRING
-  | IDENTIFIER
+		CONST_INT
+	| CONST_FLOAT
+	| CONST_STRING
+	| IDENTIFIER
 	| function_call { $$ = $1; }
-  // | IDENTIFIER LPAREN arg_list RPAREN { /* function call */ }
-  | primary_expression LBRACKET expression RBRACKET {
+	// | IDENTIFIER LPAREN arg_list RPAREN { /* function call */ }
+	| primary_expression LBRACKET expression RBRACKET {
 		$$ = malloc(strlen($1) + strlen($3) + 4);
 		sprintf($$, "%s[%s]", $1, $3);
 		safe_free($1); safe_free($3);
@@ -610,7 +615,7 @@ primary_expression:
 		sprintf($$, "%s.%s", $1, $3);
 		safe_free($1); safe_free($3);
 	}
-  ;
+	;
 
 block:
 	/* empty */ { $$ = safe_strdup(""); }
@@ -619,13 +624,13 @@ block:
 		sprintf(tmp, "%s%s", $1, $2);
 		// safe_free($1); safe_free($2);
 		$$ = tmp;
-		
+
 	} | block stmt {
 		char* tmp = malloc(strlen($1) + strlen($2) + 2);
 		sprintf(tmp, "%s%s", $1, $2);
 		safe_free($1); safe_free($2);
 		$$ = tmp;
-	
+
 	}
 	;
 

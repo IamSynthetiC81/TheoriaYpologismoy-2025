@@ -50,51 +50,31 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 }
 
 [ \t]+                            { /* skip whitespace */ }
-^@defmacro[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]+([^\n\r]+)[\r]?\n {
-    // Extract name and replacement from yytext
-    // char name[256];
-    // char replacement[1024];
+	/*
+	^@defmacro[ \t]+([a-zA-Z_][a-zA-Z0-9_]*)[ \t]+([^\n\r]+)[\r]?\n {
+			return KW_DEFMACRO;
+	}
+	*/
 
-    // // Use sscanf with format to separate name and replacement safely
-    // if (sscanf(yytext, "@defmacro %255s %1023[^\n\r]", name, replacement) == 2) {
-    //     add_macro(name, replacement);
-
-    //     fprintf(stderr, "Macro defined: %s -> %s\n", name, replacement);
-
-    //     // If we are currently expanding a macro, we need to push the new state
-    //     if (macro_expansion_depth >= MAX_MACRO_EXPANSION_DEPTH) {
-    //         fprintf(stderr, "Error: Maximum macro expansion depth exceeded\n");
-    //         exit(1);
-    //     }
-
-    //     return KW_DEFMACRO;
-    // }
-    //  else {
-    //     fprintf(stderr, "Invalid macro definition line %d: %s\n", line_num, yytext);
-    //     exit(1);
-    // }   
-
-    // line_num++;
-    return KW_DEFMACRO;
-}
+@defmacro.                        { fprintf(stderr, "KW_DEFMACRO\n");  return KW_DEFMACRO; }
 
 "True"                            { fprintf(stderr, "CONST_BOOL_TRUE\n"); return CONST_BOOL_TRUE; }
 "False"                           { fprintf(stderr, "CONST_BOOL_FALSE\n"); return CONST_BOOL_FALSE; }
 
 [0-9]+\.[0-9]+ {
     fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
-    yylval.string = strdup(yytext);
-    return CONST_FLOAT;
+	yylval.string = strdup(yytext);
+	return CONST_FLOAT;
 }
 [0-9]+\.[0-9]+([eE][+-]?[0-9]+)? {
-    fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
-    yylval.string = strdup(yytext);
-    return CONST_FLOAT;
+	fprintf(stderr, "CONST_FLOAT: %s\n", yytext);
+	yylval.string = strdup(yytext);
+	return CONST_FLOAT;
 }
 [0-9]+ {
-    fprintf(stderr, "CONST_INT: %s\n", yytext);
-    yylval.string = strdup(yytext);
-    return CONST_INT;
+	fprintf(stderr, "CONST_INT: %s\n", yytext);
+	yylval.string = strdup(yytext);
+	return CONST_INT;
 }
 \"([^\"\\]|\\.)*\"                { fprintf(stderr, "CONST_STRING\n"); yylval.string = strdup(yytext); return CONST_STRING; }
 
@@ -170,6 +150,7 @@ if (using_macro_input && macro_buffer && macro_buffer_index < macro_buffer_len) 
 
 [a-zA-Z_][a-zA-Z0-9_]* {
 	yylval.string = strdup(yytext);
+	fprintf(stderr, "IDENTIFIER: %s\n", yytext);
 	return IDENTIFIER;
 }
 

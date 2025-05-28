@@ -20,8 +20,7 @@ EXECUTABLE = $(OUT_DIR)/mycompiler
 
 # Create output directory
 $(shell mkdir -p $(OUT_DIR))
-
-.PHONY: all clean test lexer_test run debug run_compiled
+.PHONY: all clean test lexer_test run debug run_compiled bison_test
 
 all: $(EXECUTABLE)
 
@@ -40,8 +39,8 @@ $(OUT_DIR)/myanalyzer.tab.h: myanalyzer.y
 # run: $(EXECUTABLE)
 # 	@./$(EXECUTABLE) < example.la
 
-test: $(EXECUTABLE)
-	@echo "Running tests..."
+bison_test: $(EXECUTABLE)
+	@echo "Running bison tests..."
 	@mkdir -p $(OUT_DIR)/bison_tests
 	@for test in $(TEST_DIR)/*.la; do \
 		test_name=$$(basename $$test .la); \
@@ -74,6 +73,13 @@ lexer_test: $(LEX_OUT) $(OUT_DIR)/lexer_stubs.o
 $(OUT_DIR)/lexer_stubs.o: HelperFiles/lexer_stubs.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
+test: bison_test lexer_test
+	@if [ -d $(OUT_DIR)/bison_tests ] && [ -d $(OUT_DIR)/lexer_tests ]; then \
+		echo "All tests completed successfully."; \
+	else \
+		echo "Some tests failed. Check the logs in $(OUT_DIR)/bison_tests and $(OUT_DIR)/lexer_tests."; \
+	fi
+
 debug: $(EXECUTABLE)
 	@valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --verbose ./$(EXECUTABLE) < example.la
 
@@ -87,9 +93,9 @@ run:
 			echo "Running $$exe_file:"; \
 			$$exe_file; \
 			if [ $$? -eq 0 ]; then \
-				echo "  ✓ Execution successful"; \
+				echo "  \n✓ Execution successful"; \
 			else \
-				echo "  ✗ Execution failed"; \
+				echo "  \n✗ Execution failed"; \
 			fi; \
 		else \
 			echo "Compilation failed for $$cfile"; \
