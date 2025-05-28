@@ -34,7 +34,7 @@ Next token is token CONST_INT ()
 Shifting token CONST_INT ()
 Entering state 20
 Stack now 0 2 6 9 31 57 20
-Reducing stack by rule 83 (line 603):
+Reducing stack by rule 84 (line 606):
    $1 = token CONST_INT ()
 -> $$ = nterm primary_expression ()
 Entering state 30
@@ -42,7 +42,7 @@ Stack now 0 2 6 9 31 57 30
 Reading a token
 COLON
 Next token is token COLON ()
-Reducing stack by rule 59 (line 532):
+Reducing stack by rule 60 (line 535):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
 Entering state 87
@@ -100,7 +100,7 @@ Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
 Entering state 8
 Stack now 0 2 6 8
-Reducing stack by rule 57 (line 519):
+Reducing stack by rule 58 (line 522):
    $1 = token IDENTIFIER ()
 -> $$ = nterm ident_list ()
 Entering state 18

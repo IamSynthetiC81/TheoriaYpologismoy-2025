@@ -11,5 +11,5 @@ int main() {
     } else {
         writeStr("x is not bigger\n");
     }
-    /* ERROR */
+    return;
 };

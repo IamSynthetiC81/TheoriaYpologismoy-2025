@@ -28,7 +28,7 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 60
 Stack now 0 2 6 11 34 60
-Reducing stack by rule 48 (line 469):
+Reducing stack by rule 49 (line 472):
 -> $$ = nterm component_body ()
 Entering state 92
 Stack now 0 2 6 11 34 60 92
@@ -79,14 +79,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 2: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -141,14 +141,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 3: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -203,14 +203,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 4: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -364,7 +364,7 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 113
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113
-Reducing stack by rule 90 (line 621):
+Reducing stack by rule 91 (line 624):
 -> $$ = nterm block ()
 Entering state 123
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123
@@ -422,7 +422,7 @@ line 7: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -482,7 +482,7 @@ line 8: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -542,7 +542,7 @@ line 9: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -558,8 +558,8 @@ Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 165
-Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 165
+Entering state 166
+Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 166
 Reducing stack by rule 15 (line 279):
    $1 = token KW_DEF ()
    $2 = token IDENTIFIER ()
@@ -574,12 +574,12 @@ Function with no return: setAddress
 -> $$ = nterm function ()
 Entering state 107
 Stack now 0 2 6 11 34 60 92 107
-Reducing stack by rule 52 (line 496):
+Reducing stack by rule 53 (line 499):
    $1 = nterm function ()
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: void setAddress(char* s, int n, char* c) {
@@ -626,7 +626,7 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 113
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113
-Reducing stack by rule 90 (line 621):
+Reducing stack by rule 91 (line 624):
 -> $$ = nterm block ()
 Entering state 123
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123
@@ -648,7 +648,7 @@ Next token is token CONST_STRING ()
 Shifting token CONST_STRING ()
 Entering state 22
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 127 37 22
-Reducing stack by rule 85 (line 605):
+Reducing stack by rule 86 (line 608):
    $1 = token CONST_STRING ()
 -> $$ = nterm primary_expression ()
 Entering state 30
@@ -656,13 +656,13 @@ Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 127 37 30
 Reading a token
 COMMA
 Next token is token COMMA ()
-Reducing stack by rule 59 (line 532):
+Reducing stack by rule 60 (line 535):
    $1 = nterm primary_expression ()
 -> $$ = nterm expression ()
 Entering state 68
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 127 37 68
 Next token is token COMMA ()
-Reducing stack by rule 81 (line 593):
+Reducing stack by rule 82 (line 596):
    $1 = nterm expression ()
 -> $$ = nterm arg_list ()
 Entering state 69
@@ -778,7 +778,7 @@ line 13: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -794,8 +794,8 @@ Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 165
-Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 165
+Entering state 166
+Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 166
 Reducing stack by rule 15 (line 279):
    $1 = token KW_DEF ()
    $2 = token IDENTIFIER ()
@@ -810,12 +810,12 @@ Function with no return: printAddress
 -> $$ = nterm function ()
 Entering state 107
 Stack now 0 2 6 11 34 60 92 107
-Reducing stack by rule 52 (line 496):
+Reducing stack by rule 53 (line 499):
    $1 = nterm function ()
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: void printAddress() {
@@ -837,7 +837,7 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 118
 Stack now 0 2 6 11 34 60 92 105 118
-Reducing stack by rule 47 (line 458):
+Reducing stack by rule 48 (line 461):
    $1 = token KW_COMP ()
    $2 = token IDENTIFIER ()
    $3 = token COLON ()
@@ -851,7 +851,7 @@ Stack now 0 2 6 17
 Reducing stack by rule 9 (line 225):
    $1 = nterm component ()
 Component: struct Address {
-bc8Á};
+5„Çú};
 
 -> $$ = nterm top_level ()
 Entering state 12
@@ -881,7 +881,7 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 60
 Stack now 0 2 6 11 34 60
-Reducing stack by rule 48 (line 469):
+Reducing stack by rule 49 (line 472):
 -> $$ = nterm component_body ()
 Entering state 92
 Stack now 0 2 6 11 34 60 92
@@ -959,14 +959,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 18: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -1021,14 +1021,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 19: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -1083,14 +1083,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 20: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -1145,14 +1145,14 @@ Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
 Entering state 117
 Stack now 0 2 6 11 34 60 92 102 117
-Reducing stack by rule 54 (line 502):
+Reducing stack by rule 55 (line 505):
    $1 = token error ()
    $2 = token SEMICOLON ()
 line 21: Invalid variable declaration
 -> $$ = nterm component_member ()
 Entering state 108
 Stack now 0 2 6 11 34 60 92 108
-Reducing stack by rule 49 (line 470):
+Reducing stack by rule 50 (line 473):
    $1 = nterm component_body ()
    $2 = nterm component_member ()
 Component member: /* BAD DECLARATION */
@@ -1384,7 +1384,7 @@ Next token is token COLON ()
 Shifting token COLON ()
 Entering state 113
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113
-Reducing stack by rule 90 (line 621):
+Reducing stack by rule 91 (line 624):
 -> $$ = nterm block ()
 Entering state 123
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123
@@ -1442,7 +1442,7 @@ line 24: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -1502,7 +1502,7 @@ line 25: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -1562,7 +1562,7 @@ line 26: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -1622,7 +1622,7 @@ line 27: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -1682,7 +1682,7 @@ line 28: Invalid statement
 -> $$ = nterm stmt ()
 Entering state 137
 Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 137
-Reducing stack by rule 92 (line 628):
+Reducing stack by rule 93 (line 631):
    $1 = nterm block ()
    $2 = nterm stmt ()
 -> $$ = nterm block ()
@@ -1698,8 +1698,8 @@ Reading a token
 SEMICOLON
 Next token is token SEMICOLON ()
 Shifting token SEMICOLON ()
-Entering state 165
-Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 165
+Entering state 166
+Stack now 0 2 6 11 34 60 92 104 32 58 89 99 113 123 150 166
 Reducing stack by rule 15 (line 279):
    $1 = token KW_DEF ()
    $2 = token IDENTIFIER ()

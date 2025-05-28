@@ -381,7 +381,10 @@ return_stmt:
 				sprintf(line, "return %s;\n", $2);
 				$$ = add_indentation(line);
 				safe_free(line);
-		}
+		} | KW_RETURN SEMICOLON {
+			fprintf(stderr, "Returning void\n");
+			$$ = add_indentation("return;\n");
+    }
 		;
 
 if_stmt:
