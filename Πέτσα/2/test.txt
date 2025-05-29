@@ -1,5 +1,0 @@
-def main(): 
-a,b,c:integer;
-a=5+5;
-
-enddef;
