@@ -1,5 +1,5 @@
 #include "lambdalib.h"
-
+#include <stdbool.h>
 int limit, num, counter;
 bool prime(int n) {
     int i;

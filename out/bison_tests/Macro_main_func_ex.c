@@ -1,5 +1,5 @@
 #include "lambdalib.h"
-
+#include <stdbool.h>
 #define pi 3.14
 int main() {
     float x;

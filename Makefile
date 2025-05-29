@@ -20,7 +20,7 @@ EXECUTABLE = $(OUT_DIR)/mycompiler
 
 # Create output directory
 $(shell mkdir -p $(OUT_DIR))
-.PHONY: all clean test lexer_test run debug run_compiled bison_test
+.PHONY: all clean test lexer_test run debug run_compiled bison_test memcheck
 
 all: $(EXECUTABLE)
 
@@ -102,7 +102,23 @@ run:
 		fi; \
 	done
 
+memcheck: CFLAGS += -fsanitize=address
+memcheck: LDFLAGS += -fsanitize=address
+memcheck: $(EXECUTABLE)
+	@mkdir -p $(OUT_DIR)/bison_tests
+	@mkdir -p $(OUT_DIR)/bison_tests/memcheck
+	@echo "Output will be saved in $(OUT_DIR)/bison_tests/"
+	@echo "Running ASan memcheck for each bison test case..."
+	
 
+	@for test in $(TEST_DIR)/*.la; do \
+		test_name=$$(basename $$test .la); \
+		echo "ASan memcheck for $$test_name..."; \
+		./$(EXECUTABLE) < $$test > /dev/null 2> $(OUT_DIR)/bison_tests/memcheck/$$test_name.asan; \
+		echo "  Output: $(OUT_DIR)/bison_tests/memcheck/$$test_name.asan"; \
+	done
+	@echo "ASan memcheck results saved to $(OUT_DIR)/bison_tests/memcheck/"
+	@echo "Memcheck complete"
 
 clean:
 	@rm -rf $(OUT_DIR)

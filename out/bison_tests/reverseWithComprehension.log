@@ -1,14 +1,14 @@
 Starting parse
 Entering state 0
 Stack now 0
-Reducing stack by rule 2 (line 181):
+Reducing stack by rule 2 (line 185):
 -> $$ = nterm macro_def_list ()
 Entering state 2
 Stack now 0 2
 Reading a token
 KW_DEF
 Next token is token KW_DEF ()
-Reducing stack by rule 5 (line 208):
+Reducing stack by rule 5 (line 212):
 -> $$ = nterm top_level_list ()
 Entering state 6
 Stack now 0 2 6
@@ -20,28 +20,28 @@ Reading a token
 IDENTIFIER: swap
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 32
-Stack now 0 2 6 10 32
+Entering state 34
+Stack now 0 2 6 10 34
 Reading a token
 LPAREN
 Next token is token LPAREN ()
 Shifting token LPAREN ()
-Entering state 58
-Stack now 0 2 6 10 32 58
+Entering state 62
+Stack now 0 2 6 10 34 62
 Reading a token
 IDENTIFIER: a
 Next token is token IDENTIFIER ()
 Shifting token IDENTIFIER ()
-Entering state 88
-Stack now 0 2 6 10 32 58 88
+Entering state 93
+Stack now 0 2 6 10 34 62 93
 Reading a token
 LBRACKET
 Next token is token LBRACKET ()
 line 5: syntax error
 Error: popping token IDENTIFIER ()
-Stack now 0 2 6 10 32 58
+Stack now 0 2 6 10 34 62
 Error: popping token LPAREN ()
-Stack now 0 2 6 10 32
+Stack now 0 2 6 10 34
 Error: popping token IDENTIFIER ()
 Stack now 0 2 6 10
 Error: popping token KW_DEF ()

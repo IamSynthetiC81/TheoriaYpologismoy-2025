@@ -1,5 +1,5 @@
 #include "lambdalib.h"
-
+#include <stdbool.h>
 #define N 100
 int a, b;
 int cube(int i) {
